@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ARENAKORE — Il Futuro dell'Identità Sportiva. Calibrazione biometrica. Performance reale. Zero compromessi." />
+  <title>ARENAKORE — Il Futuro dell'Identità Sportiva</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 'ak-cyan': '#00FFFF', 'ak-gold': '#FFD700' },
+          fontFamily: { 'anton': ['Anton','sans-serif'], 'mono': ['"IBM Plex Mono"','monospace'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: #000; color: #fff; font-family: 'IBM Plex Mono', monospace; margin: 0; overflow-x: hidden; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #00FFFF; }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Animations */
+    @keyframes ak-hero-enter { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ak-blink { 0%,100% { opacity:1; } 50% { opacity:.1; } }
+    @keyframes ak-bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(8px); } }
+    @keyframes ak-reveal-in { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+
+    .ak-hero-badge { animation: ak-hero-enter 0.6s ease 0.3s both; }
+    .ak-hero-title { animation: ak-hero-enter 0.8s ease 0.5s both; }
+    .ak-hero-sub   { animation: ak-hero-enter 0.6s ease 0.7s both; }
+    .ak-hero-btns  { animation: ak-hero-enter 0.6s ease 0.9s both; }
+    .ak-hero-scroll{ animation: ak-hero-enter 0.6s ease 1.1s both; }
+    .ak-blink      { animation: ak-blink 1.5s ease infinite; }
+    .ak-bounce     { animation: ak-bounce 2s ease infinite; }
+
+    .ak-reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .ak-reveal.visible { opacity: 1; transform: translateY(0); }
+    .ak-reveal.d1 { transition-delay: .1s; }
+    .ak-reveal.d2 { transition-delay: .2s; }
+    .ak-reveal.d3 { transition-delay: .3s; }
+    .ak-reveal.d4 { transition-delay: .4s; }
+
+    /* Buttons */
+    .btn-cyan { display:inline-flex;align-items:center;justify-content:center;gap:.75rem;background:#00FFFF;color:#000;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.8rem;text-transform:uppercase;padding:1rem 2rem;border-radius:14px;text-decoration:none;transition:transform .2s,box-shadow .2s; }
+    .btn-cyan:hover { transform:scale(1.02);box-shadow:0 0 28px rgba(0,255,255,.6),0 0 56px rgba(0,255,255,.18); }
+    .btn-gold { display:inline-flex;align-items:center;justify-content:center;gap:.75rem;background:transparent;color:#FFD700;border:2px solid #FFD700;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.8rem;text-transform:uppercase;padding:1rem 2rem;border-radius:14px;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s,color .2s; }
+    .btn-gold:hover { transform:scale(1.02);box-shadow:0 0 28px rgba(255,215,0,.6);background:#FFD700;color:#000; }
+
+    /* Cards */
+    .ak-card { transition: border-color .3s ease, background .3s ease; }
+    .ak-card:hover { border-color: rgba(0,255,255,.5) !important; }
+    .ak-card-gold:hover { border-color: rgba(255,215,0,.5) !important; }
+
+    /* Glows */
+    .glow-cyan { text-shadow: 0 0 20px rgba(0,255,255,.45); }
+    .glow-gold { text-shadow: 0 0 20px rgba(255,215,0,.45); }
+
+    /* Hero background */
+    .hero-bg {
+      background-image: url('https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/c5b2dfc4e0edbe689fdbcd4f3132e31fb03c31c3c737e73d954f17156fbd6bfe.png');
+      background-size: cover;
+      background-position: center 20%;
+    }
+    .nexus-bg {
+      background-image: url('https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/3e690b084c9180f3a47455eb52a1241d171c46f9ca059be5705402adba209726.png');
+      background-size: cover;
+      background-position: center;
+    }
+    .arena-bg {
+      background-image: url('https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/e898a8cd56faef365707794c4911a5eaba889ef3fc8312afd1410cb3512738cb.png');
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* SVG Radar */
+    .radar-polygon { fill: rgba(0,255,255,.1); stroke: #00FFFF; stroke-width: 2; }
+    .radar-grid { fill: none; stroke: rgba(0,255,255,.1); stroke-width: 1; }
+    .radar-axis { stroke: rgba(0,255,255,.15); stroke-width: 1; }
+    .radar-dot { fill: #00FFFF; }
+    .radar-label { fill: #00FFFF; font-family: 'IBM Plex Mono',monospace; font-size: 11px; font-weight: 600; }
+
+    /* Phone */
+    .phone-frame { border: 1.5px solid rgba(255,255,255,.1); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.7); }
+
+    /* Stats divider */
+    @media(min-width:768px) {
+      .stat-col + .stat-col { border-left: 1px solid rgba(255,255,255,.08); }
+    }
+
+    /* Progress bar */
+    .attr-bar-fill { transition: width 1s ease; }
+  </style>
+</head>
+
+<body class="bg-black text-white">
+
+<!-- ══════════════════════════════════
+     NAVBAR
+══════════════════════════════════ -->
+<nav id="navbar" data-testid="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
+    <a href="#" data-testid="navbar-logo" class="font-['Anton'] text-2xl tracking-widest uppercase">
+      <span class="text-white">ARENA</span><span style="color:#00FFFF">KORE</span>
+    </a>
+    <a href="#" data-testid="navbar-accedi-btn"
+      class="font-['IBM_Plex_Mono'] text-xs uppercase tracking-wider px-5 py-2 rounded-[14px] border border-white/30 text-white hover:border-[#00FFFF] hover:text-[#00FFFF] transition-all duration-200">
+      ACCEDI
+    </a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+<section id="hero" data-testid="hero-section" class="hero-bg relative min-h-screen flex flex-col">
+  <div class="absolute inset-0" style="background:rgba(0,0,0,0.72)"></div>
+  <div class="relative z-10 flex-1 flex flex-col justify-end pb-20 md:pb-28 px-6 sm:px-10 max-w-3xl mx-auto w-full">
+
+    <div class="ak-hero-badge flex items-center gap-3 mb-6">
+      <span class="ak-blink w-2 h-2 rounded-full flex-shrink-0" style="background:#00FFFF;box-shadow:0 0 8px #00FFFF"></span>
+      <span class="font-['IBM_Plex_Mono'] text-xs tracking-[0.25em] uppercase" style="color:#00FFFF">
+        Sistema NÈXUS · Online
+      </span>
+    </div>
+
+    <h1 class="ak-hero-title font-['Anton'] text-5xl sm:text-6xl md:text-7xl uppercase leading-[0.95] text-white mb-5">
+      IL FUTURO<br>DELL'IDENTITÀ<br>SPORTIVA
+    </h1>
+
+    <p class="ak-hero-sub font-['IBM_Plex_Mono'] text-sm md:text-base mb-10 leading-relaxed" style="color:#a1a1aa">
+      Calibrazione biometrica. Performance reale.<br>Zero compromessi.
+    </p>
+
+    <div class="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
+      <a href="#" data-testid="hero-scarica-app-btn" class="btn-cyan">
+        <i data-lucide="zap" class="w-[18px] h-[18px]"></i>
+        SCARICA APP
+      </a>
+      <a href="#" data-testid="hero-arena-business-btn" class="btn-gold">
+        <i data-lucide="shield" class="w-[18px] h-[18px]"></i>
+        ARENA BUSINESS
+      </a>
+    </div>
+
+    <div class="ak-hero-scroll flex flex-col items-center gap-2" style="color:#555">
+      <span class="font-['IBM_Plex_Mono'] text-[10px] tracking-[0.3em] uppercase">Scopri di più</span>
+      <i data-lucide="chevron-down" class="ak-bounce w-5 h-5"></i>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     STATS STRIP
+══════════════════════════════════ -->
+<section data-testid="stats-section" class="border-y border-white/[.08]" style="background:#080808">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 md:grid-cols-4">
+      <div class="stat-col flex flex-col items-center gap-2 py-8 px-4">
+        <i data-lucide="users" style="color:#00FFFF" class="w-5 h-5"></i>
+        <div class="font-['Anton'] text-4xl md:text-5xl glow-cyan" style="color:#00FFFF">26+</div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest" style="color:#666">Kore Attivi</div>
+      </div>
+      <div class="stat-col flex flex-col items-center gap-2 py-8 px-4">
+        <i data-lucide="activity" style="color:#FFD700" class="w-5 h-5"></i>
+        <div class="font-['Anton'] text-4xl md:text-5xl glow-gold" style="color:#FFD700">1000</div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest" style="color:#666">K-Rating Max</div>
+      </div>
+      <div class="stat-col flex flex-col items-center gap-2 py-8 px-4">
+        <i data-lucide="zap" style="color:#00FFFF" class="w-5 h-5"></i>
+        <div class="font-['Anton'] text-4xl md:text-5xl glow-cyan" style="color:#00FFFF">346</div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest" style="color:#666">K-Flux Record</div>
+      </div>
+      <div class="stat-col flex flex-col items-center gap-2 py-8 px-4">
+        <i data-lucide="trophy" style="color:#FFD700" class="w-5 h-5"></i>
+        <div class="font-['Anton'] text-4xl md:text-5xl glow-gold" style="color:#FFD700">15+</div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest" style="color:#666">Discipline</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     KORE ID
+══════════════════════════════════ -->
+<section data-testid="kore-id-section" class="py-24 md:py-32 px-6 sm:px-10 bg-black">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <!-- Left -->
+    <div class="ak-reveal">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-8 h-px" style="background:#00FFFF"></div>
+        <span class="font-['IBM_Plex_Mono'] text-xs tracking-[0.3em] uppercase" style="color:#00FFFF">KORE ID</span>
+      </div>
+      <h2 class="font-['Anton'] text-4xl md:text-5xl uppercase leading-[0.95] text-white mb-6">
+        LA TUA<br>IDENTITÀ ATLETICA<br>DIGITALE
+      </h2>
+      <p class="font-['IBM_Plex_Mono'] text-sm md:text-base mb-8 leading-relaxed" style="color:#a1a1aa">
+        Non sei solo un atleta. Sei un sistema. La KORE ID ti assegna un'identità digitale
+        immutabile — un codice che porta i tuoi record, il tuo DNA atletico e la tua storia agonistica.
+        Ogni dato è tuo. Per sempre.
+      </p>
+      <div class="space-y-3 mb-10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-[10px] flex items-center justify-center flex-shrink-0" style="background:rgba(0,255,255,.08);color:#00FFFF">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+          </div>
+          <span class="font-['IBM_Plex_Mono'] text-sm text-white">K-FLUX — la valuta delle tue performance</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-[10px] flex items-center justify-center flex-shrink-0" style="background:rgba(0,255,255,.08);color:#00FFFF">
+            <i data-lucide="scan" class="w-4 h-4"></i>
+          </div>
+          <span class="font-['IBM_Plex_Mono'] text-sm text-white">K-SCAN — bio-analisi del movimento in tempo reale</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-[10px] flex items-center justify-center flex-shrink-0" style="background:rgba(0,255,255,.08);color:#00FFFF">
+            <i data-lucide="shield" class="w-4 h-4"></i>
+          </div>
+          <span class="font-['IBM_Plex_Mono'] text-sm text-white">KORE ID — identità digitale unica e immutabile</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-[10px] flex items-center justify-center flex-shrink-0" style="background:rgba(0,255,255,.08);color:#00FFFF">
+            <i data-lucide="users" class="w-4 h-4"></i>
+          </div>
+          <span class="font-['IBM_Plex_Mono'] text-sm text-white">KORE Network — la rete atletica sociale</span>
+        </div>
+      </div>
+      <a href="#" data-testid="kore-id-cta" class="btn-cyan" style="width:fit-content">
+        SCOPRI KORE ID
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+    <!-- Right: Phone mockup -->
+    <div class="ak-reveal d2 flex justify-center md:justify-end">
+      <div class="phone-frame w-[260px] md:w-[300px]" style="box-shadow:0 0 80px rgba(0,255,255,.1),0 40px 80px rgba(0,0,0,.7)">
+        <img src="https://customer-assets.emergentagent.com/job_d04435a4-d02c-4e45-bfc3-de61c2e4c642/artifacts/jixj7v9x_Screenshot%202026-04-13%20at%208.06.10%E2%80%AFPM.png"
+             alt="KORE Profile" class="w-full block" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     APP PREVIEW
+══════════════════════════════════ -->
+<section data-testid="app-preview-section" class="py-20 bg-black overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 sm:px-10 mb-12">
+    <div class="ak-reveal text-center">
+      <div class="font-['IBM_Plex_Mono'] text-xs tracking-[0.35em] uppercase mb-4" style="color:#00FFFF">DISPONIBILE ORA</div>
+      <h2 class="font-['Anton'] text-4xl md:text-5xl uppercase text-white">
+        L'ARENA È NEL TUO<br><span style="color:#00FFFF">TELEFONO</span>
+      </h2>
+    </div>
+  </div>
+  <div class="flex gap-4 px-6 sm:px-10 overflow-x-auto no-scrollbar pb-4 md:justify-center">
+    <div class="flex-shrink-0 ak-reveal">
+      <div class="phone-frame w-[190px] md:w-[210px]"><img src="https://customer-assets.emergentagent.com/job_d04435a4-d02c-4e45-bfc3-de61c2e4c642/artifacts/z6iebv8u_Screenshot%202026-04-13%20at%208.05.30%E2%80%AFPM.png" alt="Accesso" class="w-full block"></div>
+      <div class="font-['IBM_Plex_Mono'] text-[10px] text-center mt-3 tracking-widest uppercase" style="color:#555">Accesso</div>
+    </div>
+    <div class="flex-shrink-0 ak-reveal d1" style="transform:translateY(-20px)">
+      <div class="phone-frame w-[190px] md:w-[210px]"><img src="https://customer-assets.emergentagent.com/job_d04435a4-d02c-4e45-bfc3-de61c2e4c642/artifacts/hiwev2hk_Screenshot%202026-04-13%20at%208.05.50%E2%80%AFPM.png" alt="Dashboard" class="w-full block"></div>
+      <div class="font-['IBM_Plex_Mono'] text-[10px] text-center mt-3 tracking-widest uppercase" style="color:#555">NÈXUS Dashboard</div>
+    </div>
+    <div class="flex-shrink-0 ak-reveal d2">
+      <div class="phone-frame w-[190px] md:w-[210px]"><img src="https://customer-assets.emergentagent.com/job_d04435a4-d02c-4e45-bfc3-de61c2e4c642/artifacts/umi4e3gw_Screenshot%202026-04-13%20at%208.06.01%E2%80%AFPM.png" alt="Arena" class="w-full block"></div>
+      <div class="font-['IBM_Plex_Mono'] text-[10px] text-center mt-3 tracking-widest uppercase" style="color:#555">Arena</div>
+    </div>
+    <div class="flex-shrink-0 ak-reveal d3" style="transform:translateY(-20px)">
+      <div class="phone-frame w-[190px] md:w-[210px]"><img src="https://customer-assets.emergentagent.com/job_d04435a4-d02c-4e45-bfc3-de61c2e4c642/artifacts/q1wbu4hw_Screenshot%202026-04-13%20at%208.06.21%E2%80%AFPM.png" alt="DNA" class="w-full block"></div>
+      <div class="font-['IBM_Plex_Mono'] text-[10px] text-center mt-3 tracking-widest uppercase" style="color:#555">DNA Universale</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SISTEMA NÈXUS
+══════════════════════════════════ -->
+<section data-testid="nexus-section" class="nexus-bg py-24 md:py-32 px-6 sm:px-10 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[.08]" style="background:inherit"></div>
+  <div class="absolute inset-0" style="background:rgba(0,0,0,.92)"></div>
+  <div class="relative z-10 max-w-7xl mx-auto">
+    <div class="ak-reveal text-center mb-16">
+      <div class="font-['IBM_Plex_Mono'] text-xs tracking-[0.4em] uppercase mb-4" style="color:#a1a1aa">AZIONI NÈXUS</div>
+      <h2 class="font-['Anton'] text-4xl md:text-5xl uppercase text-white leading-none">
+        IL SISTEMA CHE TI<br><span style="color:#00FFFF">CALIBRA.</span>
+      </h2>
+      <p class="font-['IBM_Plex_Mono'] text-sm mt-5 max-w-xl mx-auto leading-relaxed" style="color:#a1a1aa">
+        NÈXUS non è una semplice app. È un motore di misurazione atletica. Ogni azione è monitorata,
+        ogni dato è analizzato, ogni risultato è permanente.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px" style="background:rgba(255,255,255,.05)">
+      <!-- K-RATING -->
+      <div data-testid="nexus-card-0" class="ak-card p-8 flex flex-col gap-5" style="background:#0a0a0a;border-top:2px solid #00FFFF">
+        <i data-lucide="activity" style="color:#00FFFF" class="w-7 h-7"></i>
+        <div>
+          <div class="font-['Anton'] text-xl uppercase text-white tracking-wide">K-RATING</div>
+          <div class="font-['IBM_Plex_Mono'] text-xs uppercase tracking-wider mt-1" style="color:#00FFFF">Valutazione 0 – 1000</div>
+        </div>
+        <p class="font-['IBM_Plex_Mono'] text-xs leading-relaxed" style="color:#a1a1aa">Sistema di punteggio biomeccanico che traccia ogni performance. Ogni rep, ogni sprint. Il tuo punteggio non mente.</p>
+      </div>
+      <!-- K-TIMELINE -->
+      <div data-testid="nexus-card-1" class="ak-card p-8 flex flex-col gap-5" style="background:#0a0a0a;border-top:2px solid #00FFFF">
+        <i data-lucide="clock" style="color:#00FFFF" class="w-7 h-7"></i>
+        <div>
+          <div class="font-['Anton'] text-xl uppercase text-white tracking-wide">K-TIMELINE</div>
+          <div class="font-['IBM_Plex_Mono'] text-xs uppercase tracking-wider mt-1" style="color:#00FFFF">Il tuo ritmo settimanale</div>
+        </div>
+        <p class="font-['IBM_Plex_Mono'] text-xs leading-relaxed" style="color:#a1a1aa">Tracker visuale a 7 giorni. Mantieni la continuità o brucia la streak. La disciplina ha un prezzo visibile.</p>
+      </div>
+      <!-- K-SCAN -->
+      <div data-testid="nexus-card-2" class="ak-card p-8 flex flex-col gap-5" style="background:#0a0a0a;border-top:2px solid #00FFFF">
+        <i data-lucide="scan" style="color:#00FFFF" class="w-7 h-7"></i>
+        <div>
+          <div class="font-['Anton'] text-xl uppercase text-white tracking-wide">K-SCAN</div>
+          <div class="font-['IBM_Plex_Mono'] text-xs uppercase tracking-wider mt-1" style="color:#00FFFF">Bio-Analisi Puppet Motion</div>
+        </div>
+        <p class="font-['IBM_Plex_Mono'] text-xs leading-relaxed" style="color:#a1a1aa">Analisi cinematica del movimento in tempo reale. Il tuo corpo diventa dati. I dati diventano evoluzione.</p>
+      </div>
+      <!-- DNA -->
+      <div data-testid="nexus-card-3" class="ak-card p-8 flex flex-col gap-5" style="background:#0a0a0a;border-top:2px solid #FFD700">
+        <i data-lucide="dna" style="color:#FFD700" class="w-7 h-7"></i>
+        <div>
+          <div class="font-['Anton'] text-xl uppercase text-white tracking-wide">DNA UNIVERSALE</div>
+          <div class="font-['IBM_Plex_Mono'] text-xs uppercase tracking-wider mt-1" style="color:#FFD700">Profilo atletico completo</div>
+        </div>
+        <p class="font-['IBM_Plex_Mono'] text-xs leading-relaxed" style="color:#a1a1aa">Sei attributi fondamentali: VEL, FOR, RES, AGI, TEC, POT. Il tuo DNA atletico tracciato con precisione chirurgica.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     DNA UNIVERSALE
+══════════════════════════════════ -->
+<section data-testid="dna-section" class="py-24 md:py-32 px-6 sm:px-10" style="background:#050505">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <!-- Left: Text -->
+    <div class="ak-reveal order-2 md:order-1">
+      <div class="font-['IBM_Plex_Mono'] text-xs tracking-[0.3em] uppercase mb-2" style="color:#a1a1aa">TALENT CARD</div>
+      <h2 class="font-['Anton'] text-4xl md:text-5xl uppercase leading-none mb-6">
+        <span style="color:#00FFFF">DNA</span> <span class="text-white">UNIVERSALE</span>
+      </h2>
+      <p class="font-['IBM_Plex_Mono'] text-sm md:text-base mb-8 leading-relaxed" style="color:#a1a1aa">
+        Ogni atleta ha attributi unici. Il DNA Universale di ARENAKORE li misura tutti, li traccia nel
+        tempo e li confronta con l'élite globale. Non puoi ingannare i dati. I dati non mentono.
+      </p>
+      <!-- Attributes -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between"><span class="font-['IBM_Plex_Mono'] text-xs uppercase" style="color:#555">VEL</span><span class="font-['Anton'] text-lg glow-cyan" style="color:#00FFFF">87</span></div>
+          <div class="h-1 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)"><div class="h-full rounded-full" style="width:87%;background:#00FFFF;box-shadow:0 0 6px rgba(0,255,255,.6)"></div></div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between"><span class="font-['IBM_Plex_Mono'] text-xs uppercase" style="color:#555">FOR</span><span class="font-['Anton'] text-lg glow-cyan" style="color:#00FFFF">83</span></div>
+          <div class="h-1 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)"><div class="h-full rounded-full" style="width:83%;background:#00FFFF;box-shadow:0 0 6px rgba(0,255,255,.6)"></div></div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between"><span class="font-['IBM_Plex_Mono'] text-xs uppercase" style="color:#555">RES</span><span class="font-['Anton'] text-lg glow-cyan" style="color:#00FFFF">91</span></div>
+          <div class="h-1 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)"><div class="h-full rounded-full" style="width:91%;background:#00FFFF;box-shadow:0 0 6px rgba(0,255,255,.6)"></div></div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between"><span class="font-['IBM_Plex_Mono'] text-xs uppercase" style="color:#555">AGI</span><span class="font-['Anton'] text-lg glow-gold" style="color:#FFD700">78</span></div>
+          <div class="h-1 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)"><div class="h-full rounded-full" style="width:78%;background:#FFD700;box-shadow:0 0 6px rgba(255,215,0,.6)"></div></div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between"><span class="font-['IBM_Plex_Mono'] text-xs uppercase" style="color:#555">TEC</span><span class="font-['Anton'] text-lg glow-cyan" style="color:#00FFFF">88</span></div>
+          <div class="h-1 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)"><div class="h-full rounded-full" style="width:88%;background:#00FFFF;box-shadow:0 0 6px rgba(0,255,255,.6)"></div></div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between"><span class="font-['IBM_Plex_Mono'] text-xs uppercase" style="color:#555">POT</span><span class="font-['Anton'] text-lg glow-gold" style="color:#FFD700">75</span></div>
+          <div class="h-1 rounded-full overflow-hidden" style="background:rgba(255,255,255,.08)"><div class="h-full rounded-full" style="width:75%;background:#FFD700;box-shadow:0 0 6px rgba(255,215,0,.6)"></div></div>
+        </div>
+      </div>
+      <div class="font-['IBM_Plex_Mono'] text-xs p-4 rounded-[14px]" style="background:rgba(0,255,255,.04);border:1px solid rgba(0,255,255,.18);color:#a1a1aa">
+        <span style="color:#00FFFF">PROSSIMA EVOLUZIONE</span> — Completa 7 giorni consecutivi per sbloccare l'analisi avanzata del DNA.
+      </div>
+    </div>
+    <!-- Right: Radar SVG -->
+    <div class="ak-reveal d2 order-1 md:order-2">
+      <div class="p-8 rounded-[14px]" style="background:#0a0a0a;border:1px solid rgba(255,255,255,.08)">
+        <div class="font-['IBM_Plex_Mono'] text-xs uppercase tracking-widest mb-4 text-center" style="color:#555">DNA CHART · LIVE</div>
+        <!-- Radar SVG -->
+        <svg viewBox="0 0 400 360" class="w-full max-w-[360px] mx-auto" style="display:block">
+          <defs>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Grid circles -->
+          <polygon class="radar-grid" points="200,80 280,130 280,230 200,280 120,230 120,130" />
+          <polygon class="radar-grid" points="200,110 258,143 258,208 200,243 142,208 142,143" style="opacity:.6" />
+          <polygon class="radar-grid" points="200,140 237,158 237,188 200,208 163,188 163,158" style="opacity:.4" />
+          <!-- Axes -->
+          <line class="radar-axis" x1="200" y1="80" x2="200" y2="280" />
+          <line class="radar-axis" x1="120" y1="130" x2="280" y2="230" />
+          <line class="radar-axis" x1="120" y1="230" x2="280" y2="130" />
+          <!-- VEL=87 FOR=83 RES=91 AGI=78 TEC=88 POT=75 (scaled to grid) -->
+          <!-- Center=200,180 Max radius~100 -->
+          <!-- VEL top: 200, 180-87=93 -->
+          <!-- FOR top-right: 200+87*cos(-30)=200+75=275, 180+87*sin(-30)=180-43=137 -->
+          <!-- Wait, hexagon: VEL=top(0°), FOR=top-right(60°), RES=bottom-right(120°), AGI=bottom(180°), TEC=bottom-left(240°), POT=top-left(300°) -->
+          <!-- VEL 87: center + 87*[sin(0), -cos(0)] = 200, 180-87 = 200,93 -->
+          <!-- FOR 83: 200+83*sin(60), 180-83*cos(60) = 200+71.9=272, 180-41.5=138 -->
+          <!-- RES 91: 200+91*sin(120), 180-91*cos(120) = 200+78.8=279, 180+45.5=226 -->
+          <!-- AGI 78: 200+78*sin(180), 180-78*cos(180) = 200+0=200, 180+78=258 -->
+          <!-- TEC 88: 200+88*sin(240), 180-88*cos(240) = 200-76.2=124, 180+44=224 -->
+          <!-- POT 75: 200+75*sin(300), 180-75*cos(300) = 200-64.9=135, 180-37.5=143 -->
+          <polygon class="radar-polygon" filter="url(#glow)"
+            points="200,93 272,138 279,226 200,258 124,224 135,143" />
+          <!-- Dots -->
+          <circle class="radar-dot" cx="200" cy="93" r="5" filter="url(#glow)" />
+          <circle class="radar-dot" cx="272" cy="138" r="5" filter="url(#glow)" />
+          <circle class="radar-dot" cx="279" cy="226" r="5" filter="url(#glow)" />
+          <circle class="radar-dot" cx="200" cy="258" r="5" filter="url(#glow)" />
+          <circle class="radar-dot" cx="124" cy="224" r="5" filter="url(#glow)" />
+          <circle class="radar-dot" cx="135" cy="143" r="5" filter="url(#glow)" />
+          <!-- Labels -->
+          <text class="radar-label" x="200" y="72" text-anchor="middle">VEL</text>
+          <text class="radar-label" x="296" y="135" text-anchor="start">FOR</text>
+          <text class="radar-label" x="296" y="235" text-anchor="start">RES</text>
+          <text class="radar-label" x="200" y="280" text-anchor="middle">AGI</text>
+          <text class="radar-label" x="105" y="235" text-anchor="end">TEC</text>
+          <text class="radar-label" x="105" y="135" text-anchor="end">POT</text>
+          <!-- Values -->
+          <text fill="#ffffff" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" x="200" y="60" text-anchor="middle">87</text>
+          <text fill="#ffffff" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" x="310" y="135" text-anchor="start">83</text>
+          <text fill="#ffffff" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" x="310" y="232" text-anchor="start">91</text>
+          <text fill="#ffffff" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" x="200" y="296" text-anchor="middle">78</text>
+          <text fill="#ffffff" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" x="90" y="232" text-anchor="end">88</text>
+          <text fill="#ffffff" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" x="90" y="135" text-anchor="end">75</text>
+        </svg>
+        <div class="text-center mt-4">
+          <div class="font-['IBM_Plex_Mono'] text-xs uppercase tracking-widest mb-1" style="color:#555">K-RATING</div>
+          <div class="font-['Anton'] text-4xl glow-cyan" style="color:#00FFFF">346<span class="text-2xl" style="color:rgba(255,255,255,.5)">/1000</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     ARENA COMPETITIVA
+══════════════════════════════════ -->
+<section data-testid="arena-section" class="arena-bg py-24 md:py-32 px-6 sm:px-10 relative overflow-hidden">
+  <div class="absolute inset-0" style="background:rgba(0,0,0,.87)"></div>
+  <div class="relative z-10 max-w-7xl mx-auto">
+    <!-- Center header -->
+    <div class="ak-reveal text-center mb-16">
+      <div class="inline-block relative px-8 pb-6">
+        <div class="absolute -top-3 -left-2 w-5 h-5" style="border-top:2px solid rgba(255,215,0,.4);border-left:2px solid rgba(255,215,0,.4)"></div>
+        <div class="absolute -top-3 -right-2 w-5 h-5" style="border-top:2px solid rgba(255,215,0,.4);border-right:2px solid rgba(255,215,0,.4)"></div>
+        <div class="absolute -bottom-0 -left-2 w-5 h-5" style="border-bottom:2px solid rgba(255,215,0,.4);border-left:2px solid rgba(255,215,0,.4)"></div>
+        <div class="absolute -bottom-0 -right-2 w-5 h-5" style="border-bottom:2px solid rgba(255,215,0,.4);border-right:2px solid rgba(255,215,0,.4)"></div>
+        <div class="font-['IBM_Plex_Mono'] text-xs tracking-[0.4em] uppercase mb-5" style="color:#a1a1aa">ARENAKORE</div>
+        <h2 class="font-['Anton'] text-5xl md:text-7xl uppercase text-white leading-none">L'ELITE<br>SI CONFRONTA</h2>
+        <div class="font-['IBM_Plex_Mono'] text-xs tracking-[0.4em] uppercase mt-5" style="color:#a1a1aa">SFIDE · RECORD · DETERMINAZIONE</div>
+      </div>
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-6 max-w-sm mx-auto mt-12">
+        <div class="flex flex-col items-center gap-1">
+          <i data-lucide="users" style="color:#00FFFF" class="w-5 h-5"></i>
+          <div class="font-['Anton'] text-3xl glow-cyan" style="color:#00FFFF">26</div>
+          <div class="font-['IBM_Plex_Mono'] text-[9px] uppercase tracking-widest" style="color:#555">KORE ATTIVI</div>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <i data-lucide="zap" style="color:#00FFFF" class="w-5 h-5"></i>
+          <div class="font-['Anton'] text-3xl glow-cyan" style="color:#00FFFF">∞</div>
+          <div class="font-['IBM_Plex_Mono'] text-[9px] uppercase tracking-widest" style="color:#555">SESSIONI</div>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <i data-lucide="trophy" style="color:#00FFFF" class="w-5 h-5"></i>
+          <div class="font-['Anton'] text-3xl glow-cyan" style="color:#00FFFF">99</div>
+          <div class="font-['IBM_Plex_Mono'] text-[9px] uppercase tracking-widest" style="color:#555">RECORD</div>
+        </div>
+      </div>
+    </div>
+    <!-- Feature cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div data-testid="arena-card-0" class="ak-card-gold p-6 rounded-[14px] flex items-start gap-4" style="background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.18)">
+        <div class="w-12 h-12 rounded-[12px] flex items-center justify-center flex-shrink-0" style="background:rgba(255,215,0,.08);color:#FFD700">
+          <i data-lucide="swords" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="font-['Anton'] text-lg uppercase text-white mb-1">LANCIA IL GUANTO</div>
+          <p class="font-['IBM_Plex_Mono'] text-xs leading-relaxed" style="color:#a1a1aa">Sfida un atleta nella tua disciplina. I dati decideranno chi vince. Nessuna scusa, solo numeri.</p>
+        </div>
+      </div>
+      <div data-testid="arena-card-1" class="ak-card-gold p-6 rounded-[14px] flex items-start gap-4" style="background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.18)">
+        <div class="w-12 h-12 rounded-[12px] flex items-center justify-center flex-shrink-0" style="background:rgba(255,215,0,.08);color:#FFD700">
+          <i data-lucide="map-pin" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="font-['Anton'] text-lg uppercase text-white mb-1">MAPPA HUB</div>
+          <p class="font-['IBM_Plex_Mono'] text-xs leading-relaxed" style="color:#a1a1aa">Trova palestre, coach certificati e sfide nelle vicinanze. L'Arena è ovunque tu sia.</p>
+        </div>
+      </div>
+      <div data-testid="arena-card-2" class="ak-card-gold p-6 rounded-[14px] flex items-start gap-4" style="background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.18)">
+        <div class="w-12 h-12 rounded-[12px] flex items-center justify-center flex-shrink-0" style="background:rgba(255,215,0,.08);color:#FFD700">
+          <i data-lucide="radio" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="font-['Anton'] text-lg uppercase text-white mb-1">SFIDA LIVE</div>
+          <p class="font-['IBM_Plex_Mono'] text-xs leading-relaxed" style="color:#a1a1aa">Competizioni in tempo reale. Trasmetti la tua performance. L'élite si guarda e si giudica.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     DOWNLOAD CTA
+══════════════════════════════════ -->
+<section data-testid="download-cta-section" class="py-24 md:py-32 px-6 sm:px-10 bg-black">
+  <div class="max-w-4xl mx-auto text-center ak-reveal">
+    <div class="flex items-center gap-4 mb-12 justify-center">
+      <div class="flex-1 max-w-[80px] h-px" style="background:rgba(0,255,255,.25)"></div>
+      <div class="w-2 h-2 rounded-full" style="background:#00FFFF;box-shadow:0 0 10px #00FFFF"></div>
+      <div class="flex-1 max-w-[80px] h-px" style="background:rgba(0,255,255,.25)"></div>
+    </div>
+    <div class="font-['IBM_Plex_Mono'] text-xs tracking-[0.4em] uppercase mb-5" style="color:#a1a1aa">INIZIA ORA · GRATIS</div>
+    <h2 class="font-['Anton'] text-5xl md:text-7xl uppercase leading-none text-white mb-6">
+      ENTRA<br>NELL'<span style="color:#00FFFF">ARENA</span>
+    </h2>
+    <p class="font-['IBM_Plex_Mono'] text-sm md:text-base mb-10 max-w-xl mx-auto leading-relaxed" style="color:#a1a1aa">
+      Registrati ora e ricevi 100 K-FLUX di benvenuto. La tua identità atletica digitale ti aspetta.
+      Il tuo record è pronto ad essere scritto.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+      <a href="#" data-testid="download-app-store-btn" class="btn-cyan">
+        <i data-lucide="download" class="w-5 h-5"></i>
+        APP STORE
+      </a>
+      <a href="#" data-testid="download-play-store-btn" class="btn-cyan">
+        <i data-lucide="download" class="w-5 h-5"></i>
+        GOOGLE PLAY
+      </a>
+    </div>
+    <div class="inline-flex items-center gap-3 font-['IBM_Plex_Mono'] text-xs px-6 py-3 rounded-full" style="background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.18);color:#a1a1aa">
+      <i data-lucide="zap" style="color:#FFD700" class="w-4 h-4"></i>
+      <span><span style="color:#FFD700">+100 K-FLUX</span> BONUS DI BENVENUTO</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     FOOTER
+══════════════════════════════════ -->
+<footer data-testid="footer" class="border-t border-white/[.08] bg-black">
+  <div class="max-w-7xl mx-auto px-6 sm:px-10 py-16">
+    <div class="font-['Anton'] uppercase leading-none overflow-hidden mb-10" style="font-size:clamp(40px,10vw,120px);color:rgba(255,255,255,.03)">
+      ARENAKORE
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+      <div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest mb-4" style="color:#444">PRODOTTO</div>
+        <ul class="space-y-2">
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">KORE ID</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Sistema NÈXUS</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">K-Scan</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">DNA Universale</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest mb-4" style="color:#444">ARENA</div>
+        <ul class="space-y-2">
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Sfide PvP</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Sfida Live</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Mappa Hub</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">KORE of the Day</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest mb-4" style="color:#444">BUSINESS</div>
+        <ul class="space-y-2">
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Arena Business</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Hub Partner</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Coach Pro</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Sponsorship</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-widest mb-4" style="color:#444">LEGALE</div>
+        <ul class="space-y-2">
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Privacy Policy</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Termini di Servizio</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Cookie Policy</a></li>
+          <li><a href="#" class="font-['IBM_Plex_Mono'] text-sm hover:text-white transition-colors" style="color:#888">Contatti</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/[.08] gap-4">
+      <div class="font-['Anton'] text-xl tracking-widest uppercase">
+        <span class="text-white">ARENA</span><span style="color:#00FFFF">KORE</span>
+      </div>
+      <div class="font-['IBM_Plex_Mono'] text-xs" style="color:#444">© 2026 ARENAKORE. Tutti i diritti riservati.</div>
+      <div class="flex items-center gap-2">
+        <span class="ak-blink w-1.5 h-1.5 rounded-full" style="background:#00FF66;display:inline-block"></span>
+        <span class="font-['IBM_Plex_Mono'] text-xs" style="color:#444">SISTEMA ATTIVO</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Init Lucide icons
+  lucide.createIcons();
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      navbar.style.background = 'rgba(0,0,0,0.9)';
+      navbar.style.backdropFilter = 'blur(12px)';
+      navbar.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+    } else {
+      navbar.style.background = 'transparent';
+      navbar.style.backdropFilter = 'none';
+      navbar.style.borderBottom = 'none';
+    }
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.ak-reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
