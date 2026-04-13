@@ -1,0 +1,124 @@
+{
+  "theme": "Dark",
+  "archetype": "Archetype 2 (Performance Pro) + Archetype 7 (Electric & Neon)",
+  "emotional_tone": "Cyber-Brutalist, technical, elite, intense, raw, competitive",
+  "colors": {
+    "background": {
+      "main": "#000000",
+      "surface": "#0a0a0a",
+      "surface_elevated": "#121212"
+    },
+    "primary": {
+      "cyan": "#00FFFF",
+      "cyan_hover": "#33FFFF",
+      "cyan_muted": "rgba(0, 255, 255, 0.1)"
+    },
+    "secondary": {
+      "gold": "#FFD700",
+      "gold_hover": "#FFE44D",
+      "gold_muted": "rgba(255, 215, 0, 0.1)"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#A1A1AA",
+      "accent_cyan": "#00FFFF",
+      "accent_gold": "#FFD700"
+    },
+    "border": {
+      "subtle": "rgba(255, 255, 255, 0.1)",
+      "cyan": "rgba(0, 255, 255, 0.3)",
+      "gold": "rgba(255, 215, 0, 0.3)"
+    }
+  },
+  "typography": {
+    "primary_font": "'Anton', sans-serif",
+    "secondary_font": "'IBM Plex Mono', monospace",
+    "hierarchy": {
+      "h1": "text-5xl md:text-7xl font-['Anton'] uppercase tracking-tight text-white leading-none",
+      "h2": "text-4xl md:text-5xl font-['Anton'] uppercase tracking-tight text-white",
+      "h3": "text-2xl md:text-3xl font-['Anton'] uppercase tracking-normal text-white",
+      "body": "text-base md:text-lg font-['IBM_Plex_Mono'] text-gray-400 leading-relaxed",
+      "kicker": "text-xs md:text-sm font-['IBM_Plex_Mono'] uppercase tracking-[0.2em] text-[#00FFFF]"
+    }
+  },
+  "layout_and_spacing": {
+    "grid_system": "Bento Grid Protocol - Mode B (Control Room Grid) adapted for Cyber-Brutalist sections. Use harsh, visible borders (border-collapse style) and zero-gap brutalist blocks where appropriate.",
+    "section_padding": "py-24 md:py-32",
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "border_radius": {
+      "buttons": "rounded-[14px]",
+      "cards": "rounded-none"
+    }
+  },
+  "components": {
+    "navbar": {
+      "style": "Fixed, border-b border-white/10, bg-black/80 backdrop-blur-md, z-50",
+      "logo": "font-['Anton'] text-2xl tracking-widest uppercase. 'ARENA' in #FFFFFF, 'KORE' in #00FFFF",
+      "cta": "bg-transparent border border-[#00FFFF] text-[#00FFFF] hover:bg-[#00FFFF] hover:text-black transition-colors rounded-[14px] px-6 py-2 font-['IBM_Plex_Mono'] uppercase text-sm"
+    },
+    "hero": {
+      "background": "Fullscreen image with absolute inset-0 overlay bg-[rgba(0,0,0,0.7)]",
+      "content_alignment": "Flex column, centered or left-aligned with brutalist massive typography",
+      "badge": "Inline-flex, border border-[#00FFFF] text-[#00FFFF] px-3 py-1 text-xs tracking-widest uppercase font-['IBM_Plex_Mono'] mb-6",
+      "primary_cta": "bg-[#00FFFF] text-black font-['IBM_Plex_Mono'] uppercase font-bold px-8 py-4 rounded-[14px] hover:bg-white transition-colors",
+      "secondary_cta": "bg-transparent border border-[#FFD700] text-[#FFD700] font-['IBM_Plex_Mono'] uppercase font-bold px-8 py-4 rounded-[14px] hover:bg-[#FFD700] hover:text-black transition-colors"
+    },
+    "kore_id_section": {
+      "style": "Raw brutalist layout. Large typography intersecting with tech data.",
+      "visuals": "Use monospace stats counters (e.g., 'ID: 001', 'STATUS: ELITE')",
+      "borders": "Exposed grid lines border-white/10"
+    },
+    "sistema_nexus_section": {
+      "style": "4-column cyber grid. Cards have flat OLED Black background with neon cyan top borders.",
+      "cards": [
+        "K-Rating (Cyan accent)",
+        "K-Timeline",
+        "K-Scan",
+        "DNA Universale"
+      ],
+      "card_style": "border border-white/10 p-6 md:p-8 hover:border-[#00FFFF]/50 transition-colors group relative overflow-hidden"
+    },
+    "arena_competitiva_section": {
+      "style": "High-contrast dark section with gold (#FFD700) accents.",
+      "stats": "Massive numbers in 'Anton' font, glowing gold.",
+      "background": "Dark sports action image with low opacity"
+    },
+    "footer": {
+      "style": "Minimalist tech footer. border-t border-white/10 pt-12 pb-8",
+      "logo_massive": "text-[10vw] font-['Anton'] text-white/5 leading-none select-none overflow-hidden flex"
+    }
+  },
+  "media": {
+    "hero_background": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/c5b2dfc4e0edbe689fdbcd4f3132e31fb03c31c3c737e73d954f17156fbd6bfe.png",
+      "description": "Wide-angle portrait of a mysterious athletic man wearing a dark hood, deep shadows, cinematic lighting, moody urban night atmosphere",
+      "placement": "Hero section background"
+    },
+    "nexus_background": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/3e690b084c9180f3a47455eb52a1241d171c46f9ca059be5705402adba209726.png",
+      "description": "Abstract high-tech glowing cyan grid and floating particles over a pitch black background",
+      "placement": "Sistema NÈXUS section background (low opacity) or card decorative images"
+    },
+    "arena_background": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/e898a8cd56faef365707794c4911a5eaba889ef3fc8312afd1410cb3512738cb.png",
+      "description": "Dramatic silhouette of athletes training in a dark gritty urban environment, illuminated by striking gold and cyan rim lights",
+      "placement": "ARENA Competitiva section background"
+    }
+  },
+  "motion_and_interactions": {
+    "buttons": "Hovering buttons should have a slight scale up (scale-105) and an aggressive box-shadow glow matching their color (cyan or gold).",
+    "cards": "Hovering over NÈXUS cards should reveal a subtle cyan radial gradient background tracking the mouse, or simply highlight the border in solid cyan.",
+    "scroll": "Smooth scrolling. Sections fade-in with raw, unpolished translation (e.g., straight up from 20px, no soft blur)."
+  },
+  "instructions_to_main_agent": [
+    "NO REACT. This is a standalone HTML5 project.",
+    "Use Tailwind CSS via CDN: <script src=\"https://cdn.tailwindcss.com\"></script>.",
+    "Configure Tailwind in the head: <script>tailwind.config = { theme: { extend: { colors: { cyan: '#00FFFF', gold: '#FFD700' }, fontFamily: { anton: ['Anton', 'sans-serif'], mono: ['IBM Plex Mono', 'monospace'] } } } }</script>",
+    "Import Google Fonts: Anton (weights 400) and IBM Plex Mono (weights 400, 600).",
+    "Use Lucide icons via CDN: <script src=\"https://unpkg.com/lucide@latest\"></script> and initialize them.",
+    "Strictly apply `rounded-[14px]` to all buttons as requested. Leave standard container borders sharp (rounded-none) for the brutalist feel.",
+    "Ensure the hero overlay is EXACTLY `bg-[rgba(0,0,0,0.7)]` over the hooded founder image.",
+    "Texts MUST be in Italian as provided in the problem statement.",
+    "CRITICAL: Add `data-testid` to all interactive elements (buttons, links, nav items) using kebab-case role-based names."
+  ]
+}
