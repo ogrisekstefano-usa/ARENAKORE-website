@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Zap, Shield, ChevronDown, Activity, Scan,
   Clock, Trophy, Users, MapPin, Radio, ArrowRight,
-  Download, Dna, Swords, Target, Star
+  Download, Dna, Swords, Target, BarChart3, Star
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 
@@ -102,7 +102,7 @@ function HeroSection() {
           IL FUTURO<br />DELL'IDENTITÀ<br />SPORTIVA
         </h1>
         {/* Sub */}
-        <p className="ak-hero-sub font-ibm-mono text-sm md:text-base mb-10 leading-relaxed" style={{ color: '#a1a1aa' }}>
+        <p className="ak-hero-sub font-ibm-mono text-sm md:text-base mb-10 leading-relaxed" style={{ color: '#E0E0E0' }}>
           Calibrazione biometrica. Performance reale.<br />Zero compromessi.
         </p>
         {/* CTAs */}
@@ -110,7 +110,8 @@ function HeroSection() {
           <a
             href="#nexus"
             data-testid="hero-scarica-app-btn"
-            className="ak-btn-cyan flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 py-4 rounded-[14px] bg-ak-cyan text-black"
+            className="ak-btn-cyan flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 rounded-[14px] bg-ak-cyan text-black"
+            style={{ height: '56px' }}
           >
             <Zap size={18} />
             INIZIA COME ATLETA
@@ -118,7 +119,8 @@ function HeroSection() {
           <a
             href="#arena"
             data-testid="hero-arena-business-btn"
-            className="ak-btn-gold flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 py-4 rounded-[14px] border-2 border-ak-gold text-ak-gold"
+            className="ak-btn-gold flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 rounded-[14px] border-2 border-ak-gold text-ak-gold"
+            style={{ height: '56px' }}
           >
             <Shield size={18} />
             SEI UN PRO? ENTRA QUI
@@ -183,7 +185,7 @@ function KoreIDSection() {
           <h2 className="font-anton text-4xl md:text-5xl uppercase leading-[0.95] text-white mb-6">
             LA TUA<br />IDENTITÀ ATLETICA<br />DIGITALE
           </h2>
-          <p className="font-ibm-mono text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#a1a1aa' }}>
+          <p className="font-ibm-mono text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#E0E0E0' }}>
             Non sei solo un atleta. Sei un sistema. La KORE ID ti assegna un'identità digitale
             immutabile — un codice che porta i tuoi record, il tuo DNA atletico e la tua storia agonistica.
             Ogni dato è tuo. Per sempre.
@@ -313,13 +315,13 @@ function NexusSection() {
       />
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="ak-reveal text-center mb-16">
-          <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-4" style={{ color: '#a1a1aa' }}>
+          <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-4" style={{ color: '#E0E0E0' }}>
             AZIONI NÈXUS
           </div>
           <h2 className="font-anton text-4xl md:text-5xl uppercase text-white leading-none">
             IL SISTEMA CHE TI<br /><span className="text-ak-cyan">CALIBRA.</span>
           </h2>
-          <p className="font-ibm-mono text-sm mt-5 max-w-xl mx-auto leading-relaxed" style={{ color: '#a1a1aa' }}>
+          <p className="font-ibm-mono text-sm mt-5 max-w-xl mx-auto leading-relaxed" style={{ color: '#E0E0E0' }}>
             NÈXUS non è una semplice app. È un motore di misurazione atletica. Ogni azione è monitorata,
             ogni dato è analizzato, ogni risultato è permanente.
           </p>
@@ -343,7 +345,7 @@ function NexusSection() {
                   {f.sub}
                 </div>
               </div>
-              <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#a1a1aa' }}>{f.desc}</p>
+              <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#E0E0E0' }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -368,13 +370,13 @@ function DNASection() {
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         {/* Left: Text */}
         <div className="ak-reveal order-2 md:order-1">
-          <div className="font-ibm-mono text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#a1a1aa' }}>
+          <div className="font-ibm-mono text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#E0E0E0' }}>
             TALENT CARD
           </div>
           <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none mb-6">
             <span className="text-ak-cyan">DNA</span> <span className="text-white">UNIVERSALE</span>
           </h2>
-          <p className="font-ibm-mono text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#a1a1aa' }}>
+          <p className="font-ibm-mono text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#E0E0E0' }}>
             Ogni atleta ha attributi unici. Il DNA Universale di ARENAKORE li misura tutti, li traccia nel
             tempo e li confronta con l'élite globale. Non puoi ingannare i dati. I dati non mentono.
           </p>
@@ -396,7 +398,7 @@ function DNASection() {
           </div>
           <div
             className="font-ibm-mono text-xs p-4 rounded-[14px]"
-            style={{ background: 'rgba(0,255,255,0.04)', border: '1px solid rgba(0,255,255,0.18)', color: '#a1a1aa' }}
+            style={{ background: 'rgba(0,255,255,0.04)', border: '1px solid rgba(0,255,255,0.18)', color: '#E0E0E0' }}
           >
             <span className="text-ak-cyan">PROSSIMA EVOLUZIONE</span> — Completa 7 giorni
             consecutivi per sbloccare l'analisi avanzata del DNA.
@@ -493,13 +495,13 @@ function ArenaSection() {
                 }}
               />
             ))}
-            <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#a1a1aa' }}>
+            <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#E0E0E0' }}>
               ARENAKORE
             </div>
             <h2 className="font-anton text-5xl md:text-7xl uppercase text-white leading-none">
               L'ELITE<br />SI CONFRONTA
             </h2>
-            <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mt-5" style={{ color: '#a1a1aa' }}>
+            <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mt-5" style={{ color: '#E0E0E0' }}>
               SFIDE · RECORD · DETERMINAZIONE
             </div>
           </div>
@@ -539,8 +541,101 @@ function ArenaSection() {
               </div>
               <div>
                 <div className="font-anton text-lg uppercase text-white mb-1">{f.title}</div>
-                <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#a1a1aa' }}>{f.desc}</p>
+                <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#E0E0E0' }}>{f.desc}</p>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── BUSINESS SECTION ─── */
+function BusinessSection() {
+  const features = [
+    {
+      icon: <Target size={22} />,
+      title: 'CREA SFIDE',
+      desc: 'Template professionali per challenge certificate. Coinvolgi i tuoi atleti con obiettivi misurabili e validati dal sistema.',
+    },
+    {
+      icon: <Users size={22} />,
+      title: 'GESTISCI ATLETI',
+      desc: 'Dashboard completa: K-Rating, progress settimanale, performance nel tempo. Tutto in un unico pannello.',
+    },
+    {
+      icon: <BarChart3 size={22} />,
+      title: 'ANALYTICS',
+      desc: 'Dati aggregati della tua struttura. Benchmark, trend stagionali e reportistica avanzata.',
+    },
+    {
+      icon: <MapPin size={22} />,
+      title: 'HUB UFFICIALE',
+      desc: 'La tua palestra sulla Mappa ARENAKORE. Visibilità immediata verso migliaia di atleti nella zona.',
+    },
+  ];
+  return (
+    <section id="business" data-testid="business-section" className="py-24 md:py-32 px-6 sm:px-10 bg-black border-t border-white/8">
+      <div className="max-w-7xl mx-auto">
+        <div className="ak-reveal grid md:grid-cols-2 gap-8 items-end mb-16">
+          <div>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-8 h-px" style={{ background: '#FFD700' }} />
+              <span className="font-ibm-mono text-xs tracking-[0.3em] uppercase" style={{ color: '#FFD700' }}>ARENA BUSINESS</span>
+            </div>
+            <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-4">
+              PER COACH<br />E <span className="text-ak-gold">PALESTRE</span>
+            </h2>
+            <p className="font-ibm-mono text-sm md:text-base leading-relaxed" style={{ color: '#E0E0E0' }}>
+              Porta la tua struttura nell'Arena digitale. Crea sfide certificate, monitora i tuoi atleti
+              e costruisci una reputazione che conta — misurata in dati reali.
+            </p>
+          </div>
+          <div className="flex justify-start md:justify-end">
+            <a
+              href="#"
+              data-testid="business-panel-btn"
+              className="ak-btn-gold inline-flex items-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 rounded-[14px] border-2 border-ak-gold text-ak-gold"
+              style={{ height: '56px' }}
+            >
+              <ArrowRight size={18} />
+              ENTRA NEL BUSINESS PANEL
+            </a>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          {features.map((f, i) => (
+            <div
+              key={i}
+              data-testid={`business-card-${i}`}
+              className="ak-reveal ak-card-gold p-6 rounded-[14px] flex flex-col gap-4"
+              style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.2)', transitionDelay: `${i * 0.08}s` }}
+            >
+              <div
+                className="w-10 h-10 rounded-[10px] flex items-center justify-center"
+                style={{ background: 'rgba(255,215,0,0.08)', color: '#FFD700' }}
+              >
+                {f.icon}
+              </div>
+              <div className="font-anton text-lg uppercase text-white">{f.title}</div>
+              <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#E0E0E0' }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="ak-reveal grid grid-cols-3 gap-4">
+          {[
+            { value: '50+', label: 'Hub Certificati' },
+            { value: '1K+', label: 'Atleti Connessi' },
+            { value: '15+', label: 'Discipline' },
+          ].map((s, i) => (
+            <div
+              key={i}
+              className="text-center p-6 rounded-[14px]"
+              style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.15)' }}
+            >
+              <div className="font-anton text-3xl md:text-4xl mb-1 ak-glow-gold" style={{ color: '#FFD700' }}>{s.value}</div>
+              <div className="font-ibm-mono text-xs uppercase tracking-wider" style={{ color: '#E0E0E0' }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -559,13 +654,13 @@ function DownloadCTA() {
           <div className="w-2 h-2 rounded-full" style={{ background: '#00FFFF', boxShadow: '0 0 10px #00FFFF' }} />
           <div className="flex-1 max-w-[80px] h-px" style={{ background: 'rgba(0,255,255,0.25)' }} />
         </div>
-        <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#a1a1aa' }}>
+        <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#E0E0E0' }}>
           INIZIA ORA · GRATIS
         </div>
         <h2 className="font-anton text-5xl md:text-7xl uppercase leading-none text-white mb-6">
           ENTRA<br />NELL'<span className="text-ak-cyan">ARENA</span>
         </h2>
-        <p className="font-ibm-mono text-sm md:text-base mb-10 max-w-xl mx-auto leading-relaxed" style={{ color: '#a1a1aa' }}>
+        <p className="font-ibm-mono text-sm md:text-base mb-10 max-w-xl mx-auto leading-relaxed" style={{ color: '#E0E0E0' }}>
           Registrati ora e ricevi 100 K-FLUX di benvenuto. La tua identità atletica digitale ti aspetta.
           Il tuo record è pronto ad essere scritto.
         </p>
@@ -589,7 +684,7 @@ function DownloadCTA() {
         </div>
         <div
           className="inline-flex items-center gap-3 font-ibm-mono text-xs px-6 py-3 rounded-full"
-          style={{ background: 'rgba(255,215,0,0.04)', border: '1px solid rgba(255,215,0,0.18)', color: '#a1a1aa' }}
+          style={{ background: 'rgba(255,215,0,0.04)', border: '1px solid rgba(255,215,0,0.18)', color: '#E0E0E0' }}
         >
           <Zap size={14} style={{ color: '#FFD700' }} />
           <span><span className="text-ak-gold">+100 K-FLUX</span> BONUS DI BENVENUTO</span>
@@ -623,7 +718,7 @@ function FooterSection() {
               <ul className="space-y-2">
                 {col.links.map(link => (
                   <li key={link}>
-                    <a href="#" className="font-ibm-mono text-sm hover:text-white transition-colors" style={{ color: '#888' }}>
+                    <a href="#" className="font-ibm-mono text-sm hover:text-white transition-colors" style={{ color: '#E0E0E0' }}>
                       {link}
                     </a>
                   </li>
@@ -678,6 +773,7 @@ export default function LandingPage() {
       <NexusSection />
       <DNASection />
       <ArenaSection />
+      <BusinessSection />
       <DownloadCTA />
       <FooterSection />
     </div>

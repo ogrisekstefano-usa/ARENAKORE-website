@@ -24,15 +24,23 @@ Sito web ufficiale ARENAKORE (www.arenakore.com). Landing page Cyber-Brutalist p
 
 ## Sections Implemented
 1. **Navbar** — Fixed, backdrop-blur on scroll, Logo ARENAKORE (ARENA white + KORE cyan) + ACCEDI button
-2. **Hero** — Fullscreen background (hooded founder figure) with rgba(0,0,0,0.72) overlay, "SISTEMA NÈXUS · ONLINE" badge, H1 headline, 2 CTA buttons (SCARICA APP cyan + ARENA BUSINESS gold), scroll indicator
+2. **Hero** — Fullscreen background (hooded founder figure) con overlay 72%, badge NÈXUS, H1, 2 CTA buttons 56px (INIZIA COME ATLETA cyan + SEI UN PRO? ENTRA QUI gold), scroll indicator
 3. **Stats Strip** — 4 animated counters: Kore Attivi, K-Rating Max, K-Flux Record, Discipline
 4. **KORE ID** — Two-column layout: text + feature list + CTA, phone mockup right
 5. **App Preview** — 4 phone screenshots in alternating heights layout
-6. **Sistema NÈXUS** — 4-card grid: K-RATING, K-TIMELINE, K-SCAN, DNA UNIVERSALE (cyan top borders)
+6. **Sistema NÈXUS** (id="nexus") — 4-card grid: K-RATING, K-TIMELINE, K-SCAN, DNA UNIVERSALE (cyan top borders)
 7. **DNA Universale** — Recharts RadarChart (VEL/FOR/RES/AGI/TEC/POT) + attribute progress bars
-8. **ARENA Competitiva** — Athletes background + "L'ELITE SI CONFRONTA" + gold feature cards
-9. **Download CTA** — "ENTRA NELL'ARENA" + App Store/Google Play buttons
-10. **Footer** — Watermark logo + 4-column links + "SISTEMA ATTIVO" live indicator
+8. **ARENA Competitiva** (id="arena") — Athletes background + "L'ELITE SI CONFRONTA" + gold feature cards + SFIDA DNA
+9. **Business** (id="business") — PER COACH E PALESTRE, 4 gold cards (CREA SFIDE, GESTISCI ATLETI, ANALYTICS, HUB UFFICIALE), stats 50+/1K+/15+
+10. **Download CTA** — "ENTRA NELL'ARENA" + App Store/Google Play buttons
+11. **Footer** — Watermark logo + 4-column links + "SISTEMA ATTIVO" live indicator
+
+## Text Color System
+- Primary: `#FFFFFF` (headings)
+- Secondary: `#E0E0E0` Grigio Ghiaccio (descriptions, body)
+- Technical: `#00FFFF` (numbers, data)
+- Gold: `#FFD700` (business/arena accents)
+- No opacity-based text colors anywhere
 
 ## Files
 - `/app/frontend/src/LandingPage.jsx` — Main React landing page
