@@ -32,6 +32,7 @@ module.exports = {
       },
       fontFamily: {
         'anton': ['Anton', 'sans-serif'],
+        'inter': ['Inter', 'sans-serif'],
         'ibm-mono': ['"IBM Plex Mono"', 'monospace'],
       },
       keyframes: {

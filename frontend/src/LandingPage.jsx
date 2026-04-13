@@ -64,7 +64,7 @@ function Navbar({ scrolled }) {
         <a
           href="#"
           data-testid="navbar-accedi-btn"
-          className="font-ibm-mono text-xs uppercase tracking-wider px-5 py-2 rounded-[14px] border border-white/30 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all duration-200"
+          className="font-inter text-xs uppercase tracking-wider px-5 py-2 rounded-[14px] border border-white/30 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all duration-200"
         >
           ACCEDI
         </a>
@@ -93,7 +93,7 @@ function HeroSection() {
             className="ak-blink w-2 h-2 rounded-full flex-shrink-0"
             style={{ background: '#00FFFF', boxShadow: '0 0 8px #00FFFF' }}
           />
-          <span className="font-ibm-mono text-xs tracking-[0.25em] uppercase text-ak-cyan">
+          <span className="font-inter text-xs tracking-[0.25em] uppercase text-ak-cyan">
             Sistema NÈXUS · Online
           </span>
         </div>
@@ -102,7 +102,7 @@ function HeroSection() {
           IL FUTURO<br />DELL'IDENTITÀ<br />SPORTIVA
         </h1>
         {/* Sub */}
-        <p className="ak-hero-sub font-ibm-mono text-sm md:text-base mb-10 leading-relaxed" style={{ color: '#E0E0E0' }}>
+        <p className="ak-hero-sub font-inter text-sm md:text-base mb-10 leading-relaxed" style={{ color: '#FFFFFF' }}>
           Calibrazione biometrica. Performance reale.<br />Zero compromessi.
         </p>
         {/* CTAs */}
@@ -110,7 +110,7 @@ function HeroSection() {
           <a
             href="#nexus"
             data-testid="hero-scarica-app-btn"
-            className="ak-btn-cyan flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 rounded-[14px] bg-ak-cyan text-black"
+            className="ak-btn-cyan flex items-center justify-center gap-3 font-inter font-bold uppercase text-sm px-8 rounded-[14px] bg-ak-cyan text-black"
             style={{ height: '56px' }}
           >
             <Zap size={18} />
@@ -119,7 +119,7 @@ function HeroSection() {
           <a
             href="#arena"
             data-testid="hero-arena-business-btn"
-            className="ak-btn-gold flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 rounded-[14px] border-2 border-ak-gold text-ak-gold"
+            className="ak-btn-gold flex items-center justify-center gap-3 font-inter font-bold uppercase text-sm px-8 rounded-[14px] border-2 border-ak-gold text-ak-gold"
             style={{ height: '56px' }}
           >
             <Shield size={18} />
@@ -127,8 +127,8 @@ function HeroSection() {
           </a>
         </div>
         {/* Scroll indicator */}
-        <div className="ak-hero-scroll flex flex-col items-center gap-2" style={{ color: '#555' }}>
-          <span className="font-ibm-mono text-[10px] tracking-[0.3em] uppercase">Scopri di più</span>
+        <div className="ak-hero-scroll flex flex-col items-center gap-2" style={{ color: '#FFFFFF' }}>
+          <span className="font-inter text-[10px] tracking-[0.3em] uppercase">Scopri di più</span>
           <ChevronDown size={18} className="ak-bounce" />
         </div>
       </div>
@@ -145,7 +145,7 @@ function StatItem({ icon, target, suffix = '', label, color }) {
       <div className="font-anton text-4xl md:text-5xl ak-glow-cyan" style={{ color }}>
         {count}{suffix}
       </div>
-      <div className="font-ibm-mono text-[10px] uppercase tracking-widest" style={{ color: '#666' }}>{label}</div>
+      <div className="font-inter text-[10px] uppercase tracking-widest" style={{ color: '#FFFFFF' }}>{label}</div>
     </div>
   );
 }
@@ -180,12 +180,12 @@ function KoreIDSection() {
         <div className="ak-reveal">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-8 h-px bg-ak-cyan" />
-            <span className="font-ibm-mono text-xs tracking-[0.3em] uppercase text-ak-cyan">KORE ID</span>
+            <span className="font-inter text-xs tracking-[0.3em] uppercase text-ak-cyan">KORE ID</span>
           </div>
           <h2 className="font-anton text-4xl md:text-5xl uppercase leading-[0.95] text-white mb-6">
             LA TUA<br />IDENTITÀ ATLETICA<br />DIGITALE
           </h2>
-          <p className="font-ibm-mono text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#E0E0E0' }}>
+          <p className="font-inter text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#FFFFFF' }}>
             Non sei solo un atleta. Sei un sistema. La KORE ID ti assegna un'identità digitale
             immutabile — un codice che porta i tuoi record, il tuo DNA atletico e la tua storia agonistica.
             Ogni dato è tuo. Per sempre.
@@ -199,14 +199,14 @@ function KoreIDSection() {
                 >
                   {f.icon}
                 </div>
-                <span className="font-ibm-mono text-sm text-white">{f.text}</span>
+                <span className="font-inter text-sm text-white">{f.text}</span>
               </div>
             ))}
           </div>
           <a
             href="#"
             data-testid="kore-id-cta"
-            className="ak-btn-cyan inline-flex items-center gap-2 font-ibm-mono text-sm font-bold uppercase px-7 py-3 rounded-[14px] bg-ak-cyan text-black"
+            className="ak-btn-cyan inline-flex items-center gap-2 font-inter text-sm font-bold uppercase px-7 py-3 rounded-[14px] bg-ak-cyan text-black"
           >
             SCOPRI KORE ID <ArrowRight size={15} />
           </a>
@@ -240,7 +240,7 @@ function AppPreviewSection() {
     <section data-testid="app-preview-section" className="py-20 bg-black overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 mb-12">
         <div className="ak-reveal text-center">
-          <div className="font-ibm-mono text-xs tracking-[0.35em] uppercase mb-4 text-ak-cyan">DISPONIBILE ORA</div>
+          <div className="font-inter text-xs tracking-[0.35em] uppercase mb-4 text-ak-cyan">DISPONIBILE ORA</div>
           <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">
             L'ARENA È NEL TUO<br /><span className="text-ak-cyan">TELEFONO</span>
           </h2>
@@ -259,7 +259,7 @@ function AppPreviewSection() {
             >
               <img src={s.img} alt={s.label} className="w-full block" />
             </div>
-            <div className="font-ibm-mono text-[10px] text-center mt-3 tracking-widest uppercase" style={{ color: '#555' }}>
+            <div className="font-inter text-[10px] text-center mt-3 tracking-widest uppercase" style={{ color: '#FFFFFF' }}>
               {s.label}
             </div>
           </div>
@@ -315,13 +315,13 @@ function NexusSection() {
       />
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="ak-reveal text-center mb-16">
-          <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-4" style={{ color: '#E0E0E0' }}>
+          <div className="font-inter text-xs tracking-[0.4em] uppercase mb-4" style={{ color: '#FFFFFF' }}>
             AZIONI NÈXUS
           </div>
           <h2 className="font-anton text-4xl md:text-5xl uppercase text-white leading-none">
             IL SISTEMA CHE TI<br /><span className="text-ak-cyan">CALIBRA.</span>
           </h2>
-          <p className="font-ibm-mono text-sm mt-5 max-w-xl mx-auto leading-relaxed" style={{ color: '#E0E0E0' }}>
+          <p className="font-inter text-sm mt-5 max-w-xl mx-auto leading-relaxed" style={{ color: '#FFFFFF' }}>
             NÈXUS non è una semplice app. È un motore di misurazione atletica. Ogni azione è monitorata,
             ogni dato è analizzato, ogni risultato è permanente.
           </p>
@@ -341,11 +341,11 @@ function NexusSection() {
               <div style={{ color: f.color }}>{f.icon}</div>
               <div>
                 <div className="font-anton text-xl uppercase text-white tracking-wide">{f.title}</div>
-                <div className="font-ibm-mono text-xs uppercase tracking-wider mt-1" style={{ color: f.color }}>
+                <div className="font-inter text-xs uppercase tracking-wider mt-1" style={{ color: f.color }}>
                   {f.sub}
                 </div>
               </div>
-              <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#E0E0E0' }}>{f.desc}</p>
+              <p className="font-inter text-xs leading-relaxed" style={{ color: '#FFFFFF' }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -370,13 +370,13 @@ function DNASection() {
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         {/* Left: Text */}
         <div className="ak-reveal order-2 md:order-1">
-          <div className="font-ibm-mono text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#E0E0E0' }}>
+          <div className="font-inter text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#FFFFFF' }}>
             TALENT CARD
           </div>
           <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none mb-6">
             <span className="text-ak-cyan">DNA</span> <span className="text-white">UNIVERSALE</span>
           </h2>
-          <p className="font-ibm-mono text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#E0E0E0' }}>
+          <p className="font-inter text-sm md:text-base mb-8 leading-relaxed" style={{ color: '#FFFFFF' }}>
             Ogni atleta ha attributi unici. Il DNA Universale di ARENAKORE li misura tutti, li traccia nel
             tempo e li confronta con l'élite globale. Non puoi ingannare i dati. I dati non mentono.
           </p>
@@ -384,7 +384,7 @@ function DNASection() {
             {DNA_ATTRS.map((a, i) => (
               <div key={i} className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-ibm-mono text-xs uppercase tracking-wider" style={{ color: '#555' }}>{a.name}</span>
+                  <span className="font-inter text-xs uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{a.name}</span>
                   <span className="font-anton text-lg ak-glow-cyan" style={{ color: a.color }}>{a.value}</span>
                 </div>
                 <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
@@ -397,8 +397,8 @@ function DNASection() {
             ))}
           </div>
           <div
-            className="font-ibm-mono text-xs p-4 rounded-[14px]"
-            style={{ background: 'rgba(0,255,255,0.04)', border: '1px solid rgba(0,255,255,0.18)', color: '#E0E0E0' }}
+            className="font-inter text-xs p-4 rounded-[14px]"
+            style={{ background: 'rgba(0,255,255,0.04)', border: '1px solid rgba(0,255,255,0.18)', color: '#FFFFFF' }}
           >
             <span className="text-ak-cyan">PROSSIMA EVOLUZIONE</span> — Completa 7 giorni
             consecutivi per sbloccare l'analisi avanzata del DNA.
@@ -410,7 +410,7 @@ function DNASection() {
             className="p-8 rounded-[14px]"
             style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}
           >
-            <div className="font-ibm-mono text-xs uppercase tracking-widest mb-4 text-center" style={{ color: '#555' }}>
+            <div className="font-inter text-xs uppercase tracking-widest mb-4 text-center" style={{ color: '#FFFFFF' }}>
               DNA CHART · LIVE
             </div>
             <ResponsiveContainer width="100%" height={300}>
@@ -432,9 +432,9 @@ function DNASection() {
               </RadarChart>
             </ResponsiveContainer>
             <div className="text-center mt-4">
-              <div className="font-ibm-mono text-xs uppercase tracking-widest mb-1" style={{ color: '#555' }}>K-RATING</div>
+              <div className="font-inter text-xs uppercase tracking-widest mb-1" style={{ color: '#FFFFFF' }}>K-RATING</div>
               <div className="font-anton text-4xl ak-glow-cyan" style={{ color: '#00FFFF' }}>
-                346<span className="text-2xl" style={{ color: '#666' }}>/1000</span>
+                346<span className="text-2xl" style={{ color: '#FFFFFF' }}>/1000</span>
               </div>
             </div>
           </div>
@@ -495,13 +495,13 @@ function ArenaSection() {
                 }}
               />
             ))}
-            <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#E0E0E0' }}>
+            <div className="font-inter text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#FFFFFF' }}>
               ARENAKORE
             </div>
             <h2 className="font-anton text-5xl md:text-7xl uppercase text-white leading-none">
               L'ELITE<br />SI CONFRONTA
             </h2>
-            <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mt-5" style={{ color: '#E0E0E0' }}>
+            <div className="font-inter text-xs tracking-[0.4em] uppercase mt-5" style={{ color: '#FFFFFF' }}>
               SFIDE · RECORD · DETERMINAZIONE
             </div>
           </div>
@@ -515,7 +515,7 @@ function ArenaSection() {
               <div key={i} className="flex flex-col items-center gap-1">
                 <div className="text-ak-cyan">{s.icon}</div>
                 <div className="font-anton text-3xl ak-glow-cyan text-ak-cyan">{s.value}</div>
-                <div className="font-ibm-mono text-[9px] uppercase tracking-widest" style={{ color: '#555' }}>{s.label}</div>
+                <div className="font-inter text-[9px] uppercase tracking-widest" style={{ color: '#FFFFFF' }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -541,7 +541,7 @@ function ArenaSection() {
               </div>
               <div>
                 <div className="font-anton text-lg uppercase text-white mb-1">{f.title}</div>
-                <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#E0E0E0' }}>{f.desc}</p>
+                <p className="font-inter text-xs leading-relaxed" style={{ color: '#FFFFFF' }}>{f.desc}</p>
               </div>
             </div>
           ))}
@@ -582,12 +582,12 @@ function BusinessSection() {
           <div>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-8 h-px" style={{ background: '#FFD700' }} />
-              <span className="font-ibm-mono text-xs tracking-[0.3em] uppercase" style={{ color: '#FFD700' }}>ARENA BUSINESS</span>
+              <span className="font-inter text-xs tracking-[0.3em] uppercase" style={{ color: '#FFD700' }}>ARENA BUSINESS</span>
             </div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-4">
               PER COACH<br />E <span className="text-ak-gold">PALESTRE</span>
             </h2>
-            <p className="font-ibm-mono text-sm md:text-base leading-relaxed" style={{ color: '#E0E0E0' }}>
+            <p className="font-inter text-sm md:text-base leading-relaxed" style={{ color: '#FFFFFF' }}>
               Porta la tua struttura nell'Arena digitale. Crea sfide certificate, monitora i tuoi atleti
               e costruisci una reputazione che conta — misurata in dati reali.
             </p>
@@ -596,7 +596,7 @@ function BusinessSection() {
             <a
               href="#"
               data-testid="business-panel-btn"
-              className="ak-btn-gold inline-flex items-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 rounded-[14px] border-2 border-ak-gold text-ak-gold"
+              className="ak-btn-gold inline-flex items-center gap-3 font-inter font-bold uppercase text-sm px-8 rounded-[14px] border-2 border-ak-gold text-ak-gold"
               style={{ height: '56px' }}
             >
               <ArrowRight size={18} />
@@ -619,7 +619,7 @@ function BusinessSection() {
                 {f.icon}
               </div>
               <div className="font-anton text-lg uppercase text-white">{f.title}</div>
-              <p className="font-ibm-mono text-xs leading-relaxed" style={{ color: '#E0E0E0' }}>{f.desc}</p>
+              <p className="font-inter text-xs leading-relaxed" style={{ color: '#FFFFFF' }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -635,7 +635,7 @@ function BusinessSection() {
               style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.15)' }}
             >
               <div className="font-anton text-3xl md:text-4xl mb-1 ak-glow-gold" style={{ color: '#FFD700' }}>{s.value}</div>
-              <div className="font-ibm-mono text-xs uppercase tracking-wider" style={{ color: '#E0E0E0' }}>{s.label}</div>
+              <div className="font-inter text-xs uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -654,13 +654,13 @@ function DownloadCTA() {
           <div className="w-2 h-2 rounded-full" style={{ background: '#00FFFF', boxShadow: '0 0 10px #00FFFF' }} />
           <div className="flex-1 max-w-[80px] h-px" style={{ background: 'rgba(0,255,255,0.25)' }} />
         </div>
-        <div className="font-ibm-mono text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#E0E0E0' }}>
+        <div className="font-inter text-xs tracking-[0.4em] uppercase mb-5" style={{ color: '#FFFFFF' }}>
           INIZIA ORA · GRATIS
         </div>
         <h2 className="font-anton text-5xl md:text-7xl uppercase leading-none text-white mb-6">
           ENTRA<br />NELL'<span className="text-ak-cyan">ARENA</span>
         </h2>
-        <p className="font-ibm-mono text-sm md:text-base mb-10 max-w-xl mx-auto leading-relaxed" style={{ color: '#E0E0E0' }}>
+        <p className="font-inter text-sm md:text-base mb-10 max-w-xl mx-auto leading-relaxed" style={{ color: '#FFFFFF' }}>
           Registrati ora e ricevi 100 K-FLUX di benvenuto. La tua identità atletica digitale ti aspetta.
           Il tuo record è pronto ad essere scritto.
         </p>
@@ -668,7 +668,7 @@ function DownloadCTA() {
           <a
             href="#"
             data-testid="download-app-store-btn"
-            className="ak-btn-cyan flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-10 py-5 rounded-[14px] bg-ak-cyan text-black"
+            className="ak-btn-cyan flex items-center justify-center gap-3 font-inter font-bold uppercase text-sm px-10 py-5 rounded-[14px] bg-ak-cyan text-black"
           >
             <Download size={20} />
             APP STORE
@@ -676,15 +676,15 @@ function DownloadCTA() {
           <a
             href="#"
             data-testid="download-play-store-btn"
-            className="ak-btn-cyan flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-10 py-5 rounded-[14px] bg-ak-cyan text-black"
+            className="ak-btn-cyan flex items-center justify-center gap-3 font-inter font-bold uppercase text-sm px-10 py-5 rounded-[14px] bg-ak-cyan text-black"
           >
             <Download size={20} />
             GOOGLE PLAY
           </a>
         </div>
         <div
-          className="inline-flex items-center gap-3 font-ibm-mono text-xs px-6 py-3 rounded-full"
-          style={{ background: 'rgba(255,215,0,0.04)', border: '1px solid rgba(255,215,0,0.18)', color: '#E0E0E0' }}
+          className="inline-flex items-center gap-3 font-inter text-xs px-6 py-3 rounded-full"
+          style={{ background: 'rgba(255,215,0,0.04)', border: '1px solid rgba(255,215,0,0.18)', color: '#FFFFFF' }}
         >
           <Zap size={14} style={{ color: '#FFD700' }} />
           <span><span className="text-ak-gold">+100 K-FLUX</span> BONUS DI BENVENUTO</span>
@@ -712,13 +712,13 @@ function FooterSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {cols.map((col, i) => (
             <div key={i}>
-              <div className="font-ibm-mono text-[10px] uppercase tracking-widest mb-4" style={{ color: '#444' }}>
+              <div className="font-inter text-[10px] uppercase tracking-widest mb-4" style={{ color: '#FFFFFF' }}>
                 {col.title}
               </div>
               <ul className="space-y-2">
                 {col.links.map(link => (
                   <li key={link}>
-                    <a href="#" className="font-ibm-mono text-sm hover:text-white transition-colors" style={{ color: '#E0E0E0' }}>
+                    <a href="#" className="font-inter text-sm hover:text-white transition-colors" style={{ color: '#FFFFFF' }}>
                       {link}
                     </a>
                   </li>
@@ -731,12 +731,12 @@ function FooterSection() {
           <div className="font-anton text-xl tracking-widest uppercase">
             <span className="text-white">ARENA</span><span className="text-ak-cyan">KORE</span>
           </div>
-          <div className="font-ibm-mono text-xs" style={{ color: '#444' }}>
+          <div className="font-inter text-xs" style={{ color: '#FFFFFF' }}>
             © 2026 ARENAKORE. Tutti i diritti riservati.
           </div>
           <div className="flex items-center gap-2">
             <span className="ak-blink w-1.5 h-1.5 rounded-full" style={{ background: '#00FF66' }} />
-            <span className="font-ibm-mono text-xs" style={{ color: '#444' }}>SISTEMA ATTIVO</span>
+            <span className="font-inter text-xs" style={{ color: '#FFFFFF' }}>SISTEMA ATTIVO</span>
           </div>
         </div>
       </div>
@@ -764,7 +764,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="bg-black text-white overflow-x-hidden font-ibm-mono">
+    <div className="bg-black text-white overflow-x-hidden font-inter">
       <Navbar scrolled={scrolled} />
       <HeroSection />
       <StatsStrip />
