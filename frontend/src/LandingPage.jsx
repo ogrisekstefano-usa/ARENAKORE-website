@@ -307,8 +307,8 @@ function NexusSection() {
       style={{ background: '#000' }}
     >
       <div
-        className="absolute inset-0 opacity-8"
-        style={{ backgroundImage: `url(${NEXUS_BG})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+        className="absolute inset-0"
+        style={{ backgroundImage: `url(${NEXUS_BG})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08 }}
       />
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="ak-reveal text-center mb-16">
