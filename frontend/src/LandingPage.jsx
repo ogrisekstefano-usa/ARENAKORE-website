@@ -108,20 +108,20 @@ function HeroSection() {
         {/* CTAs */}
         <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
           <a
-            href="#"
+            href="#nexus"
             data-testid="hero-scarica-app-btn"
             className="ak-btn-cyan flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 py-4 rounded-[14px] bg-ak-cyan text-black"
           >
             <Zap size={18} />
-            SCARICA APP
+            INIZIA COME ATLETA
           </a>
           <a
-            href="#"
+            href="#arena"
             data-testid="hero-arena-business-btn"
             className="ak-btn-gold flex items-center justify-center gap-3 font-ibm-mono font-bold uppercase text-sm px-8 py-4 rounded-[14px] border-2 border-ak-gold text-ak-gold"
           >
             <Shield size={18} />
-            ARENA BUSINESS
+            SEI UN PRO? ENTRA QUI
           </a>
         </div>
         {/* Scroll indicator */}
@@ -303,6 +303,7 @@ function NexusSection() {
   return (
     <section
       data-testid="nexus-section"
+      id="nexus"
       className="py-24 md:py-32 px-6 sm:px-10 relative overflow-hidden"
       style={{ background: '#000' }}
     >
@@ -431,7 +432,7 @@ function DNASection() {
             <div className="text-center mt-4">
               <div className="font-ibm-mono text-xs uppercase tracking-widest mb-1" style={{ color: '#555' }}>K-RATING</div>
               <div className="font-anton text-4xl ak-glow-cyan" style={{ color: '#00FFFF' }}>
-                346<span className="text-2xl text-white/60">/1000</span>
+                346<span className="text-2xl" style={{ color: '#666' }}>/1000</span>
               </div>
             </div>
           </div>
@@ -445,7 +446,7 @@ function DNASection() {
 const ARENA_FEATURES = [
   {
     icon: <Swords size={22} />,
-    title: 'LANCIA IL GUANTO',
+    title: 'SFIDA DNA',
     desc: 'Sfida un atleta nella tua disciplina. I dati decideranno chi vince. Nessuna scusa, solo numeri.',
     color: '#FFD700',
   },
@@ -467,6 +468,7 @@ function ArenaSection() {
   return (
     <section
       data-testid="arena-section"
+      id="arena"
       className="py-24 md:py-32 px-6 sm:px-10 relative overflow-hidden"
     >
       <div
