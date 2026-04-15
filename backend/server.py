@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -65,6 +66,16 @@ async def get_status_checks():
             check['timestamp'] = datetime.fromisoformat(check['timestamp'])
     
     return status_checks
+
+@api_router.get("/download/arenakore-zip")
+async def download_zip():
+    zip_path = "/app/frontend/public/arenakore-site.zip"
+    return FileResponse(
+        path=zip_path,
+        filename="arenakore-site.zip",
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=arenakore-site.zip"}
+    )
 
 # Include the router in the main app
 app.include_router(api_router)
