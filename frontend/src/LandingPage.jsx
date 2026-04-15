@@ -7,7 +7,7 @@ import {
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 
 /* ─── ASSETS ─── */
-const HERO_BG = 'https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/c5b2dfc4e0edbe689fdbcd4f3132e31fb03c31c3c737e73d954f17156fbd6bfe.png';
+const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 const NEXUS_BG = 'https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/3e690b084c9180f3a47455eb52a1241d171c46f9ca059be5705402adba209726.png';
 const ARENA_BG = 'https://static.prod-images.emergentagent.com/jobs/d04435a4-d02c-4e45-bfc3-de61c2e4c642/images/e898a8cd56faef365707794c4911a5eaba889ef3fc8312afd1410cb3512738cb.png';
 const SCREEN_1 = 'https://customer-assets.emergentagent.com/job_d04435a4-d02c-4e45-bfc3-de61c2e4c642/artifacts/z6iebv8u_Screenshot%202026-04-13%20at%208.05.30%E2%80%AFPM.png';
