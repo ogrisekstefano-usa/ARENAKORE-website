@@ -103,7 +103,7 @@ export default function ArenaSystemPage() {
             Any sport. Any discipline. One system.
           </p>
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-10">
-            <Link to="/fitness-challenge-app" data-testid="arena-download-btn"
+            <Link to="/get-the-app" data-testid="arena-download-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Download size={20} /> {t('cta.downloadApp')}
@@ -232,7 +232,7 @@ export default function ArenaSystemPage() {
             ArenaKore is a universal competition system for any performance-based activity.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/fitness-challenge-app" data-testid="arena-final-download"
+            <Link to="/get-the-app" data-testid="arena-final-download"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '56px' }}>
               <Download size={18} /> {t('cta.downloadApp')}

@@ -62,7 +62,7 @@ export default function AthletePage() {
             Enter the Arena.
           </p>
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link to="/arena-system" data-testid="athlete-hero-cta"
+            <Link to="/get-the-app" data-testid="athlete-hero-cta"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {t('cta.downloadApp')}
@@ -352,7 +352,7 @@ export default function AthletePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/arena-system" data-testid="athlete-final-cta"
+            <Link to="/get-the-app" data-testid="athlete-final-cta"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-lg px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '64px' }}>
               <Zap size={22} fill="black" /> {t('cta.downloadApp')}

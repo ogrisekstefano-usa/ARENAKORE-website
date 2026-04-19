@@ -67,9 +67,7 @@ export function InnerNavbar() {
   const NAV = [
     { key: 'nav.home',        href: '/' },
     { key: 'nav.arenaSystem', href: '/arena-system' },
-    { key: 'nav.crossfit',    href: '/crossfit-challenge' },
     { key: 'nav.competition', href: '/workout-competition' },
-    { key: 'nav.amrap',       href: '/amrap-training' },
     { key: 'nav.forGyms',     href: '/for-gyms' },
     { key: 'nav.blog',        href: '/blog' },
   ];
@@ -153,34 +151,37 @@ export function InnerFooter() {
       <footer data-testid="inner-footer" className="bg-black border-t border-white/8">
         <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-14 pb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+            {/* Col 1: Brand */}
             <div>
               <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain mb-4" loading="lazy" />
-              <p className="font-inter text-xs text-white leading-relaxed max-w-xs mb-3">{t('footer.tagline')}</p>
+              <p className="font-inter text-xs text-white leading-relaxed max-w-xs mb-3">
+                Global competition platform for athletes and gyms.
+              </p>
               <p className="font-inter text-[10px] font-bold uppercase tracking-wider mb-4" style={{ color: 'rgba(0,255,255,0.6)' }}>
-                Global Competition Platform
+                Universal Competition System
               </p>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
                 <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">{t('footer.nexusOnline')}</span>
               </div>
             </div>
+            {/* Col 2: Pages */}
             <div>
               <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.pages')}</div>
               <ul className="space-y-2.5">
                 {[
                   ['Home', '/'],
-                  ['Fitness Challenge App', '/fitness-challenge-app'],
-                  ['CrossFit Challenge', '/crossfit-challenge'],
-                  ['Workout Competition', '/workout-competition'],
-                  ['AMRAP Training', '/amrap-training'],
+                  ['Arena System', '/arena-system'],
+                  ['Competition', '/workout-competition'],
                   ['For Gyms', '/for-gyms'],
                   ['Blog', '/blog'],
-                  ['14-Day Pilot', '/gym-challenge-pilot'],
+                  ['Download App', '/get-the-app'],
                 ].map(([label, href]) => (
                   <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
                 ))}
               </ul>
             </div>
+            {/* Col 3: Support */}
             <div>
               <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.support')}</div>
               <ul className="space-y-2.5 mb-6">
