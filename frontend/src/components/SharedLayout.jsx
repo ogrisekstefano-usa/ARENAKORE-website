@@ -65,11 +65,15 @@ export function InnerNavbar() {
   }, []);
 
   const NAV = [
-    { key: 'nav.home',        href: '/' },
-    { key: 'nav.arenaSystem', href: '/arena-system' },
-    { key: 'nav.competition', href: '/workout-competition' },
-    { key: 'nav.forGyms',     href: '/for-gyms' },
-    { key: 'nav.blog',        href: '/blog' },
+    { key: 'nav.home',          href: '/',                   highlight: false },
+    { key: 'nav.arenaSystem',   href: '/arena-system',        highlight: false },
+    { key: 'nav.forAthletes',   href: '/for-athletes',        highlight: true  },
+    { key: 'nav.competition',   href: '/workout-competition', highlight: false },
+    { key: 'nav.amrap',         href: '/amrap-training',      highlight: false },
+    { key: 'nav.crossfit',      href: '/crossfit-challenge',  highlight: false },
+    { key: 'nav.forGymsCoaches',href: '/for-gyms',            highlight: false },
+    { key: 'nav.blog',          href: '/blog',                highlight: false },
+    { key: 'nav.getApp',        href: '/get-the-app',         highlight: false },
   ];
 
   const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
@@ -87,12 +91,17 @@ export function InnerNavbar() {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden lg:flex items-center gap-1">
+        <div className="hidden lg:flex items-center gap-0.5">
           {NAV.map(l => (
             <Link key={l.href} to={l.href}
               className={`font-inter text-xs font-semibold uppercase tracking-wider px-3 py-2 rounded-lg transition-colors ${
-                active(l.href) ? 'text-ak-cyan' : 'text-white/60 hover:text-white'
+                active(l.href)
+                  ? 'text-ak-cyan'
+                  : l.highlight
+                  ? 'text-white hover:text-ak-cyan'
+                  : 'text-white/55 hover:text-white'
               }`}
+              style={l.highlight && !active(l.href) ? { textShadow: '0 0 12px rgba(255,255,255,0.2)' } : {}}
             >
               {t(l.key)}
             </Link>
@@ -120,7 +129,7 @@ export function InnerNavbar() {
           {NAV.map(l => (
             <Link key={l.href} to={l.href} onClick={() => setOpen(false)}
               className={`flex items-center justify-between py-3 border-b border-white/5 font-inter text-sm font-semibold uppercase tracking-wider ${
-                active(l.href) ? 'text-ak-cyan' : 'text-white'
+                active(l.href) ? 'text-ak-cyan' : l.highlight ? 'text-white' : 'text-white/70'
               }`}
             >
               {t(l.key)} <ChevronRight size={14} className="text-white/30" />
@@ -172,6 +181,7 @@ export function InnerFooter() {
                 {[
                   ['Home', '/'],
                   ['Arena System', '/arena-system'],
+                  ['For Athletes', '/for-athletes'],
                   ['Competition', '/workout-competition'],
                   ['For Gyms', '/for-gyms'],
                   ['Blog', '/blog'],

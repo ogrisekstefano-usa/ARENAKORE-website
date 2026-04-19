@@ -189,6 +189,10 @@ export default function ArenaSystemPage() {
                 className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-gold hover:underline">
                 Gym? Start your 14-day pilot <ArrowRight size={14} />
               </Link>
+              <Link to="/for-athletes" data-testid="multisport-athletes-link"
+                className="inline-flex items-center gap-2 font-inter text-sm font-semibold text-ak-cyan hover:underline mt-2">
+                Athlete? Enter the Arena <ArrowRight size={14} />
+              </Link>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {DISCIPLINES.map((d, i) => (

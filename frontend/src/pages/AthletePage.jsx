@@ -67,8 +67,16 @@ export default function AthletePage() {
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {t('cta.downloadApp')}
             </Link>
+            <Link to="/arena-system" data-testid="athlete-enter-arena-btn"
+              className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/25 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
+              style={{ height: '60px' }}>
+              Enter the Arena <ArrowRight size={16} />
+            </Link>
           </div>
           <div className="ak-hero-scroll flex flex-col items-start gap-2" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            <p className="font-inter text-xs font-bold tracking-widest uppercase mb-2" style={{ color: 'rgba(0,255,255,0.5)' }}>
+              You are not just training. You are competing.
+            </p>
             <span className="font-inter text-[10px] tracking-[0.3em] uppercase">What awaits you</span>
             <ChevronDown size={16} className="ak-bounce" />
           </div>
@@ -352,11 +360,18 @@ export default function AthletePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/get-the-app" data-testid="athlete-final-cta"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-lg px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '64px' }}>
               <Zap size={22} fill="black" /> {t('cta.downloadApp')}
             </Link>
+            <Link to="/arena-system" data-testid="athlete-final-arena"
+              className="inline-flex items-center justify-center gap-2 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
+              style={{ height: '64px' }}>
+              Enter the Arena <ArrowRight size={16} />
+            </Link>
+          </div>
           </div>
 
           {/* Bottom trust line */}

@@ -423,6 +423,10 @@ export default function LandingPage() {
               >
                 <Zap size={16} fill="black" /> Start a 14-day Pilot
               </Link>
+              <Link to="/for-athletes" data-testid="home-for-athletes-link"
+                className="inline-flex items-center gap-2 font-inter font-semibold text-sm text-ak-cyan hover:underline">
+                For Athletes <ArrowRight size={14} />
+              </Link>
             </div>
             {/* Stats */}
             <div className="ak-reveal ak-delay-2 grid grid-cols-2 gap-4">

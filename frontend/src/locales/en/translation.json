@@ -8,7 +8,10 @@
     "forGyms": "For Gyms",
     "blog": "Blog",
     "startChallenge": "Start a Challenge",
-    "arenaSystem": "Arena System"
+    "arenaSystem": "Arena System",
+    "forAthletes": "For Athletes",
+    "forGymsCoaches": "For Gyms & Coaches",
+    "getApp": "Get the App"
   },
   "footer": {
     "tagline": "Fitness competition platform for real training.",

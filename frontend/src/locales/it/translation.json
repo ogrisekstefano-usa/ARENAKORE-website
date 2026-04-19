@@ -8,7 +8,10 @@
     "forGyms": "Palestre",
     "blog": "Blog",
     "startChallenge": "Inizia una Sfida",
-    "arenaSystem": "Arena System"
+    "arenaSystem": "Arena System",
+    "forAthletes": "Per Atleti",
+    "forGymsCoaches": "Per Palestre",
+    "getApp": "Scarica App"
   },
   "footer": {
     "tagline": "Piattaforma di competizione fitness per atleti veri.",
