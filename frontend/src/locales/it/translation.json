@@ -1,13 +1,14 @@
 {
   "nav": {
     "home": "Home",
-    "fitnessApp": "App Fitness",
+    "fitnessApp": "Arena System",
     "crossfit": "CrossFit",
     "competition": "Competizione",
     "amrap": "AMRAP",
     "forGyms": "Palestre",
     "blog": "Blog",
-    "startChallenge": "Inizia una Sfida"
+    "startChallenge": "Inizia una Sfida",
+    "arenaSystem": "Arena System"
   },
   "footer": {
     "tagline": "Piattaforma di competizione fitness per atleti veri.",
@@ -22,7 +23,7 @@
     "badge": "NEXUS LIVE · SFIDE APERTE",
     "h1_line1": "La competizione",
     "h1_line2": "non finisce mai.",
-    "sub": "Trasforma ogni performance in una sfida.",
+    "sub": "Ogni performance viene classificata.",
     "cta_primary": "Scarica l'App",
     "cta_secondary": "Per Palestre",
     "scrollHint": "Scorri per sapere di più",

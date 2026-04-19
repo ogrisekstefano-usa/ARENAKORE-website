@@ -189,6 +189,21 @@ export default function GymPilotPage() {
         </div>
       </section>
 
+      {/* ══ REINFORCEMENT STRIP ══ */}
+      <section data-testid="pilot-reinforcement" className="py-6 px-6 sm:px-10" style={{ background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-ak-cyan flex-shrink-0" />
+            <span className="font-inter text-sm font-semibold text-white">No setup. No disruption. We activate your athletes in 48 hours.</span>
+          </div>
+          <div className="hidden sm:block w-px h-5 bg-white/10" />
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-ak-gold flex-shrink-0" />
+            <span className="font-inter text-sm font-semibold text-white">20–30 athletes. 14 days. Real results.</span>
+          </div>
+        </div>
+      </section>
+
       {/* ══ PROBLEM ══ */}
       <section className="py-24 md:py-28 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">

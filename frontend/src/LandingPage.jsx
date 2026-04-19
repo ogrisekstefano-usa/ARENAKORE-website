@@ -140,7 +140,7 @@ export default function LandingPage() {
           </p>
           {/* CTAs — dual path */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link to="/fitness-challenge-app" data-testid="hero-download-app-btn"
+            <Link to="/arena-system" data-testid="hero-download-app-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {t('cta.downloadApp')}

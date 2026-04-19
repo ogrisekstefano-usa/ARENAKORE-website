@@ -66,7 +66,7 @@ export function InnerNavbar() {
 
   const NAV = [
     { key: 'nav.home',        href: '/' },
-    { key: 'nav.fitnessApp',  href: '/fitness-challenge-app' },
+    { key: 'nav.arenaSystem', href: '/arena-system' },
     { key: 'nav.crossfit',    href: '/crossfit-challenge' },
     { key: 'nav.competition', href: '/workout-competition' },
     { key: 'nav.amrap',       href: '/amrap-training' },
