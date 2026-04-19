@@ -4,7 +4,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-import os, logging, uuid, hashlib, hmac
+import os, logging, uuid, hashlib, hmac, asyncio
+import resend
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Any, Dict
@@ -28,6 +29,120 @@ security = HTTPBearer(auto_error=False)
 # ─── ADMIN AUTH ───────────────────────────────────────────────
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'ArenaKore2026!')
 ADMIN_SECRET   = os.environ.get('ADMIN_SECRET', 'ak-cms-secret-2026')
+
+# Resend email config
+resend.api_key     = os.environ.get('RESEND_API_KEY', '')
+FOUNDER_EMAIL      = os.environ.get('FOUNDER_EMAIL', 'ogrisek.stefano@gmail.com')
+SENDER_EMAIL       = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+
+# ─── EMAIL HELPERS ────────────────────────────────────────────
+
+def _founder_html(req) -> str:
+    phone = req.phone or "—"
+    ts    = req.created_at.strftime('%d/%m/%Y %H:%M UTC')
+    return f"""
+<!DOCTYPE html><html><body style="margin:0;padding:0;background:#000;font-family:Inter,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#000;padding:40px 0;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;overflow:hidden;">
+      <!-- Header -->
+      <tr><td style="background:#FFD700;padding:24px 32px;">
+        <p style="margin:0;font-size:20px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:2px;">
+          &#128293; New Pilot Request
+        </p>
+      </td></tr>
+      <!-- Body -->
+      <tr><td style="padding:32px;">
+        <p style="margin:0 0 24px;font-size:14px;color:#a1a1aa;">New ArenaKore pilot request just received:</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #1a1a1a;border-radius:12px;overflow:hidden;">
+          {''.join(f'<tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:14px 18px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:1px;width:35%;background:#050505;">{k}</td><td style="padding:14px 18px;font-size:14px;font-weight:600;color:#fff;">{v}</td></tr>'
+          for k,v in [('Gym Name', req.gym_name), ('City', req.city), ('Owner', req.owner_name), ('Email', req.email), ('Phone', phone), ('Submitted', ts)])}
+        </table>
+        <div style="margin-top:28px;padding:20px;background:#111;border-left:4px solid #FFD700;border-radius:8px;">
+          <p style="margin:0;font-size:13px;font-weight:700;color:#FFD700;text-transform:uppercase;letter-spacing:1px;">
+            &#9889; Reply within 5 minutes.
+          </p>
+          <p style="margin:8px 0 0;font-size:12px;color:#a1a1aa;">High response speed increases conversion by 40%+.</p>
+        </div>
+        <p style="margin:24px 0 0;font-size:12px;color:#555;">
+          Reply to: <a href="mailto:{req.email}" style="color:#00FFFF;">{req.email}</a>
+        </p>
+      </td></tr>
+      <tr><td style="padding:20px 32px;border-top:1px solid #1a1a1a;">
+        <p style="margin:0;font-size:11px;color:#333;">ArenaKore CMS — Automated Notification</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>"""
+
+def _owner_html(req) -> str:
+    return f"""
+<!DOCTYPE html><html><body style="margin:0;padding:0;background:#000;font-family:Inter,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#000;padding:40px 0;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;overflow:hidden;">
+      <!-- Header -->
+      <tr><td style="background:#000;padding:28px 32px 0;text-align:center;">
+        <p style="margin:0;font-size:28px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:3px;font-family:Arial,sans-serif;">
+          ARENA<span style="color:#00FFFF;">KORE</span>
+        </p>
+      </td></tr>
+      <!-- Body -->
+      <tr><td style="padding:32px;">
+        <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#fff;">Hi {req.owner_name},</p>
+        <p style="margin:0 0 24px;font-size:14px;color:#a1a1aa;line-height:1.6;">
+          We received your request to start a <strong style="color:#fff;">14-day ArenaKore pilot</strong>
+          for <strong style="color:#FFD700;">{req.gym_name}</strong>.<br>
+          We'll contact you shortly to activate your gym.
+        </p>
+        <!-- Steps -->
+        <p style="margin:0 0 16px;font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:1px;">What happens next</p>
+        <table width="100%" cellpadding="0" cellspacing="0">
+          {''.join(f'<tr><td style="padding:10px 0;border-bottom:1px solid #1a1a1a;vertical-align:top;width:32px;"><span style="font-size:18px;font-weight:900;color:{c};">{n}</span></td><td style="padding:10px 0 10px 12px;border-bottom:1px solid #1a1a1a;font-size:13px;color:#e0e0e0;">{t}</td></tr>'
+          for n,c,t in [('01','#00FFFF','We select 20–30 active members for the pilot'),('02','#FFD700','We launch your first challenge within 48 hours'),('03','#00FFFF','We track engagement, attendance and performance'),('04','#FFD700','You see the impact. Then you decide.')])}
+        </table>
+        <!-- CTA -->
+        <div style="margin-top:28px;padding:20px;background:#111;border-radius:12px;text-align:center;">
+          <p style="margin:0 0 4px;font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;">Your pilot request</p>
+          <p style="margin:0;font-size:20px;font-weight:900;color:#FFD700;text-transform:uppercase;">Confirmed ✓</p>
+        </div>
+        <p style="margin:28px 0 0;font-size:14px;color:#a1a1aa;line-height:1.6;">
+          Talk soon,<br>
+          <strong style="color:#fff;">ArenaKore Team</strong>
+        </p>
+      </td></tr>
+      <tr><td style="padding:20px 32px;border-top:1px solid #1a1a1a;">
+        <p style="margin:0;font-size:11px;color:#333;">
+          Questions? <a href="mailto:support@arenakore.com" style="color:#00FFFF;">support@arenakore.com</a>
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>"""
+
+async def _send_pilot_emails(req):
+    """Fire-and-forget: send both emails, log errors, never raise."""
+    if not resend.api_key:
+        logger.warning("RESEND_API_KEY not set — skipping emails")
+        return
+    async def _send(to: str, subject: str, html: str):
+        try:
+            result = await asyncio.to_thread(resend.Emails.send, {
+                "from": f"ArenaKore <{SENDER_EMAIL}>",
+                "to": [to],
+                "subject": subject,
+                "html": html,
+            })
+            logger.info(f"Email sent → {to} | id: {result.get('id', '?')}")
+        except Exception as e:
+            logger.error(f"Email failed → {to}: {e}")
+
+    await asyncio.gather(
+        _send(FOUNDER_EMAIL, "🔥 New ArenaKore Pilot Request", _founder_html(req)),
+        _send(req.email,     "ArenaKore — Pilot Request Received", _owner_html(req)),
+    )
 
 def _make_token(password: str) -> str:
     return hashlib.sha256(f"{ADMIN_SECRET}:{password}".encode()).hexdigest()
@@ -98,7 +213,10 @@ async def create_pilot_request(data: PilotRequestCreate):
     obj = PilotRequest(**data.model_dump())
     doc = obj.model_dump(); doc['created_at'] = doc['created_at'].isoformat()
     await db.pilot_requests.insert_one(doc)
-    logger.info(f"Pilot request: {obj.gym_name} — {obj.email}"); return obj
+    logger.info(f"Pilot request: {obj.gym_name} — {obj.email}")
+    # Fire-and-forget: non-blocking email dispatch
+    asyncio.create_task(_send_pilot_emails(obj))
+    return obj
 
 @api_router.get("/pilot-requests", response_model=List[PilotRequest])
 async def get_pilot_requests(_=Depends(verify_admin)):
