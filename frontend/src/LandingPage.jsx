@@ -12,6 +12,16 @@ import { useTranslation } from 'react-i18next';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
+// Hero slider images — multi-sport
+const HERO_SLIDES = [
+  { img: HERO_BG,                                                                                         sport: 'CROSSFIT',    pos: 'center 15%' },
+  { img: 'https://images.pexels.com/photos/30050102/pexels-photo-30050102.jpeg?auto=compress&cs=tinysrgb&w=1400', sport: 'BASKETBALL', pos: 'center center' },
+  { img: 'https://images.pexels.com/photos/28163932/pexels-photo-28163932.jpeg?auto=compress&cs=tinysrgb&w=1400', sport: 'RUNNING',    pos: 'center center' },
+  { img: 'https://images.unsplash.com/photo-1682353242312-2e1f8c5dfd9a?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400',  sport: 'SWIMMING',   pos: 'center center' },
+  { img: 'https://images.pexels.com/photos/33453950/pexels-photo-33453950.jpeg?auto=compress&cs=tinysrgb&w=1400', sport: 'SURF',       pos: 'center center' },
+  { img: 'https://images.unsplash.com/photo-1636634450055-51533cb3e0d6?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400',  sport: 'STRENGTH',   pos: 'center 30%'    },
+];
+
 const IMG_RUNNER     = 'https://images.unsplash.com/photo-1589104666851-dffe3a15aace?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
 const IMG_BASKETBALL = 'https://images.pexels.com/photos/30050102/pexels-photo-30050102.jpeg?auto=compress&cs=tinysrgb&w=800';
 const IMG_SWIMMER    = 'https://images.unsplash.com/photo-1682353242312-2e1f8c5dfd9a?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
@@ -85,6 +95,7 @@ const HOW_STEPS = [
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [slide, setSlide] = useState(0);
   const { t } = useTranslation();
 
   useSEO({
@@ -96,6 +107,14 @@ export default function LandingPage() {
     const fn = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', fn);
     return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  // Hero slider — auto-rotate every 4s
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSlide(prev => (prev + 1) % HERO_SLIDES.length);
+    }, 4000);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -112,25 +131,72 @@ export default function LandingPage() {
       <SchemaMarkup />
       <InnerNavbar />
 
-      {/* ══ HERO ══ */}
+      {/* ══ HERO — FULLSCREEN MULTI-SPORT SLIDER ══ */}
       <section
         data-testid="hero-section"
-        className="relative min-h-screen flex flex-col justify-end pt-16"
-        style={{
-          backgroundImage: `url(${HERO_BG})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 15%',
-        }}
+        className="relative min-h-screen flex flex-col justify-end pt-16 overflow-hidden"
       >
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg,rgba(0,0,0,0.82) 0%,rgba(0,10,25,0.78) 100%)' }} />
+        {/* Slider images — cross-fade stack */}
+        {HERO_SLIDES.map((s, i) => (
+          <div
+            key={i}
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url(${s.img})`,
+              backgroundSize: 'cover',
+              backgroundPosition: s.pos,
+              opacity: i === slide ? 1 : 0,
+              transition: 'opacity 1.2s ease-in-out',
+              willChange: 'opacity',
+            }}
+          />
+        ))}
+
+        {/* Dark overlay — always on top of images */}
+        <div className="absolute inset-0 z-[1]"
+          style={{ background: 'linear-gradient(160deg,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.88) 100%)' }} />
+
+        {/* Slide indicator dots */}
+        <div className="absolute bottom-6 right-6 z-10 flex items-center gap-2">
+          {HERO_SLIDES.map((s, i) => (
+            <button key={i} onClick={() => setSlide(i)}
+              className="flex items-center gap-1.5 transition-all"
+              aria-label={`Slide ${i + 1}`}>
+              <div className="rounded-full transition-all duration-300"
+                style={{
+                  width: i === slide ? '20px' : '6px',
+                  height: '4px',
+                  background: i === slide ? '#00FFFF' : 'rgba(255,255,255,0.2)',
+                }} />
+            </button>
+          ))}
+        </div>
+
+        {/* Sport label — bottom right above dots */}
+        <div className="absolute bottom-14 right-6 z-10">
+          <span
+            key={slide}
+            className="font-inter text-[9px] font-black uppercase tracking-[0.4em]"
+            style={{ color: 'rgba(0,255,255,0.6)',
+              animation: 'ak-fade-label .4s ease both' }}
+          >
+            {HERO_SLIDES[slide].sport}
+          </span>
+        </div>
+
+        {/* Hero content */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-10 pb-20 md:pb-28 w-full">
           {/* Badge */}
           <div className="ak-hero-badge flex items-center gap-3 mb-6">
-            <span className="ak-blink w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: '#FF2D2D', boxShadow: '0 0 8px #FF2D2D', display: 'inline-block' }} />
-            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-white">{t('home.badge')}</span>
+            <span className="ak-blink w-2.5 h-2.5 rounded-full flex-shrink-0"
+              style={{ background: '#FF2D2D', boxShadow: '0 0 8px #FF2D2D', display: 'inline-block' }} />
+            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-white">
+              NEXUS LIVE · GLOBAL COMPETITION ACTIVE
+            </span>
           </div>
           {/* H1 */}
-          <h1 className="ak-hero-title font-anton uppercase leading-[0.92] text-white mb-6" style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
+          <h1 className="ak-hero-title font-anton uppercase leading-[0.92] text-white mb-6"
+            style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
             {t('home.h1_line1')}<br />
             <span style={{ color: '#00FFFF' }}>{t('home.h1_line2')}</span>
           </h1>
@@ -138,7 +204,7 @@ export default function LandingPage() {
           <p className="ak-hero-sub font-inter text-lg md:text-xl text-white mb-10 max-w-xl leading-relaxed">
             {t('home.sub')}
           </p>
-          {/* CTAs — dual path */}
+          {/* CTAs */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
             <Link to="/get-the-app" data-testid="hero-download-app-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
@@ -148,10 +214,10 @@ export default function LandingPage() {
             <Link to="/gym-challenge-pilot" data-testid="hero-for-gyms-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '60px' }}>
-              {t('cta.forGyms')} <ArrowRight size={16} />
+              For Gyms & Coaches <ArrowRight size={16} />
             </Link>
           </div>
-          {/* Scroll */}
+          {/* Scroll indicator */}
           <div className="ak-hero-scroll flex flex-col items-start gap-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
             <span className="font-inter text-[10px] font-semibold tracking-[0.3em] uppercase">{t('home.scrollHint')}</span>
             <ChevronDown size={16} className="ak-bounce" />

@@ -75,3 +75,6 @@
 /* Text glows */
 .ak-glow-cyan { text-shadow: 0 0 20px rgba(0, 255, 255, 0.45); }
 .ak-glow-gold { text-shadow: 0 0 20px rgba(255, 215, 0, 0.45); }
+
+/* Sport label fade */
+@keyframes ak-fade-label { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
