@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from './components/SharedLayout';
 import { IMGS } from './data/seo-content';
+import SchemaMarkup from './components/SchemaMarkup';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
@@ -76,6 +77,7 @@ export default function LandingPage() {
 
   return (
     <div className="bg-black text-white font-inter overflow-x-hidden">
+      <SchemaMarkup />
       <InnerNavbar />
 
       {/* ══ HERO ══ */}
