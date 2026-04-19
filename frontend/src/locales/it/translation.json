@@ -7,11 +7,12 @@
     "amrap": "AMRAP",
     "forGyms": "Palestre",
     "blog": "Blog",
-    "startChallenge": "Inizia una Sfida",
+    "startChallenge": "Scarica App",
     "arenaSystem": "Arena System",
     "forAthletes": "Per Atleti",
     "forGymsCoaches": "Per Palestre",
-    "getApp": "Scarica App"
+    "getApp": "Scarica App",
+    "business": "Business"
   },
   "footer": {
     "tagline": "Piattaforma di competizione fitness per atleti veri.",
@@ -345,6 +346,8 @@
     "forGyms": "Palestre",
     "pilotCta": "Avvia il Pilot",
     "startChallenge": "Inizia una Sfida",
-    "exploreSystem": "Per Palestre"
+    "exploreSystem": "Per Palestre",
+    "getApp": "Scarica App",
+    "gymsPilot": "Gym & Coaches Pilot"
   }
 }

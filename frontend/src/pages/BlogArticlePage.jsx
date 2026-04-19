@@ -113,11 +113,11 @@ export default function BlogArticlePage() {
             <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">PROVA ARENAKORE</div>
             <p className="font-inter text-sm text-white mb-4">Tutto quello che hai letto si applica direttamente in ArenaKore.</p>
             <div className="flex flex-wrap gap-3">
-              <Link to="/gym-challenge-pilot" className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[12px] bg-ak-gold text-black" style={{ height: '38px' }}>
-                Pilot Palestre — Gratis
+              <Link to="/get-the-app" className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[12px] bg-ak-gold text-black" style={{ height: '38px' }}>
+                Get the App
               </Link>
               <Link to="/fitness-challenge-app" className="inline-flex items-center gap-2 font-inter text-xs font-semibold text-ak-cyan hover:underline" style={{ height: '38px' }}>
-                Scarica l'App <ArrowRight size={13} />
+                Arena System <ArrowRight size={13} />
               </Link>
             </div>
           </div>

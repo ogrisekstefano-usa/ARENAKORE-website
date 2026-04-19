@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import {
   Zap, ChevronDown, Shield, Trophy, Users, Dumbbell,
   Activity, Scan, ArrowRight, CheckCircle, Target,
@@ -12,14 +13,14 @@ import { useTranslation } from 'react-i18next';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
-// Hero slider images — multi-sport
-const HERO_SLIDES = [
-  { img: HERO_BG,                                                                                         sport: 'CROSSFIT',    pos: 'center 15%' },
-  { img: 'https://images.pexels.com/photos/30050102/pexels-photo-30050102.jpeg?auto=compress&cs=tinysrgb&w=1400', sport: 'BASKETBALL', pos: 'center center' },
-  { img: 'https://images.pexels.com/photos/28163932/pexels-photo-28163932.jpeg?auto=compress&cs=tinysrgb&w=1400', sport: 'RUNNING',    pos: 'center center' },
-  { img: 'https://images.unsplash.com/photo-1682353242312-2e1f8c5dfd9a?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400',  sport: 'SWIMMING',   pos: 'center center' },
-  { img: 'https://images.pexels.com/photos/33453950/pexels-photo-33453950.jpeg?auto=compress&cs=tinysrgb&w=1400', sport: 'SURF',       pos: 'center center' },
-  { img: 'https://images.unsplash.com/photo-1636634450055-51533cb3e0d6?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400',  sport: 'STRENGTH',   pos: 'center 30%'    },
+// Hero slider images — premium Nike-style multi-sport
+const HERO_SLIDES_DEFAULT = [
+  { img: HERO_BG,                                                                                                   sport: 'CROSSFIT',    pos: 'center 15%'  },
+  { img: 'https://images.unsplash.com/photo-1726195221766-e4594ff9d025?crop=entropy&cs=srgb&fm=jpg&q=90&w=1600',  sport: 'RUNNING',     pos: 'center center' },
+  { img: 'https://images.pexels.com/photos/30050101/pexels-photo-30050101.jpeg?auto=compress&cs=tinysrgb&w=1600', sport: 'BASKETBALL',  pos: 'center center' },
+  { img: 'https://images.pexels.com/photos/6011896/pexels-photo-6011896.jpeg?auto=compress&cs=tinysrgb&w=1600',   sport: 'SWIMMING',    pos: 'center center' },
+  { img: 'https://images.pexels.com/photos/29015508/pexels-photo-29015508.jpeg?auto=compress&cs=tinysrgb&w=1600', sport: 'MMA',         pos: 'center 20%'   },
+  { img: 'https://images.pexels.com/photos/33453950/pexels-photo-33453950.jpeg?auto=compress&cs=tinysrgb&w=1600', sport: 'SURF',        pos: 'center center' },
 ];
 
 const IMG_RUNNER     = 'https://images.unsplash.com/photo-1589104666851-dffe3a15aace?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
@@ -96,7 +97,23 @@ const HOW_STEPS = [
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [slide, setSlide] = useState(0);
+  const [heroSlides, setHeroSlides] = useState(HERO_SLIDES_DEFAULT);
   const { t } = useTranslation();
+  const API = process.env.REACT_APP_BACKEND_URL + '/api';
+
+  useSEO({
+    title: 'ArenaKore — The Multi-Sport Competition Platform',
+    description: 'Turn every performance into a challenge. Any sport, any discipline. Daily challenges, live rankings, validated performance. The competition never ends.',
+  });
+
+  // Load hero slides from DB, fallback to defaults
+  useEffect(() => {
+    axios.get(`${API}/hero-slides`).then(r => {
+      if (r.data?.length >= 2) {
+        setHeroSlides(r.data.map(s => ({ img: s.image_url, sport: s.sport_label, pos: s.position || 'center center' })));
+      }
+    }).catch(() => {});
+  }, [API]);
 
   useSEO({
     title: 'ArenaKore — The Multi-Sport Competition Platform',
@@ -112,7 +129,7 @@ export default function LandingPage() {
   // Hero slider — auto-rotate every 4s
   useEffect(() => {
     const timer = setInterval(() => {
-      setSlide(prev => (prev + 1) % HERO_SLIDES.length);
+      setSlide(prev => (prev + 1) % heroSlides.length);
     }, 4000);
     return () => clearInterval(timer);
   }, []);
@@ -137,7 +154,7 @@ export default function LandingPage() {
         className="relative min-h-screen flex flex-col justify-end pt-16 overflow-hidden"
       >
         {/* Slider images — cross-fade stack */}
-        {HERO_SLIDES.map((s, i) => (
+        {heroSlides.map((s, i) => (
           <div
             key={i}
             className="absolute inset-0"
@@ -152,13 +169,13 @@ export default function LandingPage() {
           />
         ))}
 
-        {/* Dark overlay — always on top of images */}
+        {/* Dark overlay — ultra-thin veil 0.05, gradient for text readability */}
         <div className="absolute inset-0 z-[1]"
-          style={{ background: 'linear-gradient(160deg,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.88) 100%)' }} />
+          style={{ background: 'linear-gradient(160deg,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.82) 100%)' }} />
 
         {/* Slide indicator dots */}
         <div className="absolute bottom-6 right-6 z-10 flex items-center gap-2">
-          {HERO_SLIDES.map((s, i) => (
+          {heroSlides.map((s, i) => (
             <button key={i} onClick={() => setSlide(i)}
               className="flex items-center gap-1.5 transition-all"
               aria-label={`Slide ${i + 1}`}>
@@ -180,7 +197,7 @@ export default function LandingPage() {
             style={{ color: 'rgba(0,255,255,0.6)',
               animation: 'ak-fade-label .4s ease both' }}
           >
-            {HERO_SLIDES[slide].sport}
+            {heroSlides[slide].sport}
           </span>
         </div>
 

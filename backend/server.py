@@ -447,7 +447,66 @@ async def get_admin_stats(_=Depends(verify_admin)):
         "pages": await db.cms_pages.count_documents({}),
         "media": await db.media_library.count_documents({}),
         "pilot_requests": await db.pilot_requests.count_documents({}),
+        "hero_slides": await db.hero_slides.count_documents({}),
     }
+
+# ─── HERO SLIDES ──────────────────────────────────────────────
+
+class HeroSlide(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    image_url: str
+    sport_label: str = ''
+    position: str = 'center center'
+    order: int = 0
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class HeroSlideCreate(BaseModel):
+    image_url: str
+    sport_label: str = ''
+    position: str = 'center center'
+    order: int = 0
+    active: bool = True
+
+class HeroSlideUpdate(BaseModel):
+    image_url: Optional[str] = None
+    sport_label: Optional[str] = None
+    position: Optional[str] = None
+    order: Optional[int] = None
+    active: Optional[bool] = None
+
+def _deser_slide(d):
+    if isinstance(d.get('created_at'), str):
+        d['created_at'] = datetime.fromisoformat(d['created_at'])
+    return d
+
+@api_router.get("/hero-slides")
+async def get_hero_slides():
+    docs = await db.hero_slides.find({"active": True}, {"_id": 0}).sort("order", 1).to_list(20)
+    return [_deser_slide(d) for d in docs]
+
+@api_router.get("/hero-slides/all")
+async def get_all_hero_slides(_=Depends(verify_admin)):
+    docs = await db.hero_slides.find({}, {"_id": 0}).sort("order", 1).to_list(20)
+    return [_deser_slide(d) for d in docs]
+
+@api_router.post("/hero-slides", response_model=HeroSlide)
+async def create_hero_slide(data: HeroSlideCreate, _=Depends(verify_admin)):
+    obj = HeroSlide(**data.model_dump())
+    doc = obj.model_dump(); doc['created_at'] = doc['created_at'].isoformat()
+    await db.hero_slides.insert_one(doc); return obj
+
+@api_router.put("/hero-slides/{slide_id}", response_model=HeroSlide)
+async def update_hero_slide(slide_id: str, data: HeroSlideUpdate, _=Depends(verify_admin)):
+    update = {k: v for k, v in data.model_dump().items() if v is not None}
+    result = await db.hero_slides.find_one_and_update(
+        {"id": slide_id}, {"$set": update}, {"_id": 0}, return_document=True)
+    if not result: raise HTTPException(404, "Not found")
+    return _deser_slide(result)
+
+@api_router.delete("/hero-slides/{slide_id}")
+async def delete_hero_slide(slide_id: str, _=Depends(verify_admin)):
+    await db.hero_slides.delete_one({"id": slide_id}); return {"ok": True}
 
 # ─── WEBHOOK: LEAD ALERT ──────────────────────────────────────
 

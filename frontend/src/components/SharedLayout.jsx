@@ -71,7 +71,7 @@ export function InnerNavbar() {
     { key: 'nav.competition',   href: '/workout-competition', highlight: false },
     { key: 'nav.amrap',         href: '/amrap-training',      highlight: false },
     { key: 'nav.crossfit',      href: '/crossfit-challenge',  highlight: false },
-    { key: 'nav.forGymsCoaches',href: '/for-gyms',            highlight: false },
+    { key: 'nav.business',      href: '/gym-challenge-pilot', highlight: false },
     { key: 'nav.blog',          href: '/blog',                highlight: false },
     { key: 'nav.getApp',        href: '/get-the-app',         highlight: false },
   ];
@@ -110,12 +110,12 @@ export function InnerNavbar() {
 
         <div className="flex items-center gap-3">
           <Link
-            to="/gym-challenge-pilot"
+            to="/get-the-app"
             data-testid="nav-start-challenge-btn"
             className="hidden sm:inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-4 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
             style={{ height: '36px' }}
           >
-            <Zap size={13} fill="black" /> {t('nav.startChallenge')}
+            <Zap size={13} fill="black" /> {t('nav.getApp')}
           </Link>
           <button onClick={() => setOpen(!open)} className="lg:hidden text-white p-1" data-testid="nav-mobile-toggle">
             {open ? <X size={22} /> : <Menu size={22} />}
@@ -183,9 +183,11 @@ export function InnerFooter() {
                   ['Arena System', '/arena-system'],
                   ['For Athletes', '/for-athletes'],
                   ['Competition', '/workout-competition'],
-                  ['For Gyms', '/for-gyms'],
+                  ['AMRAP', '/amrap-training'],
+                  ['CrossFit', '/crossfit-challenge'],
+                  ['Business', '/gym-challenge-pilot'],
                   ['Blog', '/blog'],
-                  ['Download App', '/get-the-app'],
+                  ['Get the App', '/get-the-app'],
                 ].map(([label, href]) => (
                   <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
                 ))}
@@ -198,10 +200,10 @@ export function InnerFooter() {
                 <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">Support Center</Link></li>
                 <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
               </ul>
-              <Link to="/gym-challenge-pilot"
+              <Link to="/get-the-app"
                 className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
                 style={{ height: '38px' }}>
-                <Zap size={13} fill="black" /> {t('cta.pilotCta')}
+                <Zap size={13} fill="black" /> {t('cta.getApp')}
               </Link>
             </div>
           </div>

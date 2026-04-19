@@ -112,11 +112,11 @@ export default function BlogPage() {
           <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-4">STOP READING. START COMPETING.</h2>
           <p className="font-inter text-sm text-white mb-8">Everything you read here applies directly in ArenaKore.</p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link to="/fitness-challenge-app" className="inline-flex items-center gap-3 font-inter font-black uppercase text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform" style={{ height: '48px' }}>
+            <Link to="/get-the-app" className="inline-flex items-center gap-3 font-inter font-black uppercase text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform" style={{ height: '48px' }}>
               Get the App <ArrowRight size={16} />
             </Link>
             <Link to="/gym-challenge-pilot" className="inline-flex items-center gap-3 font-inter font-bold uppercase text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all" style={{ height: '48px' }}>
-              Gym Pilot
+              Gym & Coaches Pilot
             </Link>
           </div>
         </div>

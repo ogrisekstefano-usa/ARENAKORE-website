@@ -5,7 +5,7 @@ import {
   LayoutDashboard, FileText, BookOpen, Image, Users,
   LogOut, Plus, Pencil, Trash2, Save, X, Eye,
   ChevronRight, AlertCircle, CheckCircle, Upload, Tag,
-  Zap, ArrowLeft
+  Zap, ArrowLeft, Layers
 } from 'lucide-react';
 import { LOGO, BLOG_POSTS } from '../data/seo-content';
 
@@ -78,11 +78,12 @@ function LoginScreen({ onLogin }) {
 
 /* ─── SIDEBAR ─── */
 const TABS = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'blog', label: 'Blog', icon: BookOpen },
-  { id: 'pages', label: 'Pages', icon: FileText },
-  { id: 'media', label: 'Media', icon: Image },
-  { id: 'pilots', label: 'Pilot Requests', icon: Users },
+  { id: 'dashboard', label: 'Dashboard',     icon: LayoutDashboard },
+  { id: 'hero',      label: 'Hero Slides',   icon: Layers },
+  { id: 'blog',      label: 'Blog',          icon: BookOpen },
+  { id: 'pages',     label: 'Pages',         icon: FileText },
+  { id: 'media',     label: 'Media',         icon: Image },
+  { id: 'pilots',    label: 'Pilot Requests',icon: Users },
 ];
 
 function Sidebar({ tab, setTab, onLogout }) {
@@ -508,22 +509,158 @@ function PilotRequests({ call }) {
           {requests.map(r => (
             <div key={r.id} className="p-5 rounded-[12px] grid grid-cols-2 md:grid-cols-4 gap-4" style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.15)' }}>
               <div>
-                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Palestra</div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Gym</div>
                 <div className="font-inter text-sm font-semibold text-white">{r.gym_name}</div>
                 <div className="font-inter text-xs text-white/60">{r.city}</div>
               </div>
               <div>
-                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Proprietario</div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Owner</div>
                 <div className="font-inter text-sm text-white">{r.owner_name}</div>
               </div>
               <div>
-                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Contatti</div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Contact</div>
                 <div className="font-inter text-xs text-ak-cyan">{r.email}</div>
                 {r.phone && <div className="font-inter text-xs text-white/60">{r.phone}</div>}
               </div>
               <div>
-                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Data</div>
-                <div className="font-inter text-xs text-white/60">{new Date(r.created_at).toLocaleDateString('it-IT')}</div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Date</div>
+                <div className="font-inter text-xs text-white/60">{new Date(r.created_at).toLocaleDateString('en-GB')}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── HERO SLIDES MANAGER ─── */
+function HeroSlidesManager({ call }) {
+  const [slides, setSlides] = useState([]);
+  const [form, setForm] = useState({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true });
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = useCallback(() => call('get', '/hero-slides/all').then(setSlides).catch(() => {}), [call]);
+  useEffect(() => { load(); }, [load]);
+
+  const save = async (e) => {
+    e.preventDefault(); setSaving(true); setMsg('');
+    try {
+      if (editing) { await call('put', `/hero-slides/${editing}`, form); }
+      else { await call('post', '/hero-slides', form); }
+      setMsg('Saved!'); load(); setEditing(null);
+      setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true });
+    } catch(err) { setMsg(err?.response?.data?.detail || 'Error'); }
+    finally { setSaving(false); }
+  };
+
+  const del = async (id) => {
+    if (!window.confirm('Delete this slide?')) return;
+    await call('delete', `/hero-slides/${id}`); load();
+  };
+
+  const startEdit = (s) => {
+    setEditing(s.id);
+    setForm({ image_url: s.image_url, sport_label: s.sport_label, position: s.position, order: s.order, active: s.active });
+  };
+
+  const POSITIONS = ['center center', 'center 20%', 'center 30%', 'center top', 'center bottom', 'top center'];
+  const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-3 py-2.5 rounded-[10px] outline-none focus:border-ak-cyan transition-colors";
+  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="font-anton text-2xl uppercase text-white">HERO SLIDES ({slides.length})</h2>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={save} className="p-6 rounded-[14px] mb-8" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-cyan mb-4">
+          {editing ? 'EDIT SLIDE' : 'ADD NEW SLIDE'}
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4 mb-4">
+          <div className="sm:col-span-2">
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Image URL *</label>
+            <input className={inp} style={inpStyle} required value={form.image_url}
+              onChange={e => setForm({...form, image_url: e.target.value})} placeholder="https://images.pexels.com/..." />
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Sport Label</label>
+            <input className={inp} style={inpStyle} value={form.sport_label}
+              onChange={e => setForm({...form, sport_label: e.target.value})} placeholder="CROSSFIT, RUNNING, BASKETBALL..." />
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Position</label>
+            <select className={inp} style={inpStyle} value={form.position} onChange={e => setForm({...form, position: e.target.value})}>
+              {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Order</label>
+            <input type="number" className={inp} style={inpStyle} value={form.order}
+              onChange={e => setForm({...form, order: parseInt(e.target.value)||0})} />
+          </div>
+          <div className="flex items-center gap-3 mt-4">
+            <input type="checkbox" id="slide-active" checked={form.active}
+              onChange={e => setForm({...form, active: e.target.checked})} className="w-4 h-4" />
+            <label htmlFor="slide-active" className="font-inter text-sm text-white">Active</label>
+          </div>
+        </div>
+        {/* Preview */}
+        {form.image_url && (
+          <div className="mb-4 rounded-[10px] overflow-hidden" style={{ height: '120px' }}>
+            <img src={form.image_url} alt="preview" className="w-full h-full object-cover"
+              style={{ objectPosition: form.position }} loading="lazy" />
+          </div>
+        )}
+        <div className="flex items-center gap-4">
+          <button type="submit" disabled={saving}
+            className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-6 rounded-[12px] bg-ak-gold text-black disabled:opacity-60"
+            style={{ height: '40px' }}>
+            <Save size={14} /> {saving ? 'Saving...' : editing ? 'Update' : 'Add Slide'}
+          </button>
+          {editing && (
+            <button type="button" onClick={() => { setEditing(null); setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true }); }}
+              className="font-inter text-xs text-white/50 hover:text-white transition-colors">Cancel</button>
+          )}
+          {msg && <span className={`font-inter text-xs ${msg === 'Saved!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
+        </div>
+      </form>
+
+      {/* Slides list */}
+      {slides.length === 0 ? (
+        <div className="text-center py-12 border border-dashed border-white/15 rounded-[14px]">
+          <Layers size={28} className="text-white/20 mx-auto mb-2" />
+          <p className="font-inter text-sm text-white/40">No slides yet. Add the first one above.<br /><span className="text-white/25 text-xs">Default slides are used when no slides are configured.</span></p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {slides.map(s => (
+            <div key={s.id} className="group rounded-[12px] overflow-hidden relative"
+              style={{ background: '#0a0a0a', border: `1px solid ${s.active ? 'rgba(0,255,255,0.2)' : 'rgba(255,255,255,0.05)'}` }}>
+              <div className="relative" style={{ height: '140px' }}>
+                <img src={s.image_url} alt={s.sport_label} className="w-full h-full object-cover"
+                  style={{ objectPosition: s.position }} loading="lazy" />
+                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute top-2 left-2 flex items-center gap-1">
+                  <span className="font-inter text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded"
+                    style={{ background: s.active ? 'rgba(0,255,255,0.8)' : 'rgba(255,255,255,0.2)', color: '#000' }}>
+                    #{s.order} {s.sport_label || 'SLIDE'}
+                  </span>
+                </div>
+                {!s.active && <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="font-inter text-xs text-white/60 uppercase tracking-wider">Inactive</span>
+                </div>}
+              </div>
+              <div className="p-3 flex items-center justify-between">
+                <p className="font-inter text-[10px] text-white/40 truncate max-w-[120px]">{s.image_url.split('/').pop().substring(0, 20)}...</p>
+                <div className="flex gap-1">
+                  <button onClick={() => startEdit(s)} className="p-1.5 text-white/40 hover:text-ak-cyan transition-colors"><Pencil size={13} /></button>
+                  <button onClick={() => del(s.id)} className="p-1.5 text-white/40 hover:text-red-400 transition-colors"><Trash2 size={13} /></button>
+                </div>
               </div>
             </div>
           ))}
@@ -551,6 +688,7 @@ export default function AdminPage() {
       <Sidebar tab={tab} setTab={setTab} onLogout={logout} />
       <main className="flex-1 p-8 overflow-auto">
         {tab === 'dashboard' && <Dashboard call={call} />}
+        {tab === 'hero'      && <HeroSlidesManager call={call} />}
         {tab === 'blog'      && <BlogManager call={call} />}
         {tab === 'pages'     && <PagesManager call={call} />}
         {tab === 'media'     && <MediaLibrary call={call} />}

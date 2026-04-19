@@ -7,11 +7,12 @@
     "amrap": "AMRAP",
     "forGyms": "For Gyms",
     "blog": "Blog",
-    "startChallenge": "Start a Challenge",
+    "startChallenge": "Get the App",
     "arenaSystem": "Arena System",
     "forAthletes": "For Athletes",
     "forGymsCoaches": "For Gyms & Coaches",
-    "getApp": "Get the App"
+    "getApp": "Get the App",
+    "business": "Business"
   },
   "footer": {
     "tagline": "Fitness competition platform for real training.",
@@ -345,6 +346,8 @@
     "forGyms": "For Gyms",
     "pilotCta": "Start Your Pilot",
     "startChallenge": "Start a Challenge",
-    "exploreSystem": "For Gyms"
+    "exploreSystem": "For Gyms",
+    "getApp": "Get the App",
+    "gymsPilot": "Gym & Coaches Pilot"
   }
 }
