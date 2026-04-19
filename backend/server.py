@@ -40,94 +40,134 @@ SENDER_EMAIL       = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 def _founder_html(req) -> str:
     phone = req.phone or "—"
     ts    = req.created_at.strftime('%d/%m/%Y %H:%M UTC')
-    return f"""
-<!DOCTYPE html><html><body style="margin:0;padding:0;background:#000;font-family:Inter,Arial,sans-serif;">
+    rows  = ''.join(
+        f'<tr style="border-bottom:1px solid #1a1a1a;">'
+        f'<td style="padding:14px 18px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:1px;width:35%;background:#050505;">{k}</td>'
+        f'<td style="padding:14px 18px;font-size:14px;font-weight:600;color:#fff;">{v}</td></tr>'
+        for k, v in [
+            ('Gym Name', req.gym_name), ('City', req.city),
+            ('Owner', req.owner_name), ('Email', req.email),
+            ('Phone', phone), ('Submitted', ts)
+        ]
+    )
+    return f"""<!DOCTYPE html><html><body style="margin:0;padding:0;background:#000;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#000;padding:40px 0;">
-  <tr><td align="center">
-    <table width="600" cellpadding="0" cellspacing="0" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;overflow:hidden;">
-      <!-- Header -->
-      <tr><td style="background:#FFD700;padding:24px 32px;">
-        <p style="margin:0;font-size:20px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:2px;">
-          &#128293; New Pilot Request
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;overflow:hidden;">
+
+  <tr><td style="background:#FFD700;padding:20px 32px;">
+    <p style="margin:0;font-size:11px;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:2px;">ArenaKore — Founder Alert</p>
+    <p style="margin:6px 0 0;font-size:22px;font-weight:900;color:#000;">🔥 New Gym Ready for ArenaKore</p>
+  </td></tr>
+
+  <tr><td style="padding:28px 32px 8px;">
+    <p style="margin:0;font-size:14px;color:#a1a1aa;">New pilot request received:</p>
+  </td></tr>
+
+  <tr><td style="padding:0 32px 24px;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #1a1a1a;border-radius:12px;overflow:hidden;">
+      {rows}
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:0 32px 28px;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border-left:4px solid #FF2D2D;border-radius:8px;padding:20px;">
+      <tr><td style="padding:18px 20px;">
+        <p style="margin:0;font-size:15px;font-weight:900;color:#FF2D2D;text-transform:uppercase;letter-spacing:1px;">⚡ ACTION REQUIRED</p>
+        <p style="margin:8px 0 4px;font-size:14px;color:#fff;font-weight:700;">Reply within 5 minutes.</p>
+        <p style="margin:0;font-size:12px;color:#a1a1aa;">This is a hot lead. Speed of first response is the #1 conversion factor.</p>
+        <p style="margin:14px 0 0;">
+          <a href="mailto:{req.email}" style="display:inline-block;background:#FFD700;color:#000;font-size:12px;font-weight:900;text-transform:uppercase;padding:10px 20px;border-radius:8px;text-decoration:none;letter-spacing:1px;">
+            Reply to {req.owner_name} →
+          </a>
         </p>
-      </td></tr>
-      <!-- Body -->
-      <tr><td style="padding:32px;">
-        <p style="margin:0 0 24px;font-size:14px;color:#a1a1aa;">New ArenaKore pilot request just received:</p>
-        <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #1a1a1a;border-radius:12px;overflow:hidden;">
-          {''.join(f'<tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:14px 18px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:1px;width:35%;background:#050505;">{k}</td><td style="padding:14px 18px;font-size:14px;font-weight:600;color:#fff;">{v}</td></tr>'
-          for k,v in [('Gym Name', req.gym_name), ('City', req.city), ('Owner', req.owner_name), ('Email', req.email), ('Phone', phone), ('Submitted', ts)])}
-        </table>
-        <div style="margin-top:28px;padding:20px;background:#111;border-left:4px solid #FFD700;border-radius:8px;">
-          <p style="margin:0;font-size:13px;font-weight:700;color:#FFD700;text-transform:uppercase;letter-spacing:1px;">
-            &#9889; Reply within 5 minutes.
-          </p>
-          <p style="margin:8px 0 0;font-size:12px;color:#a1a1aa;">High response speed increases conversion by 40%+.</p>
-        </div>
-        <p style="margin:24px 0 0;font-size:12px;color:#555;">
-          Reply to: <a href="mailto:{req.email}" style="color:#00FFFF;">{req.email}</a>
-        </p>
-      </td></tr>
-      <tr><td style="padding:20px 32px;border-top:1px solid #1a1a1a;">
-        <p style="margin:0;font-size:11px;color:#333;">ArenaKore CMS — Automated Notification</p>
       </td></tr>
     </table>
   </td></tr>
+
+  <tr><td style="padding:16px 32px;border-top:1px solid #1a1a1a;">
+    <p style="margin:0;font-size:11px;color:#333;">ArenaKore CMS · Automated Lead Alert</p>
+  </td></tr>
+
+</table>
+</td></tr>
 </table>
 </body></html>"""
+
 
 def _owner_html(req) -> str:
-    return f"""
-<!DOCTYPE html><html><body style="margin:0;padding:0;background:#000;font-family:Inter,Arial,sans-serif;">
+    steps = ''.join(
+        f'<tr><td style="padding:12px 0;border-bottom:1px solid #1a1a1a;vertical-align:top;width:36px;">'
+        f'<span style="font-size:13px;font-weight:900;color:{c};font-family:Arial,sans-serif;">{n}</span></td>'
+        f'<td style="padding:12px 0 12px 14px;border-bottom:1px solid #1a1a1a;font-size:13px;color:#e0e0e0;line-height:1.5;">{t}</td></tr>'
+        for n, c, t in [
+            ('01', '#00FFFF', 'We select 20–30 active members for your pilot'),
+            ('02', '#FFD700', 'We launch your first challenge — within 48 hours'),
+            ('03', '#00FFFF', 'You see engagement, attendance and performance data'),
+            ('04', '#FFD700', "You don't need to prepare anything. Just stay ready."),
+        ]
+    )
+    return f"""<!DOCTYPE html><html><body style="margin:0;padding:0;background:#000;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#000;padding:40px 0;">
-  <tr><td align="center">
-    <table width="600" cellpadding="0" cellspacing="0" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;overflow:hidden;">
-      <!-- Header -->
-      <tr><td style="background:#000;padding:28px 32px 0;text-align:center;">
-        <p style="margin:0;font-size:28px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:3px;font-family:Arial,sans-serif;">
-          ARENA<span style="color:#00FFFF;">KORE</span>
-        </p>
-      </td></tr>
-      <!-- Body -->
-      <tr><td style="padding:32px;">
-        <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#fff;">Hi {req.owner_name},</p>
-        <p style="margin:0 0 24px;font-size:14px;color:#a1a1aa;line-height:1.6;">
-          We received your request to start a <strong style="color:#fff;">14-day ArenaKore pilot</strong>
-          for <strong style="color:#FFD700;">{req.gym_name}</strong>.<br>
-          We'll contact you shortly to activate your gym.
-        </p>
-        <!-- Steps -->
-        <p style="margin:0 0 16px;font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:1px;">What happens next</p>
-        <table width="100%" cellpadding="0" cellspacing="0">
-          {''.join(f'<tr><td style="padding:10px 0;border-bottom:1px solid #1a1a1a;vertical-align:top;width:32px;"><span style="font-size:18px;font-weight:900;color:{c};">{n}</span></td><td style="padding:10px 0 10px 12px;border-bottom:1px solid #1a1a1a;font-size:13px;color:#e0e0e0;">{t}</td></tr>'
-          for n,c,t in [('01','#00FFFF','We select 20–30 active members for the pilot'),('02','#FFD700','We launch your first challenge within 48 hours'),('03','#00FFFF','We track engagement, attendance and performance'),('04','#FFD700','You see the impact. Then you decide.')])}
-        </table>
-        <!-- CTA -->
-        <div style="margin-top:28px;padding:20px;background:#111;border-radius:12px;text-align:center;">
-          <p style="margin:0 0 4px;font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;">Your pilot request</p>
-          <p style="margin:0;font-size:20px;font-weight:900;color:#FFD700;text-transform:uppercase;">Confirmed ✓</p>
-        </div>
-        <p style="margin:28px 0 0;font-size:14px;color:#a1a1aa;line-height:1.6;">
-          Talk soon,<br>
-          <strong style="color:#fff;">ArenaKore Team</strong>
-        </p>
-      </td></tr>
-      <tr><td style="padding:20px 32px;border-top:1px solid #1a1a1a;">
-        <p style="margin:0;font-size:11px;color:#333;">
-          Questions? <a href="mailto:support@arenakore.com" style="color:#00FFFF;">support@arenakore.com</a>
-        </p>
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#0a0a0a;border:1px solid #1a1a1a;border-radius:16px;overflow:hidden;">
+
+  <tr><td style="padding:32px 32px 0;text-align:center;">
+    <p style="margin:0;font-size:30px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:3px;">ARENA<span style="color:#00FFFF;">KORE</span></p>
+  </td></tr>
+
+  <tr><td style="padding:28px 32px 8px;">
+    <p style="margin:0;font-size:11px;font-weight:700;color:#00FFFF;text-transform:uppercase;letter-spacing:2px;">Pilot Request</p>
+    <p style="margin:8px 0 0;font-size:24px;font-weight:900;color:#fff;line-height:1.2;">You're in.</p>
+  </td></tr>
+
+  <tr><td style="padding:0 32px 24px;">
+    <p style="margin:0;font-size:14px;color:#a1a1aa;line-height:1.7;">
+      Hi {req.owner_name},<br><br>
+      Your ArenaKore pilot request for <strong style="color:#FFD700;">{req.gym_name}</strong> is confirmed.<br>
+      We'll contact you shortly to activate your gym.
+    </p>
+  </td></tr>
+
+  <tr><td style="padding:0 32px 8px;">
+    <p style="margin:0;font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:1px;">What will happen</p>
+  </td></tr>
+
+  <tr><td style="padding:0 32px 24px;">
+    <table width="100%" cellpadding="0" cellspacing="0">{steps}</table>
+  </td></tr>
+
+  <tr><td style="padding:0 32px 28px;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border-radius:12px;">
+      <tr><td style="padding:20px;text-align:center;">
+        <p style="margin:0 0 4px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;">Status</p>
+        <p style="margin:0;font-size:22px;font-weight:900;color:#FFD700;text-transform:uppercase;">Confirmed ✓</p>
+        <p style="margin:10px 0 0;font-size:12px;color:#a1a1aa;">You don't need to prepare anything.<br>Stay ready.</p>
       </td></tr>
     </table>
   </td></tr>
+
+  <tr><td style="padding:0 32px 28px;">
+    <p style="margin:0;font-size:14px;color:#a1a1aa;line-height:1.7;">
+      ArenaKore Team
+    </p>
+  </td></tr>
+
+  <tr><td style="padding:16px 32px;border-top:1px solid #1a1a1a;">
+    <p style="margin:0;font-size:11px;color:#333;">
+      Questions? <a href="mailto:support@arenakore.com" style="color:#00FFFF;">support@arenakore.com</a>
+    </p>
+  </td></tr>
+
+</table>
+</td></tr>
 </table>
 </body></html>"""
 
-async def _send_pilot_emails(req):
-    """Fire-and-forget: send both emails, log errors, never raise."""
-    if not resend.api_key:
-        logger.warning("RESEND_API_KEY not set — skipping emails")
-        return
-    async def _send(to: str, subject: str, html: str):
+
+async def _send_with_retry(to: str, subject: str, html: str, max_retries: int = 1) -> bool:
+    """Send email with one retry on failure. Returns True if delivered."""
+    for attempt in range(max_retries + 1):
         try:
             result = await asyncio.to_thread(resend.Emails.send, {
                 "from": f"ArenaKore <{SENDER_EMAIL}>",
@@ -135,14 +175,53 @@ async def _send_pilot_emails(req):
                 "subject": subject,
                 "html": html,
             })
-            logger.info(f"Email sent → {to} | id: {result.get('id', '?')}")
+            logger.info(f"✓ Email → {to} | id:{result.get('id','?')} | attempt:{attempt+1}")
+            return True
         except Exception as e:
-            logger.error(f"Email failed → {to}: {e}")
+            if attempt < max_retries:
+                logger.warning(f"⟳ Email retry ({attempt+1}/{max_retries}) → {to}: {e}")
+                await asyncio.sleep(1)
+            else:
+                logger.error(f"✗ Email FAILED (all retries exhausted) → {to}: {e}")
+    return False
 
-    await asyncio.gather(
-        _send(FOUNDER_EMAIL, "🔥 New ArenaKore Pilot Request", _founder_html(req)),
-        _send(req.email,     "ArenaKore — Pilot Request Received", _owner_html(req)),
+
+async def _send_pilot_emails(req):
+    """Fire-and-forget: both emails in parallel, retry once, never raise."""
+    if not resend.api_key:
+        logger.warning("RESEND_API_KEY not set — skipping emails")
+        return
+    results = await asyncio.gather(
+        _send_with_retry(
+            FOUNDER_EMAIL,
+            "🔥 New Gym Ready for ArenaKore",
+            _founder_html(req),
+        ),
+        _send_with_retry(
+            req.email,
+            "You're in. ArenaKore pilot request received.",
+            _owner_html(req),
+        ),
+        return_exceptions=True,
     )
+    logger.info(f"Email dispatch complete — founder:{results[0]} owner:{results[1]}")
+
+
+async def _trigger_lead_webhook(req):
+    """Internal webhook trigger — logs and forwards to /api/internal/lead-alert for CRM/Slack/WhatsApp."""
+    try:
+        payload = {
+            "gym_name":   req.gym_name,
+            "city":       req.city,
+            "owner_name": req.owner_name,
+            "email":      req.email,
+            "phone":      req.phone or "",
+            "source":     "pilot-form",
+        }
+        logger.info(f"[WEBHOOK] Lead alert fired: {payload['gym_name']} / {payload['email']}")
+        # Future: forward payload to Slack / WhatsApp / CRM here
+    except Exception as e:
+        logger.error(f"[WEBHOOK] Lead alert failed: {e}")
 
 def _make_token(password: str) -> str:
     return hashlib.sha256(f"{ADMIN_SECRET}:{password}".encode()).hexdigest()
@@ -214,8 +293,9 @@ async def create_pilot_request(data: PilotRequestCreate):
     doc = obj.model_dump(); doc['created_at'] = doc['created_at'].isoformat()
     await db.pilot_requests.insert_one(doc)
     logger.info(f"Pilot request: {obj.gym_name} — {obj.email}")
-    # Fire-and-forget: non-blocking email dispatch
+    # Fire-and-forget: emails + webhook, non-blocking
     asyncio.create_task(_send_pilot_emails(obj))
+    asyncio.create_task(_trigger_lead_webhook(obj))
     return obj
 
 @api_router.get("/pilot-requests", response_model=List[PilotRequest])
@@ -367,6 +447,40 @@ async def get_admin_stats(_=Depends(verify_admin)):
         "pages": await db.cms_pages.count_documents({}),
         "media": await db.media_library.count_documents({}),
         "pilot_requests": await db.pilot_requests.count_documents({}),
+    }
+
+# ─── WEBHOOK: LEAD ALERT ──────────────────────────────────────
+
+class LeadAlertPayload(BaseModel):
+    gym_name: str
+    city: str
+    owner_name: str
+    email: str
+    phone: Optional[str] = None
+    source: Optional[str] = "website"
+
+@api_router.post("/internal/lead-alert")
+async def lead_alert(payload: LeadAlertPayload):
+    """
+    Webhook endpoint for external integrations (Slack, WhatsApp, CRM).
+    Receives a lead payload and logs it. Extend to forward to any channel.
+    """
+    logger.info(
+        f"[WEBHOOK] Lead alert — {payload.gym_name} | {payload.city} "
+        f"| {payload.owner_name} | {payload.email} | source:{payload.source}"
+    )
+    # ── Future integrations ──────────────────────────────────────
+    # Slack:    POST payload to SLACK_WEBHOOK_URL
+    # WhatsApp: Twilio API with payload data
+    # CRM:      POST to HubSpot / Pipedrive contact endpoint
+    # ─────────────────────────────────────────────────────────────
+    return {
+        "received": True,
+        "gym": payload.gym_name,
+        "city": payload.city,
+        "owner": payload.owner_name,
+        "integrations_ready": ["slack", "whatsapp", "crm"],
+        "status": "logged",
     }
 
 # ─── APP SETUP ────────────────────────────────────────────────
