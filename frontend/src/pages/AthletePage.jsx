@@ -34,6 +34,19 @@ export default function AthletePage() {
         style={{ backgroundImage: `url(${HERO_BG})`, backgroundSize: 'cover', backgroundPosition: 'center 15%' }}
       >
         <div className="absolute inset-0" style={{ background: 'linear-gradient(170deg,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.95) 100%)' }} />
+        {/* Multi-discipline badge strip */}
+        <div className="absolute top-20 left-0 right-0 z-10">
+          <div className="max-w-4xl mx-auto px-6 sm:px-10">
+            <div className="flex flex-wrap gap-2">
+              {['FITNESS', 'CROSSFIT', 'RUNNING', 'BASKETBALL', 'SWIMMING', 'ANY SPORT'].map((s, i) => (
+                <span key={i} className="font-inter text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded"
+                  style={{ background: i < 2 ? 'rgba(0,255,255,0.15)' : 'rgba(255,255,255,0.05)', color: i < 2 ? '#00FFFF' : 'rgba(255,255,255,0.35)', border: `1px solid ${i < 2 ? 'rgba(0,255,255,0.3)' : 'rgba(255,255,255,0.1)'}` }}>
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
         <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-10 pb-20 md:pb-28 w-full">
           <div className="ak-hero-badge flex items-center gap-3 mb-8">
             <span className="ak-blink w-2.5 h-2.5 rounded-full" style={{ background: '#FF2D2D', boxShadow: '0 0 10px #FF2D2D', display: 'inline-block' }} />
@@ -204,6 +217,34 @@ export default function AthletePage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ MULTI-DISCIPLINE CLAIM ══ */}
+      <section className="py-16 px-6 sm:px-10 bg-black border-t border-white/8">
+        <div className="max-w-5xl mx-auto ak-reveal">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
+            <div className="flex-shrink-0">
+              <div className="font-inter text-xs font-bold tracking-[0.3em] uppercase mb-2 text-ak-cyan">THE ARENA IS EVERYWHERE</div>
+              <h3 className="font-anton text-2xl md:text-3xl uppercase text-white leading-tight">
+                You compete in<br /><span style={{ color: '#00FFFF' }}>your arena.</span><br />ArenaKore tracks it.
+              </h3>
+            </div>
+            <div className="w-px h-16 bg-white/10 hidden md:block flex-shrink-0" />
+            <div>
+              <p className="font-inter text-sm text-white leading-relaxed mb-4">
+                ArenaKore isn't just for the gym. It's designed for any performance-based activity. Whether you're lifting, running, playing basketball or surfing — your KORE identity follows you across every discipline.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {['Fitness', 'Running', 'Basketball', 'Swimming', 'Golf', 'Team Sports', 'Any Sport'].map((s, i) => (
+                  <span key={i} className="font-inter text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                    style={{ border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.5)' }}>
+                    {s}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>

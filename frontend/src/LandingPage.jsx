@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Zap, ChevronDown, Shield, Trophy, Users,
-  Activity, Scan, Clock, ArrowRight, CheckCircle
+  Zap, ChevronDown, Shield, Trophy, Users, Dumbbell,
+  Activity, Scan, ArrowRight, CheckCircle, Target,
+  Waves, PersonStanding, Circle
 } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from './components/SharedLayout';
 import { IMGS } from './data/seo-content';
@@ -11,46 +12,75 @@ import { useTranslation } from 'react-i18next';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
-const USE_CASES = [
+const IMG_RUNNER     = 'https://images.unsplash.com/photo-1589104666851-dffe3a15aace?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
+const IMG_BASKETBALL = 'https://images.pexels.com/photos/30050102/pexels-photo-30050102.jpeg?auto=compress&cs=tinysrgb&w=800';
+const IMG_SWIMMER    = 'https://images.unsplash.com/photo-1682353242312-2e1f8c5dfd9a?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
+const IMG_GOLF       = 'https://images.unsplash.com/photo-1609408960307-ed11e7fb151f?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
+
+const DISCIPLINES = [
   {
-    title: 'Fitness Challenge App',
-    desc: 'Rep validation. Live rankings. Your score, certified.',
+    title: 'Fitness & CrossFit',
+    sub: 'PRIMARY USE CASE',
+    desc: 'Daily challenges, NEXUS rep validation, box vs box competition.',
     href: '/fitness-challenge-app',
-    icon: <Zap size={20} />,
-    color: '#00FFFF',
-    img: IMGS.barbell,
+    color: '#00FFFF', img: IMGS.barbell, primary: true,
   },
   {
-    title: 'CrossFit Challenge',
-    desc: 'Box vs box. WOD competition. NEXUS validates every rep.',
-    href: '/crossfit-challenge',
-    icon: <Shield size={20} />,
-    color: '#FFD700',
-    img: IMGS.crossfit,
-  },
-  {
-    title: 'Workout Competition',
-    desc: 'K-Rating. Global leaderboards. 1v1 direct challenges.',
+    title: 'Running',
+    sub: 'ANY DISTANCE',
+    desc: 'Time, pace, splits. Compete against runners worldwide.',
     href: '/workout-competition',
-    icon: <Trophy size={20} />,
-    color: '#00FFFF',
-    img: IMGS.competition,
+    color: '#FFD700', img: IMG_RUNNER,
   },
   {
-    title: 'AMRAP Training',
-    desc: 'Validated reps only. Your real AMRAP score, finally.',
-    href: '/amrap-training',
-    icon: <Activity size={20} />,
-    color: '#FFD700',
-    img: IMGS.pullup,
+    title: 'Basketball',
+    sub: 'REPS & DRILLS',
+    desc: 'Shots, dribbling, 1v1. Your court becomes a leaderboard.',
+    href: '/workout-competition',
+    color: '#FF2D2D', img: IMG_BASKETBALL,
+  },
+  {
+    title: 'Swimming',
+    sub: 'SPEED & SPLITS',
+    desc: 'Lap times, stroke analysis, competitive performance data.',
+    href: '/workout-competition',
+    color: '#00FFFF', img: IMG_SWIMMER,
+  },
+  {
+    title: 'Golf',
+    sub: 'STROKE PLAY',
+    desc: 'Scorecard competition. Handicap-based ranking. Permanent results.',
+    href: '/workout-competition',
+    color: '#FFD700', bg: 'linear-gradient(135deg,#0a1a00 0%,#000 100%)',
+  },
+  {
+    title: 'Surf & Kitesurf',
+    sub: 'WAVE PERFORMANCE',
+    desc: 'Session scoring, outdoor competition. The ocean is your arena.',
+    href: '/workout-competition',
+    color: '#00FFFF', bg: 'linear-gradient(135deg,#001a2a 0%,#000 100%)',
+  },
+  {
+    title: 'Team Sports',
+    sub: 'COLLECTIVE RANKING',
+    desc: 'Group challenges, team K-Flux. Compete as a unit.',
+    href: '/gym-challenge-pilot',
+    color: '#FFD700', img: IMGS.competition,
+  },
+  {
+    title: 'Personal Challenges',
+    sub: 'ANY ACTIVITY',
+    desc: 'Set your own standard. Any movement. Any goal. Your rules.',
+    href: '/for-athletes',
+    color: '#FF2D2D', img: IMGS.pullup,
   },
 ];
 
 const HOW_STEPS = [
-  { num: '01', title: 'Join a challenge', desc: 'Pick a discipline, set your target. Challenge open or 1v1.', color: '#00FFFF' },
-  { num: '02', title: 'Track your performance', desc: 'NEXUS validates every rep in real-time. Bad form doesn\'t count.', color: '#00FFFF' },
-  { num: '03', title: 'Climb the ranking', desc: 'K-Rating updates after every session. Public. Permanent.', color: '#FFD700' },
-  { num: '04', title: 'Compete daily', desc: 'New challenges every day. The competition never ends.', color: '#FFD700' },
+  { num: '01', title: 'Join a challenge', desc: 'Pick any discipline, set your target. Open challenge or 1v1.', color: '#00FFFF' },
+  { num: '02', title: 'Track your performance', desc: 'NEXUS validates every rep. Bad form doesn\'t count. Anywhere.', color: '#00FFFF' },
+  { num: '03', title: 'Climb the ranking', desc: 'K-Rating updates after every performance. Public. Permanent.', color: '#FFD700' },
+  { num: '04', title: 'Compete daily', desc: 'New challenges every day across every discipline.', color: '#FFD700' },
 ];
 
 export default function LandingPage() {
@@ -58,8 +88,8 @@ export default function LandingPage() {
   const { t } = useTranslation();
 
   useSEO({
-    title: 'ArenaKore — The Fitness Competition Platform',
-    description: 'Turn every workout into a challenge. Daily challenges, live rankings, validated performance. The competition never ends.',
+    title: 'ArenaKore — The Multi-Sport Competition Platform',
+    description: 'Turn every performance into a challenge. Any sport, any discipline. Daily challenges, live rankings, validated performance. The competition never ends.',
   });
 
   useEffect(() => {
@@ -145,6 +175,37 @@ export default function LandingPage() {
                 <div className="font-inter text-[10px] font-semibold uppercase tracking-widest text-white">{s.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ POSITIONING BLOCK ══ */}
+      <section data-testid="positioning-section" className="py-20 md:py-24 px-6 sm:px-10 border-b border-white/8" style={{ background: '#000' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center ak-reveal">
+            <div>
+              <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">THE PLATFORM</div>
+              <h2 className="font-anton text-4xl md:text-6xl uppercase leading-none text-white">
+                ONE SYSTEM.<br /><span style={{ color: '#00FFFF' }}>ANY DISCIPLINE.</span>
+              </h2>
+            </div>
+            <div>
+              <p className="font-inter text-base text-white leading-relaxed mb-8">
+                ArenaKore is a competition platform designed for any performance-based activity — from fitness and CrossFit to basketball, running, swimming and beyond.
+              </p>
+              <p className="font-inter text-sm text-white mb-8 leading-relaxed" style={{ borderLeft: '3px solid #FFD700', paddingLeft: '1rem' }}>
+                <strong className="text-ak-gold">Today:</strong> Fitness & CrossFit.<br />
+                <strong className="text-white">Tomorrow:</strong> Every sport on the planet.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {['Fitness', 'CrossFit', 'Running', 'Basketball', 'Swimming', 'Golf', 'Surf', 'Team Sports'].map((s, i) => (
+                  <span key={i} className="font-inter text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border"
+                    style={{ borderColor: i < 2 ? 'rgba(0,255,255,0.4)' : 'rgba(255,255,255,0.15)', color: i < 2 ? '#00FFFF' : 'rgba(255,255,255,0.6)' }}>
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -270,39 +331,54 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ USE CASES ══ */}
-      <section data-testid="use-cases-section" className="py-24 px-6 sm:px-10" style={{ background: '#050505' }}>
+      {/* ══ DISCIPLINES GRID ══ */}
+      <section data-testid="disciplines-section" className="py-24 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14 ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">THE PLATFORM</div>
-            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">BUILT FOR EVERY ARENA.</h2>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">EVERY ARENA</div>
+            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">BUILT FOR EVERY DISCIPLINE.</h2>
+            <p className="font-inter text-sm text-white mt-4 max-w-xl mx-auto">One ranking system. One identity. Any sport.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {USE_CASES.map((c, i) => (
-              <Link
-                key={i}
-                to={c.href}
-                data-testid={`use-case-card-${i}`}
-                className="group ak-reveal rounded-[14px] overflow-hidden border border-white/10 hover:border-white/30 transition-all flex flex-col"
-                style={{ background: '#0a0a0a', transitionDelay: `${i * 0.08}s` }}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {DISCIPLINES.map((d, i) => (
+              <Link key={i} to={d.href} data-testid={`discipline-card-${i}`}
+                className="group ak-reveal rounded-[14px] overflow-hidden border border-white/10 hover:border-white/25 transition-all flex flex-col"
+                style={{ background: '#0a0a0a', transitionDelay: `${i * 0.06}s`, minHeight: '220px' }}
               >
-                <div className="h-44 overflow-hidden">
-                  <img src={c.img} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="h-full w-full" style={{ marginTop: '-100%', background: 'rgba(0,0,0,0.4)' }} />
-                </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 mb-3" style={{ color: c.color }}>
-                    {c.icon}
-                    <div className="w-6 h-px" style={{ background: c.color }} />
+                {/* Image or gradient bg */}
+                <div className="relative overflow-hidden" style={{ height: '130px' }}>
+                  {d.img ? (
+                    <img src={d.img} alt={d.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  ) : (
+                    <div className="w-full h-full" style={{ background: d.bg }} />
+                  )}
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.7) 100%)' }} />
+                  {d.primary && (
+                    <div className="absolute top-3 left-3 font-inter text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded" style={{ background: '#00FFFF', color: '#000' }}>
+                      ★ Primary
+                    </div>
+                  )}
+                  <div className="absolute bottom-3 left-3">
+                    <div className="font-inter text-[9px] font-bold uppercase tracking-widest" style={{ color: d.color }}>{d.sub}</div>
                   </div>
-                  <h3 className="font-anton text-lg uppercase text-white mb-2 group-hover:text-ak-cyan transition-colors">{c.title}</h3>
-                  <p className="font-inter text-xs text-white leading-relaxed flex-1">{c.desc}</p>
-                  <div className="flex items-center gap-2 mt-4 font-inter text-xs font-bold" style={{ color: c.color }}>
-                    Learn more <ArrowRight size={12} />
+                </div>
+                {/* Content */}
+                <div className="p-4 flex flex-col flex-1">
+                  <h3 className="font-anton text-base uppercase text-white mb-1 group-hover:text-ak-cyan transition-colors leading-tight">{d.title}</h3>
+                  <p className="font-inter text-xs text-white leading-relaxed flex-1">{d.desc}</p>
+                  <div className="flex items-center gap-1 mt-3 font-inter text-[10px] font-bold" style={{ color: d.color }}>
+                    Explore <ArrowRight size={10} />
                   </div>
                 </div>
               </Link>
             ))}
+          </div>
+          {/* Global positioning statement */}
+          <div className="mt-12 ak-reveal p-6 rounded-[14px] text-center" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.15)' }}>
+            <p className="font-inter text-sm text-white leading-relaxed">
+              <span style={{ color: '#00FFFF' }} className="font-bold">ArenaKore</span> is a universal competition system for any performance-based activity.
+              {' '}<Link to="/fitness-challenge-app" className="underline" style={{ color: '#FFD700' }}>Start with fitness</Link> — expand to any discipline.
+            </p>
           </div>
         </div>
       </section>
