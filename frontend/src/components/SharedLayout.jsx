@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronRight, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { LOGO } from '../data/seo-content';
 
 export function useSEO({ title, description }) {
@@ -12,26 +13,65 @@ export function useSEO({ title, description }) {
   }, [title, description]);
 }
 
-const NAV = [
-  { label: 'Home',        href: '/' },
-  { label: 'Fitness App', href: '/fitness-challenge-app' },
-  { label: 'CrossFit',    href: '/crossfit-challenge' },
-  { label: 'Competition', href: '/workout-competition' },
-  { label: 'AMRAP',       href: '/amrap-training' },
-  { label: 'For Gyms',   href: '/for-gyms' },
-  { label: 'Blog',        href: '/blog' },
+/* ─── Language Switcher ─── */
+const LANGS = [
+  { code: 'en', label: 'EN' },
+  { code: 'it', label: 'IT' },
+  { code: 'es', label: 'ES' },
 ];
+
+function LangSwitcher() {
+  const { i18n } = useTranslation();
+  const current = i18n.language?.slice(0, 2) || 'en';
+
+  const change = (code) => {
+    i18n.changeLanguage(code);
+    localStorage.setItem('ak_lang', code);
+  };
+
+  return (
+    <div className="flex items-center gap-0.5" data-testid="lang-switcher">
+      {LANGS.map((l, i) => (
+        <React.Fragment key={l.code}>
+          <button
+            onClick={() => change(l.code)}
+            data-testid={`lang-btn-${l.code}`}
+            className={`font-inter text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded transition-colors ${
+              current === l.code
+                ? 'text-ak-cyan'
+                : 'text-white/40 hover:text-white'
+            }`}
+          >
+            {l.label}
+          </button>
+          {i < LANGS.length - 1 && <span className="text-white/20 text-xs">|</span>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
 
 export function InnerNavbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const loc = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', fn);
     return () => window.removeEventListener('scroll', fn);
   }, []);
+
+  const NAV = [
+    { key: 'nav.home',        href: '/' },
+    { key: 'nav.fitnessApp',  href: '/fitness-challenge-app' },
+    { key: 'nav.crossfit',    href: '/crossfit-challenge' },
+    { key: 'nav.competition', href: '/workout-competition' },
+    { key: 'nav.amrap',       href: '/amrap-training' },
+    { key: 'nav.forGyms',     href: '/for-gyms' },
+    { key: 'nav.blog',        href: '/blog' },
+  ];
 
   const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
 
@@ -43,7 +83,6 @@ export function InnerNavbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
-        {/* Logo */}
         <Link to="/" data-testid="nav-logo" className="flex-shrink-0">
           <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain" loading="lazy" />
         </Link>
@@ -56,20 +95,22 @@ export function InnerNavbar() {
                 active(l.href) ? 'text-ak-cyan' : 'text-white/60 hover:text-white'
               }`}
             >
-              {l.label}
+              {t(l.key)}
             </Link>
           ))}
         </div>
 
-        {/* Primary CTA */}
         <div className="flex items-center gap-3">
+          <div className="hidden md:flex">
+            <LangSwitcher />
+          </div>
           <Link
             to="/gym-challenge-pilot"
             data-testid="nav-start-challenge-btn"
             className="hidden sm:inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-4 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
             style={{ height: '36px' }}
           >
-            <Zap size={13} fill="black" /> Start a Challenge
+            <Zap size={13} fill="black" /> {t('nav.startChallenge')}
           </Link>
           <button onClick={() => setOpen(!open)} className="lg:hidden text-white p-1" data-testid="nav-mobile-toggle">
             {open ? <X size={22} /> : <Menu size={22} />}
@@ -86,14 +127,17 @@ export function InnerNavbar() {
                 active(l.href) ? 'text-ak-cyan' : 'text-white'
               }`}
             >
-              {l.label} <ChevronRight size={14} className="text-white/30" />
+              {t(l.key)} <ChevronRight size={14} className="text-white/30" />
             </Link>
           ))}
-          <Link to="/gym-challenge-pilot" onClick={() => setOpen(false)}
-            className="mt-4 flex items-center justify-center gap-2 font-inter font-black text-sm uppercase tracking-wider rounded-[14px] bg-ak-gold text-black"
-            style={{ height: '48px' }}>
-            <Zap size={16} fill="black" /> Start a Challenge
-          </Link>
+          <div className="pt-3 flex items-center justify-between">
+            <LangSwitcher />
+            <Link to="/gym-challenge-pilot" onClick={() => setOpen(false)}
+              className="inline-flex items-center gap-2 font-inter font-black text-sm uppercase tracking-wider rounded-[14px] bg-ak-gold text-black px-5"
+              style={{ height: '44px' }}>
+              <Zap size={15} fill="black" /> {t('nav.startChallenge')}
+            </Link>
+          </div>
         </div>
       )}
     </nav>
@@ -101,27 +145,21 @@ export function InnerNavbar() {
 }
 
 export function InnerFooter() {
+  const { t } = useTranslation();
   return (
     <footer data-testid="inner-footer" className="bg-black border-t border-white/8">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-14 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
-
-          {/* Col 1: Brand */}
           <div>
             <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain mb-4" loading="lazy" />
-            <p className="font-inter text-xs text-white leading-relaxed max-w-xs">
-              Fitness competition platform for real training.<br />
-              The competition never ends.
-            </p>
+            <p className="font-inter text-xs text-white leading-relaxed max-w-xs">{t('footer.tagline')}</p>
             <div className="flex items-center gap-2 mt-4">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
-              <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">NEXUS ONLINE</span>
+              <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">{t('footer.nexusOnline')}</span>
             </div>
           </div>
-
-          {/* Col 2: Pages */}
           <div>
-            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">PAGES</div>
+            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.pages')}</div>
             <ul className="space-y-2.5">
               {[
                 ['Home', '/'],
@@ -133,18 +171,12 @@ export function InnerFooter() {
                 ['Blog', '/blog'],
                 ['14-Day Pilot', '/gym-challenge-pilot'],
               ].map(([label, href]) => (
-                <li key={href}>
-                  <Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">
-                    {label}
-                  </Link>
-                </li>
+                <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
               ))}
             </ul>
           </div>
-
-          {/* Col 3: Support */}
           <div>
-            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">SUPPORT</div>
+            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.support')}</div>
             <ul className="space-y-2.5 mb-6">
               <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">Support Center</Link></li>
               <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
@@ -152,18 +184,16 @@ export function InnerFooter() {
             <Link to="/gym-challenge-pilot"
               className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '38px' }}>
-              <Zap size={13} fill="black" /> Start Pilot
+              <Zap size={13} fill="black" /> {t('nav.startChallenge')}
             </Link>
           </div>
         </div>
-
-        {/* Bottom row */}
         <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-white/8 gap-3">
-          <div className="font-inter text-xs text-white">© 2026 ArenaKore. All rights reserved.</div>
+          <div className="font-inter text-xs text-white">{t('footer.copyright')}</div>
           <div className="flex items-center gap-6">
-            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">Terms of Service</a>
-            <Link to="/support" className="font-inter text-xs text-white/50 hover:text-white transition-colors">Support</Link>
+            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.terms')}</a>
+            <Link to="/support" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.support')}</Link>
           </div>
         </div>
       </div>

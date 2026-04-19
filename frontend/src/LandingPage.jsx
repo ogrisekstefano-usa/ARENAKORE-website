@@ -7,6 +7,7 @@ import {
 import { InnerNavbar, InnerFooter, useSEO } from './components/SharedLayout';
 import { IMGS } from './data/seo-content';
 import SchemaMarkup from './components/SchemaMarkup';
+import { useTranslation } from 'react-i18next';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
@@ -54,6 +55,7 @@ const HOW_STEPS = [
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
 
   useSEO({
     title: 'ArenaKore — The Fitness Competition Platform',
@@ -95,40 +97,33 @@ export default function LandingPage() {
           {/* Badge */}
           <div className="ak-hero-badge flex items-center gap-3 mb-6">
             <span className="ak-blink w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: '#FF2D2D', boxShadow: '0 0 8px #FF2D2D', display: 'inline-block' }} />
-            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-white">NEXUS LIVE · CHALLENGES OPEN</span>
+            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-white">{t('home.badge')}</span>
           </div>
           {/* H1 */}
           <h1 className="ak-hero-title font-anton uppercase leading-[0.92] text-white mb-6" style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
-            The competition<br />
-            <span style={{ color: '#00FFFF' }}>never ends.</span>
+            {t('home.h1_line1')}<br />
+            <span style={{ color: '#00FFFF' }}>{t('home.h1_line2')}</span>
           </h1>
           {/* Sub */}
           <p className="ak-hero-sub font-inter text-lg md:text-xl text-white mb-10 max-w-xl leading-relaxed">
-            Turn every workout into a challenge.<br />
-            Compete, track, and win.
+            {t('home.sub')}
           </p>
           {/* CTAs */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link
-              to="/gym-challenge-pilot"
-              data-testid="hero-start-challenge-btn"
+            <Link to="/gym-challenge-pilot" data-testid="hero-start-challenge-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
-              style={{ height: '60px' }}
-            >
-              <Zap size={20} fill="black" /> Start a Challenge
+              style={{ height: '60px' }}>
+              <Zap size={20} fill="black" /> {t('home.cta_primary')}
             </Link>
-            <Link
-              to="/fitness-challenge-app"
-              data-testid="hero-explore-btn"
+            <Link to="/fitness-challenge-app" data-testid="hero-explore-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
-              style={{ height: '60px' }}
-            >
-              Explore the system <ArrowRight size={16} />
+              style={{ height: '60px' }}>
+              {t('home.cta_secondary')} <ArrowRight size={16} />
             </Link>
           </div>
           {/* Scroll */}
           <div className="ak-hero-scroll flex flex-col items-start gap-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            <span className="font-inter text-[10px] font-semibold tracking-[0.3em] uppercase">Scroll to learn more</span>
+            <span className="font-inter text-[10px] font-semibold tracking-[0.3em] uppercase">{t('home.scrollHint')}</span>
             <ChevronDown size={16} className="ak-bounce" />
           </div>
         </div>
@@ -158,19 +153,15 @@ export default function LandingPage() {
       <section data-testid="problem-section" className="py-24 md:py-28 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto ak-reveal">
           <div className="border-l-4 pl-8 md:pl-12" style={{ borderColor: '#FF2D2D' }}>
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5" style={{ color: '#FF2D2D' }}>THE PROBLEM</div>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5" style={{ color: '#FF2D2D' }}>{t('home.problem.badge')}</div>
             <h2 className="font-anton text-4xl md:text-6xl uppercase leading-none text-white mb-8">
-              TRAINING WITHOUT<br />COMPETITION<br />DOESN'T LAST.
+              {t('home.problem.h2')}
             </h2>
             <div className="space-y-4 max-w-2xl">
-              {[
-                'No pressure — missing a session has no consequence.',
-                'No accountability — nobody notices if you don\'t show up.',
-                'No reason to come back — progress feels invisible.',
-              ].map((t, i) => (
+              {[t('home.problem.p1'), t('home.problem.p2'), t('home.problem.p3')].map((item, i) => (
                 <div key={i} className="flex items-start gap-4">
                   <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-red-500 inline-block" />
-                  <p className="font-inter text-base text-white leading-relaxed">{t}</p>
+                  <p className="font-inter text-base text-white leading-relaxed">{item}</p>
                 </div>
               ))}
             </div>
@@ -183,15 +174,13 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center ak-reveal">
           <div className="w-10 h-1 bg-ak-cyan mx-auto mb-8 rounded" />
           <blockquote className="font-anton uppercase leading-none text-white mb-8" style={{ fontSize: 'clamp(28px,4.5vw,56px)' }}>
-            "PEOPLE DON'T COME BACK<br />
-            <span style={{ color: '#00FFFF' }}>TO TRAIN.</span><br />
-            THEY COME BACK<br />
-            <span style={{ color: '#FFD700' }}>TO NOT LOSE."</span>
+            "{t('home.insight.line1')}<br />
+            <span style={{ color: '#00FFFF' }}>{t('home.insight.line2')}</span><br />
+            {t('home.insight.line3')}<br />
+            <span style={{ color: '#FFD700' }}>{t('home.insight.line4')}"</span>
           </blockquote>
           <p className="font-inter text-base text-white max-w-2xl mx-auto leading-relaxed">
-            Behavioral science is clear: loss aversion is 2x more motivating than the desire to gain.
-            When performance is ranked, visible, and permanent — people show up differently.
-            That's not motivation. That's environment design.
+            {t('home.insight.body')}
           </p>
         </div>
       </section>
@@ -203,17 +192,17 @@ export default function LandingPage() {
             <div className="ak-reveal">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-px bg-ak-cyan" />
-                <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">THE SYSTEM</span>
+                <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">{t('home.solution.badge')}</span>
               </div>
               <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-                ARENAKORE TURNS<br />TRAINING INTO<br />
-                <span style={{ color: '#00FFFF' }}>COMPETITION.</span>
+                {t('home.solution.h2_line1')}<br />{t('home.solution.h2_line2')}<br />
+                <span style={{ color: '#00FFFF' }}>{t('home.solution.h2_line3')}</span>
               </h2>
               <div className="space-y-4 mb-8">
                 {[
-                  { label: 'Daily challenges', desc: 'New challenge every day. Every session has stakes.' },
-                  { label: 'Live rankings', desc: 'K-Rating updates in real-time. Public, permanent, undeniable.' },
-                  { label: 'Visible performance', desc: 'NEXUS validates every rep. You can\'t fake your score.' },
+                  { label: t('home.solution.feat1_label'), desc: t('home.solution.feat1_desc') },
+                  { label: t('home.solution.feat2_label'), desc: t('home.solution.feat2_desc') },
+                  { label: t('home.solution.feat3_label'), desc: t('home.solution.feat3_desc') },
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-4">
                     <CheckCircle size={16} className="text-ak-cyan mt-1 flex-shrink-0" />
@@ -386,27 +375,21 @@ export default function LandingPage() {
             <div className="flex-1 max-w-[80px] h-px" style={{ background: 'rgba(0,255,255,0.3)' }} />
           </div>
           <h2 className="font-anton uppercase leading-none text-white mb-4" style={{ fontSize: 'clamp(48px,7vw,88px)' }}>
-            START NOW.
+            {t('home.finalCta.h2')}
           </h2>
           <p className="font-inter text-lg text-white mb-10">
-            Compete or fall behind.
+            {t('home.finalCta.sub')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/gym-challenge-pilot"
-              data-testid="final-cta-btn"
+            <Link to="/gym-challenge-pilot" data-testid="final-cta-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
-              style={{ height: '60px' }}
-            >
-              <Zap size={20} fill="black" /> Start a Challenge
+              style={{ height: '60px' }}>
+              <Zap size={20} fill="black" /> {t('home.finalCta.cta')}
             </Link>
-            <Link
-              to="/for-gyms"
-              data-testid="final-gyms-btn"
+            <Link to="/for-gyms" data-testid="final-gyms-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-white transition-colors"
-              style={{ height: '60px' }}
-            >
-              For Gyms <ArrowRight size={16} />
+              style={{ height: '60px' }}>
+              {t('home.finalCta.gyms')} <ArrowRight size={16} />
             </Link>
           </div>
         </div>
