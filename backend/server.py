@@ -508,7 +508,34 @@ async def update_hero_slide(slide_id: str, data: HeroSlideUpdate, _=Depends(veri
 async def delete_hero_slide(slide_id: str, _=Depends(verify_admin)):
     await db.hero_slides.delete_one({"id": slide_id}); return {"ok": True}
 
-# ─── WEBHOOK: LEAD ALERT ──────────────────────────────────────
+# ─── ANALYTICS EVENTS ────────────────────────────────────────
+
+class AnalyticsEvent(BaseModel):
+    event: str
+    params: Dict[str, Any] = {}
+    url: Optional[str] = None
+    ts: Optional[str] = None
+
+@api_router.post("/events")
+async def track_event(data: AnalyticsEvent):
+    """Receive frontend analytics events. Non-blocking — always returns 200."""
+    try:
+        doc = data.model_dump()
+        doc['server_ts'] = datetime.now(timezone.utc).isoformat()
+        await db.analytics_events.insert_one(doc)
+    except Exception as e:
+        logger.debug(f"Event log failed (non-critical): {e}")
+    return {"ok": True}
+
+@api_router.get("/events/summary")
+async def events_summary(_=Depends(verify_admin)):
+    pipeline = [
+        {"$group": {"_id": "$event", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 50},
+    ]
+    result = await db.analytics_events.aggregate(pipeline).to_list(50)
+    return [{"event": r["_id"], "count": r["count"]} for r in result]
 
 class LeadAlertPayload(BaseModel):
     gym_name: str

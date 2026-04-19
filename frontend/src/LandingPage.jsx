@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -10,6 +10,8 @@ import { InnerNavbar, InnerFooter, useSEO } from './components/SharedLayout';
 import { IMGS } from './data/seo-content';
 import SchemaMarkup from './components/SchemaMarkup';
 import { useTranslation } from 'react-i18next';
+import { trackHeroSlideView, trackHeroSlideClick, trackGetAppClick, trackBusinessClick } from './utils/tracking';
+import { useScrollTracking } from './hooks/useScrollTracking';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
@@ -100,6 +102,8 @@ export default function LandingPage() {
   const [heroSlides, setHeroSlides] = useState(HERO_SLIDES_DEFAULT);
   const { t } = useTranslation();
   const API = process.env.REACT_APP_BACKEND_URL + '/api';
+  const firedSlides = useRef(new Set());
+  useScrollTracking('home');
 
   useSEO({
     title: 'ArenaKore — The Multi-Sport Competition Platform',
@@ -126,13 +130,24 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  // Hero slider — auto-rotate every 4s
+  // Hero slider — auto-rotate every 4s + track slide views
   useEffect(() => {
     const timer = setInterval(() => {
       setSlide(prev => (prev + 1) % heroSlides.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
+
+  // Track each unique slide view once per session
+  useEffect(() => {
+    const s = heroSlides[slide];
+    if (!s) return;
+    const key = `${slide}-${s.sport}`;
+    if (!firedSlides.current.has(key)) {
+      firedSlides.current.add(key);
+      trackHeroSlideView(s.sport, slide);
+    }
+  }, [slide, heroSlides]);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -224,11 +239,13 @@ export default function LandingPage() {
           {/* CTAs */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
             <Link to="/get-the-app" data-testid="hero-download-app-btn"
+              onClick={() => trackGetAppClick('hero', heroSlides[slide]?.sport)}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {t('cta.downloadApp')}
             </Link>
             <Link to="/gym-challenge-pilot" data-testid="hero-for-gyms-btn"
+              onClick={() => trackBusinessClick('hero')}
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '60px' }}>
               For Gyms & Coaches <ArrowRight size={16} />

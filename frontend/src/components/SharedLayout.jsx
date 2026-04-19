@@ -4,6 +4,7 @@ import { Menu, X, ChevronRight, Zap, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LOGO } from '../data/seo-content';
 import LangModal from './LangModal';
+import { trackGetAppClick, trackBusinessClick } from '../utils/tracking';
 
 export function useSEO({ title, description }) {
   useEffect(() => {
@@ -112,6 +113,7 @@ export function InnerNavbar() {
           <Link
             to="/get-the-app"
             data-testid="nav-start-challenge-btn"
+            onClick={() => trackGetAppClick('navbar')}
             className="hidden sm:inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-4 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
             style={{ height: '36px' }}
           >
@@ -201,6 +203,7 @@ export function InnerFooter() {
                 <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
               </ul>
               <Link to="/get-the-app"
+                onClick={() => trackGetAppClick('footer')}
                 className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
                 style={{ height: '38px' }}>
                 <Zap size={13} fill="black" /> {t('cta.getApp')}

@@ -1,6 +1,9 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import ScrollToTop from './components/ScrollToTop';
+import { usePageTracking } from './hooks/usePageTracking';
+import { initGA } from './utils/tracking';
 import LandingPage from './LandingPage';
 import ArenaSystemPage from './pages/ArenaSystemPage';
 import FitnessChallengePage from './pages/FitnessChallengePage';
@@ -17,9 +20,11 @@ import BlogArticlePage from './pages/BlogArticlePage';
 import SupportPage from './pages/SupportPage';
 import AdminPage from './pages/AdminPage';
 
-function App() {
+// Inner component so hooks have Router context
+function AppRoutes() {
+  usePageTracking();
   return (
-    <BrowserRouter>
+    <>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -40,6 +45,15 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  useEffect(() => { initGA(); }, []);
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
