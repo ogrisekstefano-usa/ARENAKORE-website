@@ -10,6 +10,7 @@ import ForGymsPage from './pages/ForGymsPage';
 import BlogPage from './pages/BlogPage';
 import BlogArticlePage from './pages/BlogArticlePage';
 import SupportPage from './pages/SupportPage';
+import GymPilotPage from './pages/GymPilotPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/amrap-training" element={<AmrapPage />} />
         <Route path="/fitness-gamification" element={<GamificationPage />} />
         <Route path="/for-gyms" element={<ForGymsPage />} />
+        <Route path="/gym-challenge-pilot" element={<GymPilotPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
         <Route path="/support" element={<SupportPage />} />

@@ -7,7 +7,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 
@@ -76,6 +76,41 @@ async def download_zip():
         media_type="application/zip",
         headers={"Content-Disposition": "attachment; filename=arenakore-site.zip"}
     )
+
+# ─── PILOT REQUESTS ───────────────────────────────────────────
+
+class PilotRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    gym_name: str
+    city: str
+    owner_name: str
+    email: str
+    phone: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PilotRequestCreate(BaseModel):
+    gym_name: str
+    city: str
+    owner_name: str
+    email: str
+    phone: Optional[str] = None
+
+@api_router.post("/pilot-requests", response_model=PilotRequest)
+async def create_pilot_request(data: PilotRequestCreate):
+    obj = PilotRequest(**data.model_dump())
+    doc = obj.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.pilot_requests.insert_one(doc)
+    logger.info(f"New pilot request: {obj.gym_name} — {obj.email}")
+    return obj
+
+@api_router.get("/pilot-requests", response_model=List[PilotRequest])
+async def get_pilot_requests():
+    docs = await db.pilot_requests.find({}, {"_id": 0}).to_list(1000)
+    for d in docs:
+        if isinstance(d.get('created_at'), str):
+            d['created_at'] = datetime.fromisoformat(d['created_at'])
+    return docs
 
 # Include the router in the main app
 app.include_router(api_router)
