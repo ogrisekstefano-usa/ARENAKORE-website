@@ -11,6 +11,7 @@ import BlogPage from './pages/BlogPage';
 import BlogArticlePage from './pages/BlogArticlePage';
 import SupportPage from './pages/SupportPage';
 import GymPilotPage from './pages/GymPilotPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
         <Route path="/support" element={<SupportPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
   );

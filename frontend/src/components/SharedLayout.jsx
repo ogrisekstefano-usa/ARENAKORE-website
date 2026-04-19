@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Download } from 'lucide-react';
-import { LOGO, NAV_LINKS } from '../data/seo-content';
+import { Menu, X, ChevronRight, Zap } from 'lucide-react';
+import { LOGO } from '../data/seo-content';
 
 export function useSEO({ title, description }) {
   useEffect(() => {
@@ -11,6 +11,16 @@ export function useSEO({ title, description }) {
     meta.content = description;
   }, [title, description]);
 }
+
+const NAV = [
+  { label: 'Home',        href: '/' },
+  { label: 'Fitness App', href: '/fitness-challenge-app' },
+  { label: 'CrossFit',    href: '/crossfit-challenge' },
+  { label: 'Competition', href: '/workout-competition' },
+  { label: 'AMRAP',       href: '/amrap-training' },
+  { label: 'For Gyms',   href: '/for-gyms' },
+  { label: 'Blog',        href: '/blog' },
+];
 
 export function InnerNavbar() {
   const [open, setOpen] = useState(false);
@@ -23,37 +33,45 @@ export function InnerNavbar() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
+  const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/10' : 'bg-black/80 backdrop-blur-sm'}`}>
+    <nav
+      data-testid="inner-navbar"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/10' : 'bg-black/80 backdrop-blur-sm border-b border-white/5'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
-        <Link to="/" data-testid="inner-navbar-logo">
-          <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain" />
+        {/* Logo */}
+        <Link to="/" data-testid="nav-logo" className="flex-shrink-0">
+          <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain" loading="lazy" />
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map(l => (
-            <Link
-              key={l.href}
-              to={l.href}
-              className={`font-inter text-xs font-semibold uppercase tracking-wider transition-colors ${loc.pathname === l.href ? 'text-ak-cyan' : 'text-white/70 hover:text-white'}`}
+        {/* Desktop links */}
+        <div className="hidden lg:flex items-center gap-1">
+          {NAV.map(l => (
+            <Link key={l.href} to={l.href}
+              className={`font-inter text-xs font-semibold uppercase tracking-wider px-3 py-2 rounded-lg transition-colors ${
+                active(l.href) ? 'text-ak-cyan' : 'text-white/60 hover:text-white'
+              }`}
             >
               {l.label}
             </Link>
           ))}
         </div>
 
+        {/* Primary CTA */}
         <div className="flex items-center gap-3">
-          <a
-            href="#"
-            data-testid="inner-navbar-download"
-            className="hidden md:inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[14px] bg-ak-gold text-black transition-all hover:scale-105"
+          <Link
+            to="/gym-challenge-pilot"
+            data-testid="nav-start-challenge-btn"
+            className="hidden sm:inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-4 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
             style={{ height: '36px' }}
           >
-            <Download size={14} />
-            App
-          </a>
-          <button onClick={() => setOpen(!open)} className="md:hidden text-white p-1">
+            <Zap size={13} fill="black" /> Start a Challenge
+          </Link>
+          <button onClick={() => setOpen(!open)} className="lg:hidden text-white p-1" data-testid="nav-mobile-toggle">
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -61,13 +79,21 @@ export function InnerNavbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-black/98 border-t border-white/10 px-5 py-4 space-y-3">
-          {NAV_LINKS.map(l => (
+        <div className="lg:hidden bg-black/98 border-t border-white/10 px-5 py-5 space-y-1">
+          {NAV.map(l => (
             <Link key={l.href} to={l.href} onClick={() => setOpen(false)}
-              className={`block font-inter text-sm font-semibold uppercase tracking-wider py-2 ${loc.pathname === l.href ? 'text-ak-cyan' : 'text-white'}`}>
-              {l.label}
+              className={`flex items-center justify-between py-3 border-b border-white/5 font-inter text-sm font-semibold uppercase tracking-wider ${
+                active(l.href) ? 'text-ak-cyan' : 'text-white'
+              }`}
+            >
+              {l.label} <ChevronRight size={14} className="text-white/30" />
             </Link>
           ))}
+          <Link to="/gym-challenge-pilot" onClick={() => setOpen(false)}
+            className="mt-4 flex items-center justify-center gap-2 font-inter font-black text-sm uppercase tracking-wider rounded-[14px] bg-ak-gold text-black"
+            style={{ height: '48px' }}>
+            <Zap size={16} fill="black" /> Start a Challenge
+          </Link>
         </div>
       )}
     </nav>
@@ -76,38 +102,68 @@ export function InnerNavbar() {
 
 export function InnerFooter() {
   return (
-    <footer className="border-t border-white/8 bg-black mt-0">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
+    <footer data-testid="inner-footer" className="bg-black border-t border-white/8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-14 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+
+          {/* Col 1: Brand */}
           <div>
-            <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain mb-3" />
-            <p className="font-inter text-xs text-white max-w-xs leading-relaxed">
-              The fitness competition platform that validates every rep. NEXUS doesn't lie.
+            <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain mb-4" loading="lazy" />
+            <p className="font-inter text-xs text-white leading-relaxed max-w-xs">
+              Fitness competition platform for real training.<br />
+              The competition never ends.
             </p>
+            <div className="flex items-center gap-2 mt-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+              <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">NEXUS ONLINE</span>
+            </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
-            {[
-              { title: 'PRODOTTO', links: [['Fitness App', '/fitness-challenge-app'], ['CrossFit', '/crossfit-challenge'], ['Competizione', '/workout-competition'], ['AMRAP', '/amrap-training']] },
-              { title: 'PALESTRE', links: [['Per Palestre', '/for-gyms'], ['Gamification', '/fitness-gamification'], ['Prezzi', '/for-gyms']] },
-              { title: 'LEARN', links: [['Blog', '/blog'], ['Support', '/support']] },
-              { title: 'DOWNLOAD', links: [['App Store', '#'], ['Google Play', '#']] },
-            ].map((col, i) => (
-              <div key={i}>
-                <div className="font-inter text-[10px] font-bold uppercase tracking-widest mb-3 text-white">{col.title}</div>
-                <ul className="space-y-2">
-                  {col.links.map(([label, href]) => (
-                    <li key={label}><Link to={href} className="font-inter text-xs text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+
+          {/* Col 2: Pages */}
+          <div>
+            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">PAGES</div>
+            <ul className="space-y-2.5">
+              {[
+                ['Home', '/'],
+                ['Fitness Challenge App', '/fitness-challenge-app'],
+                ['CrossFit Challenge', '/crossfit-challenge'],
+                ['Workout Competition', '/workout-competition'],
+                ['AMRAP Training', '/amrap-training'],
+                ['For Gyms', '/for-gyms'],
+                ['Blog', '/blog'],
+                ['14-Day Pilot', '/gym-challenge-pilot'],
+              ].map(([label, href]) => (
+                <li key={href}>
+                  <Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Col 3: Support */}
+          <div>
+            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">SUPPORT</div>
+            <ul className="space-y-2.5 mb-6">
+              <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">Support Center</Link></li>
+              <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
+            </ul>
+            <Link to="/gym-challenge-pilot"
+              className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
+              style={{ height: '38px' }}>
+              <Zap size={13} fill="black" /> Start Pilot
+            </Link>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-white/8 gap-3">
+
+        {/* Bottom row */}
+        <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-white/8 gap-3">
           <div className="font-inter text-xs text-white">© 2026 ArenaKore. All rights reserved.</div>
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
-            <span className="font-inter text-xs font-bold uppercase tracking-wider text-white">NEXUS ONLINE</span>
+          <div className="flex items-center gap-6">
+            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">Terms of Service</a>
+            <Link to="/support" className="font-inter text-xs text-white/50 hover:text-white transition-colors">Support</Link>
           </div>
         </div>
       </div>

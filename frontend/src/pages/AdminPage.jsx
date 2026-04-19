@@ -1,0 +1,561 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import {
+  LayoutDashboard, FileText, BookOpen, Image, Users,
+  LogOut, Plus, Pencil, Trash2, Save, X, Eye,
+  ChevronRight, AlertCircle, CheckCircle, Upload, Tag,
+  Zap, ArrowLeft
+} from 'lucide-react';
+import { LOGO, BLOG_POSTS } from '../data/seo-content';
+
+const API = process.env.REACT_APP_BACKEND_URL + '/api';
+const TOKEN_KEY = 'ak_admin_token';
+
+/* ─── helpers ─── */
+const api = (token) => axios.create({
+  baseURL: API,
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+function useAdminAPI(token) {
+  return useCallback((method, path, data) =>
+    api(token)[method](path, data).then(r => r.data), [token]);
+}
+
+/* ─── LOGIN SCREEN ─── */
+function LoginScreen({ onLogin }) {
+  const [pwd, setPwd] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setLoading(true); setError('');
+    try {
+      const res = await axios.post(`${API}/admin/login`, { password: pwd });
+      onLogin(res.data.token);
+    } catch {
+      setError('Password errata.');
+    } finally { setLoading(false); }
+  };
+
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center px-6">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <img src={LOGO} alt="ArenaKore" className="h-10 w-auto object-contain mx-auto mb-4" />
+          <h1 className="font-anton text-3xl uppercase text-white">CMS ADMIN</h1>
+          <p className="font-inter text-xs text-white/40 mt-1">Area riservata</p>
+        </div>
+        <form onSubmit={submit} className="space-y-4">
+          <div>
+            <label className="font-inter text-xs font-bold uppercase tracking-wider text-white/50 block mb-2">Password</label>
+            <input
+              type="password" value={pwd} onChange={e => setPwd(e.target.value)}
+              placeholder="••••••••••"
+              className="w-full font-inter text-sm text-white placeholder-white/20 px-4 py-3 rounded-[12px] outline-none focus:border-ak-cyan transition-colors"
+              style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.15)' }}
+              data-testid="admin-password-input"
+            />
+          </div>
+          {error && <div className="flex items-center gap-2 text-red-400"><AlertCircle size={14} /><span className="font-inter text-xs">{error}</span></div>}
+          <button type="submit" disabled={loading}
+            className="w-full font-inter font-black uppercase tracking-wider text-sm rounded-[14px] bg-ak-gold text-black disabled:opacity-60 flex items-center justify-center gap-2"
+            style={{ height: '48px' }} data-testid="admin-login-btn">
+            {loading ? 'Accesso...' : <><Zap size={16} fill="black" /> Accedi</>}
+          </button>
+        </form>
+        <div className="mt-6 text-center">
+          <Link to="/" className="font-inter text-xs text-white/30 hover:text-white transition-colors">
+            ← Torna al sito
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── SIDEBAR ─── */
+const TABS = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'blog', label: 'Blog', icon: BookOpen },
+  { id: 'pages', label: 'Pages', icon: FileText },
+  { id: 'media', label: 'Media', icon: Image },
+  { id: 'pilots', label: 'Pilot Requests', icon: Users },
+];
+
+function Sidebar({ tab, setTab, onLogout }) {
+  return (
+    <aside className="w-56 flex-shrink-0 border-r border-white/8 flex flex-col" style={{ background: '#080808' }}>
+      <div className="p-5 border-b border-white/8">
+        <img src={LOGO} alt="ArenaKore" className="h-7 w-auto object-contain" />
+        <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/30 mt-1">CMS Admin</div>
+      </div>
+      <nav className="flex-1 py-3 px-2">
+        {TABS.map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[10px] mb-1 font-inter text-sm font-semibold transition-all ${
+              tab === t.id ? 'bg-ak-cyan/10 text-ak-cyan' : 'text-white/50 hover:text-white hover:bg-white/5'
+            }`}>
+            <t.icon size={16} />
+            {t.label}
+          </button>
+        ))}
+      </nav>
+      <div className="p-3 border-t border-white/8">
+        <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-[10px] font-inter text-xs text-white/40 hover:text-white transition-colors mb-1">
+          <Eye size={14} /> Vedi sito
+        </Link>
+        <button onClick={onLogout} className="flex items-center gap-2 px-3 py-2 rounded-[10px] font-inter text-xs text-red-400 hover:text-red-300 transition-colors w-full">
+          <LogOut size={14} /> Logout
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+/* ─── DASHBOARD ─── */
+function Dashboard({ call }) {
+  const [stats, setStats] = useState(null);
+  useEffect(() => { call('get', '/admin/stats').then(setStats).catch(() => {}); }, [call]);
+  const cards = stats ? [
+    { label: 'Blog Posts', value: stats.blog_posts, color: '#00FFFF' },
+    { label: 'Pages CMS', value: stats.pages, color: '#FFD700' },
+    { label: 'Media Items', value: stats.media, color: '#00FFFF' },
+    { label: 'Pilot Requests', value: stats.pilot_requests, color: '#FF2D2D' },
+  ] : [];
+  return (
+    <div>
+      <h2 className="font-anton text-2xl uppercase text-white mb-6">DASHBOARD</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {cards.map((c, i) => (
+          <div key={i} className="p-6 rounded-[14px]" style={{ background: '#0a0a0a', border: `1px solid ${c.color}20` }}>
+            <div className="font-anton text-4xl mb-1" style={{ color: c.color }}>{c.value}</div>
+            <div className="font-inter text-xs font-bold uppercase tracking-wider text-white">{c.label}</div>
+          </div>
+        ))}
+      </div>
+      <div className="p-6 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.2)' }}>
+        <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-3">AZIONI RAPIDE</div>
+        <div className="flex flex-wrap gap-3">
+          <button className="font-inter text-xs font-semibold text-white border border-white/20 px-4 py-2 rounded-[10px] hover:border-ak-cyan hover:text-ak-cyan transition-all">
+            + Nuovo Articolo Blog
+          </button>
+          <button className="font-inter text-xs font-semibold text-white border border-white/20 px-4 py-2 rounded-[10px] hover:border-ak-cyan hover:text-ak-cyan transition-all">
+            + Aggiungi Immagine
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── BLOG MANAGER ─── */
+function BlogManager({ call }) {
+  const [posts, setPosts] = useState([]);
+  const [editing, setEditing] = useState(null); // null=list, 'new'=create, post=edit
+  const [form, setForm] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = useCallback(() => call('get', '/blog').then(setPosts).catch(() => {}), [call]);
+  useEffect(() => { load(); }, [load]);
+
+  const newForm = { slug: '', title: '', seo_title: '', meta_description: '', category: 'General', read_time: '5 min read', date: new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }), excerpt: '', content: '', featured_image: '', published: true };
+
+  const startEdit = (post) => { setEditing(post); setForm({ ...post }); setMsg(''); };
+  const startNew = () => { setEditing('new'); setForm({ ...newForm }); setMsg(''); };
+
+  const save = async () => {
+    setSaving(true); setMsg('');
+    try {
+      if (editing === 'new') { await call('post', '/blog', form); }
+      else { await call('put', `/blog/${editing.id}`, form); }
+      setMsg('Salvato!'); load(); setTimeout(() => setEditing(null), 800);
+    } catch (e) { setMsg(e?.response?.data?.detail || 'Errore'); }
+    finally { setSaving(false); }
+  };
+
+  const del = async (post) => {
+    if (!window.confirm(`Eliminare "${post.title}"?`)) return;
+    await call('delete', `/blog/${post.id}`); load();
+  };
+
+  const seedDemo = async () => {
+    setSaving(true);
+    try {
+      for (const p of BLOG_POSTS) {
+        await call('post', '/blog', {
+          slug: p.slug, title: p.title, seo_title: p.seo_title,
+          meta_description: p.meta_description, category: p.category,
+          read_time: p.readTime, date: p.date, excerpt: p.excerpt,
+          content: p.content, featured_image: p.coverImage, published: true,
+        }).catch(() => {}); // skip if slug exists
+      }
+      load(); setMsg('Demo articles seeded!');
+    } finally { setSaving(false); }
+  };
+
+  const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-3 py-2.5 rounded-[10px] outline-none focus:border-ak-cyan transition-colors";
+  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
+
+  if (editing !== null) {
+    return (
+      <div>
+        <button onClick={() => setEditing(null)} className="flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white mb-6 transition-colors">
+          <ArrowLeft size={14} /> Torna alla lista
+        </button>
+        <h2 className="font-anton text-2xl uppercase text-white mb-6">{editing === 'new' ? 'NUOVO ARTICOLO' : 'MODIFICA ARTICOLO'}</h2>
+        <div className="space-y-4 max-w-3xl">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Titolo *</label>
+              <input className={inp} style={inpStyle} value={form.title||''} onChange={e => setForm({...form,title:e.target.value})} placeholder="Titolo articolo" />
+            </div>
+            <div>
+              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Slug *</label>
+              <input className={inp} style={inpStyle} value={form.slug||''} onChange={e => setForm({...form,slug:e.target.value})} placeholder="url-del-articolo" />
+            </div>
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">SEO Title</label>
+            <input className={inp} style={inpStyle} value={form.seo_title||''} onChange={e => setForm({...form,seo_title:e.target.value})} placeholder="Titolo SEO (max 60 char)" />
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Meta Description</label>
+            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.meta_description||''} onChange={e => setForm({...form,meta_description:e.target.value})} placeholder="Descrizione SEO (max 155 char)" />
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Categoria</label>
+              <input className={inp} style={inpStyle} value={form.category||''} onChange={e => setForm({...form,category:e.target.value})} />
+            </div>
+            <div>
+              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Read Time</label>
+              <input className={inp} style={inpStyle} value={form.read_time||''} onChange={e => setForm({...form,read_time:e.target.value})} placeholder="5 min read" />
+            </div>
+            <div>
+              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Data</label>
+              <input className={inp} style={inpStyle} value={form.date||''} onChange={e => setForm({...form,date:e.target.value})} placeholder="Aprile 2026" />
+            </div>
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Immagine (URL)</label>
+            <input className={inp} style={inpStyle} value={form.featured_image||''} onChange={e => setForm({...form,featured_image:e.target.value})} placeholder="https://..." />
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt</label>
+            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.excerpt||''} onChange={e => setForm({...form,excerpt:e.target.value})} placeholder="Breve anteprima dell'articolo" />
+          </div>
+          <div>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Contenuto (Markdown)</label>
+            <textarea className={`${inp} resize-y font-mono text-xs`} style={{ ...inpStyle, minHeight: '300px' }} value={form.content||''} onChange={e => setForm({...form,content:e.target.value})} placeholder="## Titolo&#10;&#10;Contenuto in markdown..." />
+          </div>
+          <div className="flex items-center gap-3">
+            <input type="checkbox" id="pub" checked={form.published||false} onChange={e => setForm({...form,published:e.target.checked})} className="w-4 h-4" />
+            <label htmlFor="pub" className="font-inter text-sm text-white">Pubblicato</label>
+          </div>
+          <div className="flex items-center gap-4">
+            <button onClick={save} disabled={saving}
+              className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-6 rounded-[12px] bg-ak-gold text-black disabled:opacity-60"
+              style={{ height: '44px' }}>
+              <Save size={16} /> {saving ? 'Salvataggio...' : 'Salva'}
+            </button>
+            {msg && <span className={`font-inter text-xs ${msg.includes('Errore') ? 'text-red-400' : 'text-ak-cyan'}`}>{msg}</span>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="font-anton text-2xl uppercase text-white">BLOG ARTICLES ({posts.length})</h2>
+        <div className="flex gap-3">
+          {posts.length === 0 && (
+            <button onClick={seedDemo} disabled={saving}
+              className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] border border-ak-cyan text-ak-cyan hover:bg-ak-cyan hover:text-black transition-all"
+              style={{ height: '36px' }}>
+              Seed Demo Content
+            </button>
+          )}
+          <button onClick={startNew} data-testid="blog-new-btn"
+            className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] bg-ak-gold text-black hover:scale-105 transition-transform"
+            style={{ height: '36px' }}>
+            <Plus size={14} /> Nuovo Articolo
+          </button>
+        </div>
+      </div>
+      {posts.length === 0 ? (
+        <div className="text-center py-16 border border-dashed border-white/15 rounded-[14px]">
+          <BookOpen size={32} className="text-white/20 mx-auto mb-3" />
+          <p className="font-inter text-sm text-white/40">Nessun articolo. Crea il primo o importa i demo.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {posts.map(post => (
+            <div key={post.id} className="flex items-center justify-between p-4 rounded-[12px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="flex items-center gap-4 min-w-0">
+                {post.featured_image && <img src={post.featured_image} alt="" className="w-12 h-12 object-cover rounded-[8px] flex-shrink-0" loading="lazy" />}
+                <div className="min-w-0">
+                  <div className="font-inter text-sm font-semibold text-white truncate">{post.title}</div>
+                  <div className="flex items-center gap-3 mt-0.5">
+                    <span className="font-inter text-[10px] text-ak-cyan">{post.category}</span>
+                    <span className="font-inter text-[10px] text-white/40">/{post.slug}</span>
+                    {!post.published && <span className="font-inter text-[10px] text-yellow-500">Bozza</span>}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Link to={`/blog/${post.slug}`} target="_blank" className="p-2 text-white/40 hover:text-white transition-colors"><Eye size={15} /></Link>
+                <button onClick={() => startEdit(post)} className="p-2 text-white/40 hover:text-ak-cyan transition-colors"><Pencil size={15} /></button>
+                <button onClick={() => del(post)} className="p-2 text-white/40 hover:text-red-400 transition-colors"><Trash2 size={15} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── PAGES MANAGER ─── */
+const PAGE_SLUGS = [
+  { slug: '/', name: 'Home' },
+  { slug: '/fitness-challenge-app', name: 'Fitness Challenge App' },
+  { slug: '/crossfit-challenge', name: 'CrossFit Challenge' },
+  { slug: '/workout-competition', name: 'Workout Competition' },
+  { slug: '/amrap-training', name: 'AMRAP Training' },
+  { slug: '/fitness-gamification', name: 'Fitness Gamification' },
+  { slug: '/for-gyms', name: 'For Gyms' },
+  { slug: '/gym-challenge-pilot', name: 'Gym Pilot' },
+  { slug: '/blog', name: 'Blog' },
+  { slug: '/support', name: 'Support' },
+];
+
+function PagesManager({ call }) {
+  const [selected, setSelected] = useState(null);
+  const [form, setForm] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = async (slug) => {
+    try { const d = await call('get', `/pages${slug}`); setForm(d); }
+    catch { setForm({ slug, seo_title: '', meta_description: '', h1: '' }); }
+    setSelected(slug); setMsg('');
+  };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await call('put', `/pages${selected}`, { seo_title: form.seo_title, meta_description: form.meta_description, h1: form.h1 });
+      setMsg('Salvato!');
+    } catch { setMsg('Errore'); } finally { setSaving(false); }
+  };
+
+  const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-3 py-2.5 rounded-[10px] outline-none focus:border-ak-cyan transition-colors";
+  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
+
+  return (
+    <div className="grid md:grid-cols-3 gap-6">
+      {/* Page list */}
+      <div>
+        <h2 className="font-anton text-xl uppercase text-white mb-4">PAGINE</h2>
+        <div className="space-y-1">
+          {PAGE_SLUGS.map(p => (
+            <button key={p.slug} onClick={() => load(p.slug)}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-[10px] text-left transition-all font-inter text-sm ${
+                selected === p.slug ? 'bg-ak-cyan/10 text-ak-cyan border border-ak-cyan/30' : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
+              }`}>
+              {p.name} <ChevronRight size={13} />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Editor */}
+      <div className="md:col-span-2">
+        {!selected ? (
+          <div className="flex items-center justify-center h-full border border-dashed border-white/15 rounded-[14px] py-16">
+            <p className="font-inter text-sm text-white/30">Seleziona una pagina da modificare</p>
+          </div>
+        ) : (
+          <div>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-anton text-xl uppercase text-white">{PAGE_SLUGS.find(p => p.slug === selected)?.name}</h3>
+              <span className="font-inter text-xs text-white/40">{selected}</span>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">SEO Title <span className="text-white/20">(max 60 char)</span></label>
+                <input className={inp} style={inpStyle} value={form.seo_title||''} onChange={e => setForm({...form,seo_title:e.target.value})} placeholder="Titolo SEO" maxLength={60} />
+                <div className="font-inter text-[10px] text-white/30 mt-1">{(form.seo_title||'').length}/60</div>
+              </div>
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Meta Description <span className="text-white/20">(max 155 char)</span></label>
+                <textarea className={`${inp} resize-none`} style={inpStyle} rows={3} value={form.meta_description||''} onChange={e => setForm({...form,meta_description:e.target.value})} placeholder="Meta descrizione" maxLength={155} />
+                <div className="font-inter text-[10px] text-white/30 mt-1">{(form.meta_description||'').length}/155</div>
+              </div>
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">H1 Override</label>
+                <input className={inp} style={inpStyle} value={form.h1||''} onChange={e => setForm({...form,h1:e.target.value})} placeholder="Lascia vuoto per usare il default" />
+              </div>
+              <div className="flex items-center gap-4">
+                <button onClick={save} disabled={saving}
+                  className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-6 rounded-[12px] bg-ak-gold text-black disabled:opacity-60"
+                  style={{ height: '44px' }}>
+                  <Save size={16} /> {saving ? 'Salvataggio...' : 'Salva'}
+                </button>
+                {msg && <span className={`font-inter text-xs ${msg === 'Salvato!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── MEDIA LIBRARY ─── */
+function MediaLibrary({ call }) {
+  const [items, setItems] = useState([]);
+  const [form, setForm] = useState({ image_url: '', alt_text: '', tag: 'general' });
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(() => call('get', '/media').then(setItems).catch(() => {}), [call]);
+  useEffect(() => { load(); }, [load]);
+
+  const add = async (e) => {
+    e.preventDefault(); if (!form.image_url) return;
+    setSaving(true);
+    try { await call('post', '/media', form); load(); setForm({ image_url: '', alt_text: '', tag: 'general' }); }
+    finally { setSaving(false); }
+  };
+
+  const del = async (id) => { await call('delete', `/media/${id}`); load(); };
+
+  const TAGS = ['general', 'hero', 'crossfit', 'amrap', 'gym', 'competition', 'blog'];
+  const inp = "font-inter text-sm text-white placeholder-white/30 px-3 py-2 rounded-[10px] outline-none focus:border-ak-cyan transition-colors";
+  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="font-anton text-2xl uppercase text-white">MEDIA LIBRARY ({items.length})</h2>
+      </div>
+
+      {/* Add form */}
+      <form onSubmit={add} className="flex flex-wrap gap-3 mb-8 p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <input className={`${inp} flex-1 min-w-[200px]`} style={inpStyle} value={form.image_url} onChange={e => setForm({...form,image_url:e.target.value})} placeholder="URL immagine (https://...)" required />
+        <input className={`${inp} w-44`} style={inpStyle} value={form.alt_text} onChange={e => setForm({...form,alt_text:e.target.value})} placeholder="Alt text" />
+        <select className={`${inp} w-36`} style={inpStyle} value={form.tag} onChange={e => setForm({...form,tag:e.target.value})}>
+          {TAGS.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <button type="submit" disabled={saving}
+          className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[10px] bg-ak-gold text-black disabled:opacity-60"
+          style={{ height: '40px' }}>
+          <Upload size={14} /> Aggiungi
+        </button>
+      </form>
+
+      {/* Grid */}
+      {items.length === 0 ? (
+        <div className="text-center py-16 border border-dashed border-white/15 rounded-[14px]">
+          <Image size={32} className="text-white/20 mx-auto mb-3" />
+          <p className="font-inter text-sm text-white/40">Nessuna immagine. Aggiungi il primo URL.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          {items.map(item => (
+            <div key={item.id} className="group relative rounded-[10px] overflow-hidden" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)', aspectRatio: '1' }}>
+              <img src={item.image_url} alt={item.alt_text} className="w-full h-full object-cover" loading="lazy" />
+              <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                <div>
+                  <div className="inline-flex items-center gap-1 font-inter text-[10px] text-ak-cyan border border-ak-cyan/30 px-1.5 py-0.5 rounded">
+                    <Tag size={9} /> {item.tag}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-inter text-[10px] text-white/60 truncate max-w-[80%]">{item.alt_text}</span>
+                  <button onClick={() => del(item.id)} className="text-red-400 hover:text-red-300 transition-colors flex-shrink-0"><Trash2 size={13} /></button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── PILOT REQUESTS ─── */
+function PilotRequests({ call }) {
+  const [requests, setRequests] = useState([]);
+  useEffect(() => { call('get', '/pilot-requests').then(setRequests).catch(() => {}); }, [call]);
+
+  return (
+    <div>
+      <h2 className="font-anton text-2xl uppercase text-white mb-6">PILOT REQUESTS ({requests.length})</h2>
+      {requests.length === 0 ? (
+        <div className="text-center py-16 border border-dashed border-white/15 rounded-[14px]">
+          <Users size={32} className="text-white/20 mx-auto mb-3" />
+          <p className="font-inter text-sm text-white/40">Nessuna richiesta pilot ancora.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {requests.map(r => (
+            <div key={r.id} className="p-5 rounded-[12px] grid grid-cols-2 md:grid-cols-4 gap-4" style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.15)' }}>
+              <div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Palestra</div>
+                <div className="font-inter text-sm font-semibold text-white">{r.gym_name}</div>
+                <div className="font-inter text-xs text-white/60">{r.city}</div>
+              </div>
+              <div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Proprietario</div>
+                <div className="font-inter text-sm text-white">{r.owner_name}</div>
+              </div>
+              <div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Contatti</div>
+                <div className="font-inter text-xs text-ak-cyan">{r.email}</div>
+                {r.phone && <div className="font-inter text-xs text-white/60">{r.phone}</div>}
+              </div>
+              <div>
+                <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider mb-1">Data</div>
+                <div className="font-inter text-xs text-white/60">{new Date(r.created_at).toLocaleDateString('it-IT')}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── MAIN ADMIN PAGE ─── */
+export default function AdminPage() {
+  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
+  const [tab, setTab] = useState('dashboard');
+  const navigate = useNavigate();
+
+  const login = (t) => { localStorage.setItem(TOKEN_KEY, t); setToken(t); };
+  const logout = () => { localStorage.removeItem(TOKEN_KEY); setToken(null); };
+
+  const call = useAdminAPI(token);
+
+  if (!token) return <LoginScreen onLogin={login} />;
+
+  return (
+    <div className="min-h-screen bg-black font-inter flex">
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} />
+      <main className="flex-1 p-8 overflow-auto">
+        {tab === 'dashboard' && <Dashboard call={call} />}
+        {tab === 'blog'      && <BlogManager call={call} />}
+        {tab === 'pages'     && <PagesManager call={call} />}
+        {tab === 'media'     && <MediaLibrary call={call} />}
+        {tab === 'pilots'    && <PilotRequests call={call} />}
+      </main>
+    </div>
+  );
+}
