@@ -12,6 +12,7 @@ import BlogArticlePage from './pages/BlogArticlePage';
 import SupportPage from './pages/SupportPage';
 import GymPilotPage from './pages/GymPilotPage';
 import AdminPage from './pages/AdminPage';
+import AthletePage from './pages/AthletePage';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/support" element={<SupportPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
+        <Route path="/for-athletes" element={<AthletePage />} />
       </Routes>
     </BrowserRouter>
   );
