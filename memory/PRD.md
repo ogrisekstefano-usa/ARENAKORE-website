@@ -22,7 +22,23 @@ Sito web ufficiale ARENAKORE (www.arenakore.com). Landing page Cyber-Brutalist p
 - **Fonts**: Anton (headings) + IBM Plex Mono (body/mono)
 - **Buttons**: border-radius 14px, generous height
 
-## Sections Implemented
+## Multi-Page SEO Website Structure (Added April 2026)
+- **/** — Home (LandingPage.jsx)
+- **/fitness-challenge-app** — Fitness Challenge App page
+- **/crossfit-challenge** — CrossFit Challenge & Box vs Box
+- **/workout-competition** — Workout Competition Platform
+- **/amrap-training** — AMRAP Training Tracker
+- **/fitness-gamification** — Fitness Gamification (+40% retention data)
+- **/for-gyms** — For Gyms & CrossFit Boxes (14-day pilot)
+- **/blog** — Blog with 5 articles
+- **/blog/:slug** — Individual article pages
+- **/support** — Support page
+
+## SEO Data
+- Each page has unique SEO title (≤60 chars), meta description (≤155 chars)
+- H1, structured sections, FAQs, internal links, keywords
+- Managed via `src/data/seo-content.js`
+- All meta tags updated dynamically via useSEO hook
 1. **Navbar** — Fixed, backdrop-blur on scroll, Logo ARENAKORE (ARENA white + KORE cyan) + ACCEDI button
 2. **Hero** — Fullscreen background (hooded founder figure) con overlay 72%, badge NÈXUS, H1, 2 CTA buttons 56px (INIZIA COME ATLETA cyan + SEI UN PRO? ENTRA QUI gold), scroll indicator
 3. **Stats Strip** — 4 animated counters: Kore Attivi, K-Rating Max, K-Flux Record, Discipline
