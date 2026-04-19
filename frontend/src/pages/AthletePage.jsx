@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Zap, Trophy, Users, Scan, Activity, ChevronDown, ArrowRight, Swords, Star, Radio } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import { useTranslation } from 'react-i18next';
+import SportSelector from '../components/SportSelector';
 
 const HERO_BG   = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 const IMG_DARK  = 'https://images.unsplash.com/photo-1543300722-222718fd8509?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400';
@@ -81,6 +82,11 @@ export default function AthletePage() {
             <ChevronDown size={16} className="ak-bounce" />
           </div>
         </div>
+      </section>
+
+      {/* ══ SPORT SELECTOR (compact) ══ */}
+      <section className="border-b border-white/5" style={{ background: '#000' }}>
+        <SportSelector compact={true} />
       </section>
 
       {/* ══ S1: IDENTITY ══ */}

@@ -12,6 +12,8 @@ import SchemaMarkup from './components/SchemaMarkup';
 import { useTranslation } from 'react-i18next';
 import { trackHeroSlideView, trackHeroSlideClick, trackGetAppClick, trackBusinessClick } from './utils/tracking';
 import { useScrollTracking } from './hooks/useScrollTracking';
+import SportSelector from './components/SportSelector';
+import { useSportPreference } from './components/SportSelector';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
@@ -110,13 +112,28 @@ export default function LandingPage() {
     description: 'Turn every performance into a challenge. Any sport, any discipline. Daily challenges, live rankings, validated performance. The competition never ends.',
   });
 
-  // Load hero slides from DB, fallback to defaults
+  // Load hero slides from DB, fallback to defaults. Prioritize sport preference.
   useEffect(() => {
+    const pref = useSportPreference ? localStorage.getItem('arena_sport_preference') : null;
     axios.get(`${API}/hero-slides`).then(r => {
-      if (r.data?.length >= 2) {
-        setHeroSlides(r.data.map(s => ({ img: s.image_url, sport: s.sport_label, pos: s.position || 'center center' })));
+      let slides = r.data?.length >= 2
+        ? r.data.map(s => ({ img: s.image_url, sport: s.sport_label, pos: s.position || 'center center' }))
+        : [...HERO_SLIDES_DEFAULT];
+      // Phase 2: move preferred sport slide to front
+      if (pref) {
+        const idx = slides.findIndex(s => s.sport?.toLowerCase() === pref.toLowerCase());
+        if (idx > 0) { const s = slides.splice(idx, 1)[0]; slides.unshift(s); }
       }
-    }).catch(() => {});
+      setHeroSlides(slides);
+    }).catch(() => {
+      const slides = [...HERO_SLIDES_DEFAULT];
+      const pref = localStorage.getItem('arena_sport_preference');
+      if (pref) {
+        const idx = slides.findIndex(s => s.sport?.toLowerCase() === pref.toLowerCase());
+        if (idx > 0) { const s = slides.splice(idx, 1)[0]; slides.unshift(s); }
+      }
+      setHeroSlides(slides);
+    });
   }, [API]);
 
   useSEO({
@@ -278,6 +295,11 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ══ SPORT SELECTOR ══ */}
+      <section className="border-b border-white/5" style={{ background: '#000' }}>
+        <SportSelector />
       </section>
 
       {/* ══ POSITIONING BLOCK ══ */}
