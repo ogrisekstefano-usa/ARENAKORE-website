@@ -23,8 +23,8 @@
     "h1_line1": "La competizione",
     "h1_line2": "non finisce mai.",
     "sub": "Trasforma ogni performance in una sfida.",
-    "cta_primary": "Inizia una Sfida",
-    "cta_secondary": "Esplora il sistema",
+    "cta_primary": "Scarica l'App",
+    "cta_secondary": "Per Palestre",
     "scrollHint": "Scorri per sapere di più",
     "stats": {
       "active": "KORE Attivi",
@@ -335,5 +335,12 @@
     "faq_q5": "Come registro la mia palestra su ArenaKore?",
     "faq_a5": "Visita arenakore.com/for-gyms e inizia il tuo pilot gratuito di 14 giorni. Riceverai un pannello admin per creare e gestire le sfide.",
     "still_need": "Hai ancora bisogno di aiuto? Scrivici direttamente."
+  },
+  "cta": {
+    "downloadApp": "Scarica l'App",
+    "forGyms": "Palestre",
+    "pilotCta": "Avvia il Pilot",
+    "startChallenge": "Inizia una Sfida",
+    "exploreSystem": "Per Palestre"
   }
 }

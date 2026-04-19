@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, Trophy, Users, Scan, Activity, ChevronDown, ArrowRight, Swords, Star, Radio } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
+import { useTranslation } from 'react-i18next';
 
 const HERO_BG   = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 const IMG_DARK  = 'https://images.unsplash.com/photo-1543300722-222718fd8509?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400';
@@ -9,6 +10,7 @@ const IMG_SWEAT = 'https://images.unsplash.com/photo-1637651684506-07e16fcf7b06?
 const IMG_LONE  = 'https://images.unsplash.com/photo-1605296867724-fa87a8ef53fd?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400';
 
 export default function AthletePage() {
+  const { t } = useTranslation();
   useSEO({
     title: 'For Athletes | ArenaKore — Enter the Arena',
     description: 'You don\'t train. You compete. ArenaKore turns every workout into a ranked challenge. Enter the Arena. Become a KORE.',
@@ -60,10 +62,10 @@ export default function AthletePage() {
             Enter the Arena.
           </p>
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link to="/gym-challenge-pilot" data-testid="athlete-hero-cta"
+            <Link to="/fitness-challenge-app" data-testid="athlete-hero-cta"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
-              <Zap size={20} fill="black" /> Start Your First Challenge
+              <Zap size={20} fill="black" /> {t('cta.downloadApp')}
             </Link>
           </div>
           <div className="ak-hero-scroll flex flex-col items-start gap-2" style={{ color: 'rgba(255,255,255,0.25)' }}>
@@ -350,10 +352,10 @@ export default function AthletePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/gym-challenge-pilot" data-testid="athlete-final-cta"
+            <Link to="/fitness-challenge-app" data-testid="athlete-final-cta"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-lg px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '64px' }}>
-              <Zap size={22} fill="black" /> Enter the Arena
+              <Zap size={22} fill="black" /> {t('cta.downloadApp')}
             </Link>
           </div>
 

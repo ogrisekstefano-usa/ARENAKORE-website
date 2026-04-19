@@ -23,8 +23,8 @@
     "h1_line1": "The competition",
     "h1_line2": "never ends.",
     "sub": "Turn every performance into a challenge.",
-    "cta_primary": "Start a Challenge",
-    "cta_secondary": "Explore the system",
+    "cta_primary": "Download the App",
+    "cta_secondary": "For Gyms",
     "scrollHint": "Scroll to learn more",
     "stats": {
       "active": "Active KORE",
@@ -335,5 +335,12 @@
     "faq_q5": "How do I register my gym on ArenaKore?",
     "faq_a5": "Visit arenakore.com/for-gyms and start your 14-day free pilot. You will receive an admin dashboard for creating and managing challenges.",
     "still_need": "Still need help? Reach out directly."
+  },
+  "cta": {
+    "downloadApp": "Download the App",
+    "forGyms": "For Gyms",
+    "pilotCta": "Start Your Pilot",
+    "startChallenge": "Start a Challenge",
+    "exploreSystem": "For Gyms"
   }
 }

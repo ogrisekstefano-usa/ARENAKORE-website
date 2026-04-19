@@ -138,17 +138,17 @@ export default function LandingPage() {
           <p className="ak-hero-sub font-inter text-lg md:text-xl text-white mb-10 max-w-xl leading-relaxed">
             {t('home.sub')}
           </p>
-          {/* CTAs */}
+          {/* CTAs — dual path */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link to="/gym-challenge-pilot" data-testid="hero-start-challenge-btn"
+            <Link to="/fitness-challenge-app" data-testid="hero-download-app-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
-              <Zap size={20} fill="black" /> {t('home.cta_primary')}
+              <Zap size={20} fill="black" /> {t('cta.downloadApp')}
             </Link>
-            <Link to="/fitness-challenge-app" data-testid="hero-explore-btn"
+            <Link to="/gym-challenge-pilot" data-testid="hero-for-gyms-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '60px' }}>
-              {t('home.cta_secondary')} <ArrowRight size={16} />
+              {t('cta.forGyms')} <ArrowRight size={16} />
             </Link>
           </div>
           {/* Scroll */}
@@ -160,19 +160,20 @@ export default function LandingPage() {
       </section>
 
       {/* ══ STATS STRIP ══ */}
-      <section className="border-y border-white/8" style={{ background: '#080808' }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/8">
+      <section className="border-y border-white/5" style={{ background: '#080808' }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-wrap justify-center">
             {[
-              { icon: <Users size={18} />, value: '26+', label: 'Active KORE', color: '#00FFFF' },
-              { icon: <Activity size={18} />, value: '1000', label: 'Max K-Rating', color: '#FFD700' },
-              { icon: <CheckCircle size={18} />, value: '100%', label: 'Rep Validated', color: '#00FFFF' },
-              { icon: <Zap size={18} />, value: '0', label: 'Excuses Accepted', color: '#FF2D2D' },
+              { icon: <Users size={16} />, value: '26+', label: t('home.stats.active'), color: '#00FFFF' },
+              { icon: <Activity size={16} />, value: '1000', label: t('home.stats.rating'), color: '#FFD700' },
+              { icon: <CheckCircle size={16} />, value: '100%', label: t('home.stats.validated'), color: '#00FFFF' },
+              { icon: <Zap size={16} />, value: '0', label: t('home.stats.excuses'), color: '#FF2D2D' },
             ].map((s, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 py-8 px-4">
+              <div key={i} className="flex flex-col items-center gap-2 py-10 px-8 md:px-14 relative">
+                {i > 0 && <div className="absolute left-0 top-1/4 bottom-1/4 w-px" style={{ background: 'rgba(255,255,255,0.07)' }} />}
                 <div style={{ color: s.color }}>{s.icon}</div>
                 <div className="font-anton text-4xl md:text-5xl" style={{ color: s.color }}>{s.value}</div>
-                <div className="font-inter text-[10px] font-semibold uppercase tracking-widest text-white">{s.label}</div>
+                <div className="font-inter text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.45)' }}>{s.label}</div>
               </div>
             ))}
           </div>

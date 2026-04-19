@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronRight, Zap } from 'lucide-react';
+import { Menu, X, ChevronRight, Zap, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LOGO } from '../data/seo-content';
+import LangModal from './LangModal';
 
 export function useSEO({ title, description }) {
   useEffect(() => {
@@ -101,9 +102,6 @@ export function InnerNavbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex">
-            <LangSwitcher />
-          </div>
           <Link
             to="/gym-challenge-pilot"
             data-testid="nav-start-challenge-btn"
@@ -145,58 +143,74 @@ export function InnerNavbar() {
 }
 
 export function InnerFooter() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [langOpen, setLangOpen] = useState(false);
+  const currentLang = i18n.language?.slice(0, 2).toUpperCase() || 'EN';
+
   return (
-    <footer data-testid="inner-footer" className="bg-black border-t border-white/8">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-14 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
-          <div>
-            <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain mb-4" loading="lazy" />
-            <p className="font-inter text-xs text-white leading-relaxed max-w-xs">{t('footer.tagline')}</p>
-            <div className="flex items-center gap-2 mt-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
-              <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">{t('footer.nexusOnline')}</span>
+    <>
+      <LangModal open={langOpen} onClose={() => setLangOpen(false)} />
+      <footer data-testid="inner-footer" className="bg-black border-t border-white/8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-14 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+            <div>
+              <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain mb-4" loading="lazy" />
+              <p className="font-inter text-xs text-white leading-relaxed max-w-xs mb-3">{t('footer.tagline')}</p>
+              <p className="font-inter text-[10px] font-bold uppercase tracking-wider mb-4" style={{ color: 'rgba(0,255,255,0.6)' }}>
+                Global Competition Platform
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+                <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">{t('footer.nexusOnline')}</span>
+              </div>
+            </div>
+            <div>
+              <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.pages')}</div>
+              <ul className="space-y-2.5">
+                {[
+                  ['Home', '/'],
+                  ['Fitness Challenge App', '/fitness-challenge-app'],
+                  ['CrossFit Challenge', '/crossfit-challenge'],
+                  ['Workout Competition', '/workout-competition'],
+                  ['AMRAP Training', '/amrap-training'],
+                  ['For Gyms', '/for-gyms'],
+                  ['Blog', '/blog'],
+                  ['14-Day Pilot', '/gym-challenge-pilot'],
+                ].map(([label, href]) => (
+                  <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.support')}</div>
+              <ul className="space-y-2.5 mb-6">
+                <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">Support Center</Link></li>
+                <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
+              </ul>
+              <Link to="/gym-challenge-pilot"
+                className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
+                style={{ height: '38px' }}>
+                <Zap size={13} fill="black" /> {t('cta.pilotCta')}
+              </Link>
             </div>
           </div>
-          <div>
-            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.pages')}</div>
-            <ul className="space-y-2.5">
-              {[
-                ['Home', '/'],
-                ['Fitness Challenge App', '/fitness-challenge-app'],
-                ['CrossFit Challenge', '/crossfit-challenge'],
-                ['Workout Competition', '/workout-competition'],
-                ['AMRAP Training', '/amrap-training'],
-                ['For Gyms', '/for-gyms'],
-                ['Blog', '/blog'],
-                ['14-Day Pilot', '/gym-challenge-pilot'],
-              ].map(([label, href]) => (
-                <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.support')}</div>
-            <ul className="space-y-2.5 mb-6">
-              <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">Support Center</Link></li>
-              <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
-            </ul>
-            <Link to="/gym-challenge-pilot"
-              className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
-              style={{ height: '38px' }}>
-              <Zap size={13} fill="black" /> {t('nav.startChallenge')}
-            </Link>
+          <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-white/8 gap-4">
+            <div className="font-inter text-xs text-white">{t('footer.copyright')}</div>
+            <div className="flex items-center gap-5">
+              <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.privacy')}</a>
+              <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.terms')}</a>
+              <button
+                onClick={() => setLangOpen(true)}
+                data-testid="footer-lang-btn"
+                className="flex items-center gap-1.5 font-inter text-xs text-white/50 hover:text-ak-cyan transition-colors"
+              >
+                <Globe size={13} />
+                <span>{currentLang}</span>
+              </button>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-white/8 gap-3">
-          <div className="font-inter text-xs text-white">{t('footer.copyright')}</div>
-          <div className="flex items-center gap-6">
-            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.privacy')}</a>
-            <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.terms')}</a>
-            <Link to="/support" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.support')}</Link>
-          </div>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }
