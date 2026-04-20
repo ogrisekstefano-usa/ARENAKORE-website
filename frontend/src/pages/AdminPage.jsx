@@ -5,7 +5,7 @@ import {
   LayoutDashboard, FileText, BookOpen, Image, Users,
   LogOut, Plus, Pencil, Trash2, Save, X, Eye,
   ChevronRight, AlertCircle, CheckCircle, Upload, Tag,
-  Zap, ArrowLeft, Layers
+  Zap, ArrowLeft, Layers, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import { LOGO, BLOG_POSTS } from '../data/seo-content';
 
@@ -534,136 +534,259 @@ function PilotRequests({ call }) {
   );
 }
 
-/* ─── HERO SLIDES MANAGER ─── */
+/* ─── HERO SLIDES MANAGER (Enhanced) ─── */
 function HeroSlidesManager({ call }) {
-  const [slides, setSlides] = useState([]);
-  const [form, setForm] = useState({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true });
-  const [editing, setEditing] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [msg, setMsg] = useState('');
+  const [slides, setSlides]       = useState([]);
+  const [form, setForm]           = useState({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true });
+  const [editing, setEditing]     = useState(null);  // null=list/add, id=edit
+  const [saving, setSaving]       = useState(false);
+  const [toggling, setToggling]   = useState(null);  // id being toggled
+  const [deleteTarget, setDeleteTarget] = useState(null); // slide to confirm delete
+  const [msg, setMsg]             = useState('');
 
   const load = useCallback(() => call('get', '/hero-slides/all').then(setSlides).catch(() => {}), [call]);
   useEffect(() => { load(); }, [load]);
 
+  /* ── Save / Update ── */
   const save = async (e) => {
     e.preventDefault(); setSaving(true); setMsg('');
     try {
       if (editing) { await call('put', `/hero-slides/${editing}`, form); }
-      else { await call('post', '/hero-slides', form); }
-      setMsg('Saved!'); load(); setEditing(null);
+      else         { await call('post', '/hero-slides', form); }
+      setMsg('Saved!'); load();
+      setEditing(null);
       setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true });
     } catch(err) { setMsg(err?.response?.data?.detail || 'Error'); }
     finally { setSaving(false); }
   };
 
-  const del = async (id) => {
-    if (!window.confirm('Delete this slide?')) return;
-    await call('delete', `/hero-slides/${id}`); load();
+  /* ── Toggle active/inactive ── */
+  const toggleActive = async (slide) => {
+    setToggling(slide.id);
+    try { await call('put', `/hero-slides/${slide.id}`, { active: !slide.active }); load(); }
+    catch { }
+    finally { setToggling(null); }
+  };
+
+  /* ── Delete with confirmation ── */
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    await call('delete', `/hero-slides/${deleteTarget.id}`);
+    setDeleteTarget(null); load();
   };
 
   const startEdit = (s) => {
     setEditing(s.id);
     setForm({ image_url: s.image_url, sport_label: s.sport_label, position: s.position, order: s.order, active: s.active });
+    setMsg('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const POSITIONS = ['center center', 'center 20%', 'center 30%', 'center top', 'center bottom', 'top center'];
+  const POSITIONS = ['center center','center 20%','center 30%','center top','center bottom','top center'];
   const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-3 py-2.5 rounded-[10px] outline-none focus:border-ak-cyan transition-colors";
   const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
 
+  const active = slides.filter(s => s.active).length;
+  const total  = slides.length;
+
   return (
     <div>
+      {/* ── Header ── */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-anton text-2xl uppercase text-white">HERO SLIDES ({slides.length})</h2>
+        <div>
+          <h2 className="font-anton text-2xl uppercase text-white">HERO SLIDES</h2>
+          <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
+            {active} active / {total} total — default slides used if none configured
+          </p>
+        </div>
+        {editing && (
+          <button onClick={() => { setEditing(null); setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true }); }}
+            className="inline-flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white transition-colors">
+            <X size={14} /> Cancel Edit
+          </button>
+        )}
       </div>
 
-      {/* Form */}
-      <form onSubmit={save} className="p-6 rounded-[14px] mb-8" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-cyan mb-4">
-          {editing ? 'EDIT SLIDE' : 'ADD NEW SLIDE'}
+      {/* ── Add / Edit Form ── */}
+      <form onSubmit={save} className="p-6 rounded-[14px] mb-8" style={{ background: '#0a0a0a', border: `1px solid ${editing ? 'rgba(0,255,255,0.3)' : 'rgba(255,255,255,0.08)'}` }}>
+        <div className="font-inter text-xs font-bold uppercase tracking-wider mb-4" style={{ color: editing ? '#00FFFF' : '#a1a1aa' }}>
+          {editing ? '✏ EDITING SLIDE' : '+ ADD NEW SLIDE'}
         </div>
         <div className="grid sm:grid-cols-2 gap-4 mb-4">
           <div className="sm:col-span-2">
             <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Image URL *</label>
             <input className={inp} style={inpStyle} required value={form.image_url}
-              onChange={e => setForm({...form, image_url: e.target.value})} placeholder="https://images.pexels.com/..." />
+              onChange={e => setForm({...form, image_url: e.target.value})}
+              placeholder="https://images.pexels.com/photos/..." />
           </div>
           <div>
             <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Sport Label</label>
             <input className={inp} style={inpStyle} value={form.sport_label}
-              onChange={e => setForm({...form, sport_label: e.target.value})} placeholder="CROSSFIT, RUNNING, BASKETBALL..." />
+              onChange={e => setForm({...form, sport_label: e.target.value.toUpperCase()})}
+              placeholder="CROSSFIT · RUNNING · BASKETBALL..." />
           </div>
           <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Position</label>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Image Position</label>
             <select className={inp} style={inpStyle} value={form.position} onChange={e => setForm({...form, position: e.target.value})}>
               {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
           </div>
           <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Order</label>
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Order (0 = first)</label>
             <input type="number" className={inp} style={inpStyle} value={form.order}
-              onChange={e => setForm({...form, order: parseInt(e.target.value)||0})} />
+              onChange={e => setForm({...form, order: parseInt(e.target.value)||0})} min={0} />
           </div>
-          <div className="flex items-center gap-3 mt-4">
-            <input type="checkbox" id="slide-active" checked={form.active}
-              onChange={e => setForm({...form, active: e.target.checked})} className="w-4 h-4" />
-            <label htmlFor="slide-active" className="font-inter text-sm text-white">Active</label>
+          <div className="flex items-center gap-3 self-end pb-2">
+            <button type="button" onClick={() => setForm({...form, active: !form.active})}
+              className="flex items-center gap-2 transition-colors"
+              style={{ color: form.active ? '#00FFFF' : '#666' }}>
+              {form.active ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
+              <span className="font-inter text-sm">{form.active ? 'Active' : 'Inactive'}</span>
+            </button>
           </div>
         </div>
-        {/* Preview */}
+        {/* Live preview */}
         {form.image_url && (
-          <div className="mb-4 rounded-[10px] overflow-hidden" style={{ height: '120px' }}>
-            <img src={form.image_url} alt="preview" className="w-full h-full object-cover"
+          <div className="mb-4 rounded-[10px] overflow-hidden relative group" style={{ height: '130px' }}>
+            <img src={form.image_url} alt="preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               style={{ objectPosition: form.position }} loading="lazy" />
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute bottom-2 left-2">
+              <span className="font-inter text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded"
+                style={{ background: 'rgba(0,255,255,0.8)', color: '#000' }}>
+                {form.sport_label || 'PREVIEW'} · {form.position}
+              </span>
+            </div>
           </div>
         )}
         <div className="flex items-center gap-4">
           <button type="submit" disabled={saving}
             className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-6 rounded-[12px] bg-ak-gold text-black disabled:opacity-60"
             style={{ height: '40px' }}>
-            <Save size={14} /> {saving ? 'Saving...' : editing ? 'Update' : 'Add Slide'}
+            <Save size={14} /> {saving ? 'Saving...' : editing ? 'Update Slide' : 'Add Slide'}
           </button>
           {editing && (
-            <button type="button" onClick={() => { setEditing(null); setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true }); }}
-              className="font-inter text-xs text-white/50 hover:text-white transition-colors">Cancel</button>
+            <button type="button"
+              onClick={() => { setEditing(null); setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true }); setMsg(''); }}
+              className="font-inter text-xs text-white/50 hover:text-white px-4 py-2 rounded-[10px] border border-white/10 transition-colors">
+              Cancel
+            </button>
           )}
           {msg && <span className={`font-inter text-xs ${msg === 'Saved!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
         </div>
       </form>
 
-      {/* Slides list */}
+      {/* ── Slides Grid ── */}
       {slides.length === 0 ? (
-        <div className="text-center py-12 border border-dashed border-white/15 rounded-[14px]">
-          <Layers size={28} className="text-white/20 mx-auto mb-2" />
-          <p className="font-inter text-sm text-white/40">No slides yet. Add the first one above.<br /><span className="text-white/25 text-xs">Default slides are used when no slides are configured.</span></p>
+        <div className="text-center py-16 border border-dashed border-white/10 rounded-[14px]">
+          <Layers size={32} className="text-white/15 mx-auto mb-3" />
+          <p className="font-inter text-sm text-white/35 mb-1">No slides configured.</p>
+          <p className="font-inter text-xs text-white/20">Homepage uses default built-in slides until you add slides here.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {slides.map(s => (
-            <div key={s.id} className="group rounded-[12px] overflow-hidden relative"
-              style={{ background: '#0a0a0a', border: `1px solid ${s.active ? 'rgba(0,255,255,0.2)' : 'rgba(255,255,255,0.05)'}` }}>
-              <div className="relative" style={{ height: '140px' }}>
-                <img src={s.image_url} alt={s.sport_label} className="w-full h-full object-cover"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {slides.sort((a,b) => a.order - b.order).map(s => (
+            <div key={s.id}
+              className="rounded-[14px] overflow-hidden"
+              style={{ background: '#0a0a0a', border: `1px solid ${s.active ? 'rgba(0,255,255,0.2)' : 'rgba(255,255,255,0.06)'}`, opacity: s.active ? 1 : 0.55 }}>
+
+              {/* Thumbnail */}
+              <div className="relative overflow-hidden group" style={{ height: '160px' }}>
+                <img src={s.image_url} alt={s.sport_label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   style={{ objectPosition: s.position }} loading="lazy" />
-                <div className="absolute inset-0 bg-black/50" />
-                <div className="absolute top-2 left-2 flex items-center gap-1">
-                  <span className="font-inter text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded"
-                    style={{ background: s.active ? 'rgba(0,255,255,0.8)' : 'rgba(255,255,255,0.2)', color: '#000' }}>
-                    #{s.order} {s.sport_label || 'SLIDE'}
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.7) 100%)' }} />
+
+                {/* Order badge */}
+                <div className="absolute top-3 left-3">
+                  <span className="font-inter text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full"
+                    style={{ background: 'rgba(0,0,0,0.7)', color: '#a1a1aa', border: '1px solid rgba(255,255,255,0.15)' }}>
+                    #{s.order}
                   </span>
                 </div>
-                {!s.active && <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="font-inter text-xs text-white/60 uppercase tracking-wider">Inactive</span>
-                </div>}
+
+                {/* Sport label */}
+                <div className="absolute bottom-3 left-3">
+                  <span className="font-anton text-xl uppercase tracking-wide" style={{ color: '#fff', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+                    {s.sport_label || '—'}
+                  </span>
+                </div>
+
+                {/* Inactive overlay */}
+                {!s.active && (
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
+                    <span className="font-inter text-xs font-bold uppercase tracking-widest text-white/50 border border-white/20 px-3 py-1 rounded-full">INACTIVE</span>
+                  </div>
+                )}
               </div>
-              <div className="p-3 flex items-center justify-between">
-                <p className="font-inter text-[10px] text-white/40 truncate max-w-[120px]">{s.image_url.split('/').pop().substring(0, 20)}...</p>
-                <div className="flex gap-1">
-                  <button onClick={() => startEdit(s)} className="p-1.5 text-white/40 hover:text-ak-cyan transition-colors"><Pencil size={13} /></button>
-                  <button onClick={() => del(s.id)} className="p-1.5 text-white/40 hover:text-red-400 transition-colors"><Trash2 size={13} /></button>
+
+              {/* Controls */}
+              <div className="p-4 flex items-center justify-between gap-3">
+                {/* Toggle */}
+                <button
+                  onClick={() => toggleActive(s)}
+                  disabled={toggling === s.id}
+                  className="flex items-center gap-2 transition-colors disabled:opacity-50"
+                  title={s.active ? 'Click to deactivate' : 'Click to activate'}
+                  style={{ color: s.active ? '#00FFFF' : '#555' }}>
+                  {toggling === s.id
+                    ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    : s.active ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
+                  <span className="font-inter text-xs font-semibold">{s.active ? 'Active' : 'Inactive'}</span>
+                </button>
+
+                {/* Actions */}
+                <div className="flex items-center gap-1">
+                  <button onClick={() => startEdit(s)}
+                    className="p-2 rounded-[8px] text-white/40 hover:text-ak-cyan hover:bg-ak-cyan/10 transition-all"
+                    title="Edit slide">
+                    <Pencil size={14} />
+                  </button>
+                  <button onClick={() => setDeleteTarget(s)}
+                    className="p-2 rounded-[8px] text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                    title="Delete slide">
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ── Delete Confirmation Modal ── */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
+          onClick={() => setDeleteTarget(null)}>
+          <div className="w-full max-w-sm rounded-[20px] p-8 text-center"
+            style={{ background: '#111', border: '1px solid rgba(255,45,45,0.3)', boxShadow: '0 40px 80px rgba(0,0,0,0.8)' }}
+            onClick={e => e.stopPropagation()}>
+            {/* Slide preview in modal */}
+            <div className="w-full rounded-[12px] overflow-hidden mb-5" style={{ height: '100px' }}>
+              <img src={deleteTarget.image_url} alt="" className="w-full h-full object-cover"
+                style={{ objectPosition: deleteTarget.position }} loading="lazy" />
+            </div>
+            <div className="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-4">
+              <Trash2 size={18} className="text-red-400" />
+            </div>
+            <h3 className="font-anton text-xl uppercase text-white mb-2">Delete Slide?</h3>
+            <p className="font-inter text-sm mb-1" style={{ color: '#a1a1aa' }}>
+              Sport: <span className="text-white font-semibold">{deleteTarget.sport_label || '—'}</span>
+            </p>
+            <p className="font-inter text-xs mb-8" style={{ color: '#666' }}>This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteTarget(null)}
+                className="flex-1 font-inter font-semibold text-sm rounded-[12px] border border-white/15 text-white hover:border-white/40 transition-colors"
+                style={{ height: '44px' }}>
+                Cancel
+              </button>
+              <button onClick={confirmDelete}
+                className="flex-1 font-inter font-black text-sm rounded-[12px] bg-red-500 text-white hover:bg-red-400 transition-colors"
+                style={{ height: '44px' }}>
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
