@@ -850,46 +850,97 @@ function ContentEditor({ call }) {
             {/* ── DISCIPLINE IMAGES PANEL (homepage only) ── */}
             {selectedPage === 'homepage' && (() => {
               const imgKeys = ['d1_img','d2_img','d3_img','d4_img','d5_img','d6_img','d7_img','d8_img'];
+              const posKeys = ['d1_pos','d2_pos','d3_pos','d4_pos','d5_pos','d6_pos','d7_pos','d8_pos'];
               const imgLabels = ['Fitness & CrossFit','Running','Basket','Nuoto','Golf','Surf & Kitesurf','Sport di Squadra','Sfide Personali'];
               const imgSections = imgKeys.map(k => sections.find(s => (typeof s==='object' ? s.key : '') === k)).filter(Boolean);
               if (imgSections.length === 0) return null;
               return (
                 <div className="mb-6 p-5 rounded-[14px]" style={{ background: 'rgba(0,255,255,0.03)', border: '1px solid rgba(0,255,255,0.15)' }}>
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-2 mb-1">
                     <Image size={14} className="text-ak-cyan flex-shrink-0" />
                     <span className="font-inter text-xs font-bold uppercase tracking-widest text-ak-cyan">IMMAGINI DISCIPLINE</span>
-                    <span className="font-inter text-[10px] text-white/30 ml-1">— modifica l'URL per cambiare l'immagine di ogni card</span>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <p className="font-inter text-[10px] text-white/30 mb-4">
+                    Cambia URL immagine · <strong className="text-white/50">Clic sul riquadro immagine</strong> per spostare il punto focale (croce bianca = centro attuale)
+                  </p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {imgSections.map((s, i) => {
-                      const k = typeof s === 'object' ? s.key : '';
-                      const idx = imgKeys.indexOf(k);
-                      const currentVal = (s.translations || {})[activeLang] || (s.translations || {}).en || '';
-                      const label = imgLabels[idx] || k;
+                      const imgKey = imgKeys[i];
+                      const posKey = posKeys[i];
+                      const label = imgLabels[i];
+                      const currentImg = (s.translations || {})[activeLang] || (s.translations || {}).en || '';
+                      const posSection = sections.find(sec => (typeof sec==='object' ? sec.key : '') === posKey);
+                      const currentPos = posSection ? ((posSection.translations || {})[activeLang] || (posSection.translations || {}).en || '50% 50%') : '50% 50%';
+
+                      // Parse position percentages for the focal point indicator
+                      const [px, py] = (currentPos || '50% 50%').split(' ').map(v => parseFloat(v) || 50);
+
+                      const handleFocalClick = (e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+                        const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+                        const newPos = `${x}% ${y}%`;
+                        updateSection(posKey, activeLang || 'en', newPos);
+                      };
+
                       return (
-                        <div key={k} className="rounded-[10px] overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-                          {/* Thumbnail */}
-                          <div className="relative h-20 bg-black">
-                            {currentVal ? (
-                              <img src={currentVal} alt={label} className="w-full h-full object-cover" loading="lazy"
+                        <div key={imgKey}>
+                          {/* Label */}
+                          <div className="font-inter text-[10px] font-bold text-white/50 uppercase tracking-wider mb-1.5 truncate">{label}</div>
+
+                          {/* Image with focal point editor */}
+                          <div className="relative rounded-[8px] overflow-hidden mb-2 select-none"
+                            style={{ height: 100, background: '#111', border: '1px solid rgba(255,255,255,0.1)', cursor: 'crosshair' }}
+                            onClick={handleFocalClick}
+                            title="Clic per spostare il punto focale">
+                            {currentImg ? (
+                              <img src={currentImg} alt={label}
+                                className="w-full h-full object-cover pointer-events-none"
+                                style={{ objectPosition: currentPos }}
+                                loading="lazy"
                                 onError={e => { e.currentTarget.style.opacity='0'; }} />
                             ) : (
                               <div className="flex items-center justify-center h-full">
-                                <Image size={20} className="text-white/15" />
+                                <Image size={18} className="text-white/15" />
                               </div>
                             )}
-                            <div className="absolute bottom-0 left-0 right-0 px-2 py-1 font-inter text-[9px] font-bold text-white truncate"
-                              style={{ background:'linear-gradient(transparent,rgba(0,0,0,0.8))' }}>
-                              {label}
+                            {/* Focal point crosshair */}
+                            {currentImg && (
+                              <div className="absolute pointer-events-none"
+                                style={{ left: `${px}%`, top: `${py}%`, transform: 'translate(-50%,-50%)', zIndex: 10 }}>
+                                {/* Crosshair lines */}
+                                <div style={{ position:'absolute', left:'50%', top:'50%', transform:'translate(-50%,-50%)',
+                                  width:20, height:20 }}>
+                                  <div style={{ position:'absolute', top:'50%', left:0, right:0, height:1,
+                                    background:'rgba(255,255,255,0.9)', transform:'translateY(-50%)',
+                                    boxShadow:'0 0 2px rgba(0,0,0,0.8)' }} />
+                                  <div style={{ position:'absolute', left:'50%', top:0, bottom:0, width:1,
+                                    background:'rgba(255,255,255,0.9)', transform:'translateX(-50%)',
+                                    boxShadow:'0 0 2px rgba(0,0,0,0.8)' }} />
+                                  <div style={{ position:'absolute', top:'50%', left:'50%',
+                                    transform:'translate(-50%,-50%)', width:6, height:6,
+                                    borderRadius:'50%', background:'#fff',
+                                    border:'1.5px solid rgba(0,0,0,0.6)',
+                                    boxShadow:'0 0 4px rgba(0,0,0,0.5)' }} />
+                                </div>
+                              </div>
+                            )}
+                            {/* Hover overlay hint */}
+                            <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center"
+                              style={{ background:'rgba(0,0,0,0.35)' }}>
+                              <span className="font-inter text-[9px] font-bold text-white uppercase tracking-wider">Clic per spostare</span>
                             </div>
                           </div>
+
+                          {/* Position display */}
+                          <div className="font-inter text-[9px] text-white/30 mb-1.5 font-mono">{currentPos}</div>
+
                           {/* URL input */}
-                          <input type="url"
-                            value={currentVal}
-                            onChange={e => updateSection(k, activeLang, e.target.value)}
-                            className="w-full font-mono text-[10px] text-white placeholder-white/20 px-2 py-2 outline-none"
-                            style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.06)' }}
-                            placeholder="https://..." />
+                          <input type="url" value={currentImg}
+                            onChange={e => updateSection(imgKey, activeLang || 'en', e.target.value)}
+                            className="w-full font-mono text-[10px] text-white/70 placeholder-white/20 px-2 py-1.5 rounded-[6px] outline-none focus:border-ak-cyan transition-colors"
+                            style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.1)' }}
+                            placeholder="URL immagine..." />
                         </div>
                       );
                     })}

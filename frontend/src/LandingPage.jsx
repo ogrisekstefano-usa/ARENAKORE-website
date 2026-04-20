@@ -49,14 +49,14 @@ export default function LandingPage() {
   useScrollTracking('home');
 
   const DISCIPLINES = [
-    { title: t('home.d1_title'), sub: t('home.d1_sub'), desc: t('home.d1_desc'), href: ROUTES.fitnessApp, color: '#00FFFF', img: cms('d1_img', IMGS.barbell), primary: true },
-    { title: t('home.d2_title'), sub: t('home.d2_sub'), desc: t('home.d2_desc'), href: ROUTES.competition, color: '#FFD700', img: cms('d2_img', IMG_RUNNER) },
-    { title: t('home.d3_title'), sub: t('home.d3_sub'), desc: t('home.d3_desc'), href: ROUTES.competition, color: '#FF2D2D', img: cms('d3_img', IMG_BASKETBALL) },
-    { title: t('home.d4_title'), sub: t('home.d4_sub'), desc: t('home.d4_desc'), href: ROUTES.competition, color: '#00FFFF', img: cms('d4_img', IMG_SWIMMER) },
-    { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: ROUTES.competition, color: '#FFD700', img: cms('d5_img', IMG_GOLF) },
-    { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: ROUTES.competition, color: '#00FFFF', img: cms('d6_img', IMG_SURF) },
-    { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: ROUTES.gyms,        color: '#FFD700', img: cms('d7_img', IMGS.competition) },
-    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: ROUTES.athletes,    color: '#FF2D2D', img: cms('d8_img', IMG_CHALLENGE) },
+    { title: t('home.d1_title'), sub: t('home.d1_sub'), desc: t('home.d1_desc'), href: ROUTES.fitnessApp, color: '#00FFFF', img: cms('d1_img', IMGS.barbell),    pos: cms('d1_pos', '50% 50%'), primary: true },
+    { title: t('home.d2_title'), sub: t('home.d2_sub'), desc: t('home.d2_desc'), href: ROUTES.competition, color: '#FFD700', img: cms('d2_img', IMG_RUNNER),      pos: cms('d2_pos', '50% 30%') },
+    { title: t('home.d3_title'), sub: t('home.d3_sub'), desc: t('home.d3_desc'), href: ROUTES.competition, color: '#FF2D2D', img: cms('d3_img', IMG_BASKETBALL),  pos: cms('d3_pos', '50% 40%') },
+    { title: t('home.d4_title'), sub: t('home.d4_sub'), desc: t('home.d4_desc'), href: ROUTES.competition, color: '#00FFFF', img: cms('d4_img', IMG_SWIMMER),     pos: cms('d4_pos', '50% 50%') },
+    { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: ROUTES.competition, color: '#FFD700', img: cms('d5_img', IMG_GOLF),        pos: cms('d5_pos', '50% 40%') },
+    { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: ROUTES.competition, color: '#00FFFF', img: cms('d6_img', IMG_SURF),        pos: cms('d6_pos', '50% 60%') },
+    { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: ROUTES.gyms,        color: '#FFD700', img: cms('d7_img', IMGS.competition), pos: cms('d7_pos', '50% 50%') },
+    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: ROUTES.athletes,    color: '#FF2D2D', img: cms('d8_img', IMG_CHALLENGE),   pos: cms('d8_pos', '50% 30%') },
   ];
 
   const HOW_STEPS = [
@@ -441,7 +441,10 @@ export default function LandingPage() {
                 {/* Image or gradient bg */}
                 <div className="relative overflow-hidden" style={{ height: '130px' }}>
                   {d.img ? (
-                    <img src={d.img} alt={d.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <img src={d.img} alt={d.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      style={{ objectPosition: d.pos || '50% 50%' }}
+                      loading="lazy" />
                   ) : (
                     <div className="w-full h-full" style={{ background: d.bg }} />
                   )}
