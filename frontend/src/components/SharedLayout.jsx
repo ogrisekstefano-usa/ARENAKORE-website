@@ -8,6 +8,7 @@ import LangModal from './LangModal';
 import TranslationBanner from './TranslationBanner';
 import { trackGetAppClick, trackBusinessClick } from '../utils/tracking';
 import { useGlobalContent } from '../hooks/useGlobalContent';
+import { useNavConfig } from '../hooks/useNavConfig';
 
 // Lazy import to avoid circular dep
 let _useAuth = null;
@@ -72,9 +73,16 @@ export function InnerNavbar() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language?.slice(0, 2) || 'en';
   const { global: g, offline: isOffline } = useGlobalContent(lang);
+  const { topNav } = useNavConfig();
 
-  // Nav labels: CMS → i18n fallback (fallbackContent covers the rest)
-  const navLabel = (cmsKey, i18nKey) => g(cmsKey, t(i18nKey));
+  // Resolve label: 1. navConfig lang label, 2. CMS global, 3. i18n fallback
+  const navLabel = (item) => {
+    if (item.labels?.[lang]) return item.labels[lang];
+    if (item.labels?.en)    return item.labels.en;
+    const staticItem = NAV_ITEMS.find(n => n.key === item.key);
+    if (staticItem) return g(staticItem.cmsKey, t(staticItem.i18nKey));
+    return item.key;
+  };
 
   // Safe auth access
   let authUser = null;
@@ -91,12 +99,10 @@ export function InnerNavbar() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  const NAV = NAV_ITEMS.map(item => ({
-    cmsKey:    item.cmsKey,
-    i18nKey:   item.i18nKey,
-    href:      item.route,
-    highlight: item.highlight || false,
-  }));
+  // Nav built dynamically from CMS nav config (sorted, active only)
+  const NAV = topNav
+    .filter(item => item.active !== false)
+    .sort((a, b) => a.order - b.order);
 
   const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
 
@@ -126,7 +132,7 @@ export function InnerNavbar() {
               }`}
               style={l.highlight && !active(l.href) ? { textShadow: '0 0 12px rgba(255,255,255,0.2)' } : {}}
             >
-              {navLabel(l.cmsKey, l.i18nKey)}
+              {navLabel(l)}
             </Link>
           ))}
         </div>
@@ -156,7 +162,7 @@ export function InnerNavbar() {
                 active(l.href) ? 'text-ak-cyan' : l.highlight ? 'text-white' : 'text-white/70'
               }`}
             >
-              {navLabel(l.cmsKey, l.i18nKey)} <ChevronRight size={14} className="text-white/30" />
+              {navLabel(l)} <ChevronRight size={14} className="text-white/30" />
             </Link>
           ))}
           <div className="pt-3 flex items-center justify-between">
@@ -193,12 +199,26 @@ export function InnerFooter() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language?.slice(0, 2) || 'en';
   const { global: g } = useGlobalContent(lang);
+  const { bottomNav } = useNavConfig();
   const [langOpen, setLangOpen] = useState(false);
   const currentLang    = i18n.language?.slice(0, 2).toUpperCase() || 'EN';
   const currentCountry = localStorage.getItem('arena_country') || '';
 
   const FLAGS = { IT: '🇮🇹', ES: '🇪🇸', EN: '🌍', US: '🇺🇸', GB: '🇬🇧', DE: '🇩🇪', FR: '🇫🇷', AU: '🇦🇺', CA: '🇨🇦', AE: '🇦🇪' };
   const displayFlag = FLAGS[currentCountry] || FLAGS[currentLang] || '🌍';
+
+  // Resolve footer link label
+  const footerLabel = (item) => {
+    if (item.labels?.[lang]) return item.labels[lang];
+    if (item.labels?.en)    return item.labels.en;
+    const staticItem = NAV_ITEMS.find(n => n.key === item.key);
+    if (staticItem) return t(staticItem.i18nKey);
+    return item.key;
+  };
+
+  const activeFooterLinks = bottomNav
+    .filter(item => item.active !== false)
+    .sort((a, b) => a.order - b.order);
 
   return (
     <>
@@ -220,24 +240,16 @@ export function InnerFooter() {
                 <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">{g('footer_nexus', t('footer.nexusOnline'))}</span>
               </div>
             </div>
-            {/* Col 2: Pages */}
+            {/* Col 2: Pages — driven by CMS nav config */}
             <div>
               <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.pages')}</div>
               <ul className="space-y-2.5">
-                {[
-                  [t('nav.home'),           ROUTES.home],
-                  [t('nav.arenaSystem'),    ROUTES.arenaSystem],
-                  [t('nav.athletes'),       ROUTES.athletes],
-                  [t('nav.competition'),    ROUTES.competition],
-                  [t('nav.amrap'),          ROUTES.amrap],
-                  [t('nav.crossfit'),       ROUTES.crossfit],
-                  [t('nav.gamification'),   ROUTES.gamification],
-                  [t('nav.forGymsCoaches'), ROUTES.gyms],
-                  [t('nav.fitnessApp'),     ROUTES.fitnessApp],
-                  [t('nav.blog'),           ROUTES.blog],
-                  [t('nav.getApp'),         ROUTES.app],
-                ].map(([label, href]) => (
-                  <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
+                {activeFooterLinks.map(item => (
+                  <li key={item.key}>
+                    <Link to={item.href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">
+                      {footerLabel(item)}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>

@@ -1725,7 +1725,84 @@ async def get_admin_stats(_=Depends(verify_admin)):
         "hero_slides": await db.hero_slides.count_documents({}),
     }
 
-# All known routes — single source of truth (mirrors frontend ROUTES config)
+# ─── NAVIGATION CONFIG ────────────────────────────────────────
+class NavItem(BaseModel):
+    key: str
+    href: str
+    labels: Dict[str, str] = {}   # {en: "Home", it: "Home", es: "Inicio"}
+    active: bool = True
+    order: int = 0
+
+class NavConfig(BaseModel):
+    top_nav: List[NavItem] = []
+    bottom_nav: List[NavItem] = []
+
+# Default nav from ALL_PAGES — used when no DB config exists
+DEFAULT_TOP_NAV = [
+    NavItem(key="home",         href="/",                    labels={"en":"Home","it":"Home","es":"Inicio"},              order=0),
+    NavItem(key="arenaSystem",  href="/arena-system",        labels={"en":"Arena System","it":"Arena System","es":"Sistema Arena"}, order=1),
+    NavItem(key="athletes",     href="/for-athletes",        labels={"en":"Athletes","it":"Atleti","es":"Atletas"},       order=2),
+    NavItem(key="competition",  href="/competition",         labels={"en":"Competition","it":"Competizione","es":"Competición"}, order=3),
+    NavItem(key="amrap",        href="/amrap",               labels={"en":"AMRAP","it":"AMRAP","es":"AMRAP"},             order=4),
+    NavItem(key="crossfit",     href="/crossfit",            labels={"en":"CrossFit","it":"CrossFit","es":"CrossFit"},    order=5),
+    NavItem(key="gamification", href="/gamification",        labels={"en":"Gamification","it":"Gamification","es":"Gamificación"}, order=6),
+    NavItem(key="gyms",         href="/for-gyms-and-coaches",labels={"en":"Business","it":"Business","es":"Business"},   order=7),
+    NavItem(key="blog",         href="/blog",                labels={"en":"Blog","it":"Blog","es":"Blog"},                order=8),
+]
+
+DEFAULT_BOTTOM_NAV = [
+    NavItem(key="home",         href="/",                    labels={"en":"Home","it":"Home","es":"Inicio"},              order=0),
+    NavItem(key="arenaSystem",  href="/arena-system",        labels={"en":"Arena System","it":"Arena System","es":"Sistema Arena"}, order=1),
+    NavItem(key="athletes",     href="/for-athletes",        labels={"en":"Athletes","it":"Atleti","es":"Atletas"},       order=2),
+    NavItem(key="competition",  href="/competition",         labels={"en":"Competition","it":"Competizione","es":"Competición"}, order=3),
+    NavItem(key="amrap",        href="/amrap",               labels={"en":"AMRAP","it":"AMRAP","es":"AMRAP"},             order=4),
+    NavItem(key="crossfit",     href="/crossfit",            labels={"en":"CrossFit","it":"CrossFit","es":"CrossFit"},    order=5),
+    NavItem(key="gamification", href="/gamification",        labels={"en":"Gamification","it":"Gamification","es":"Gamificación"}, order=6),
+    NavItem(key="gyms",         href="/for-gyms-and-coaches",labels={"en":"For Gyms & Coaches","it":"Per Palestre & Coach","es":"Para Gimnasios & Coaches"}, order=7),
+    NavItem(key="fitnessApp",   href="/fitness-challenge-app",labels={"en":"Fitness Challenge App","it":"Fitness Challenge App","es":"Fitness Challenge App"}, order=8),
+    NavItem(key="blog",         href="/blog",                labels={"en":"Blog","it":"Blog","es":"Blog"},                order=9),
+    NavItem(key="app",          href="/get-the-app",         labels={"en":"Get the App","it":"Scarica App","es":"Descargar App"}, order=10),
+]
+
+@api_router.get("/nav/config")
+async def get_nav_config():
+    """Public: returns current navigation configuration."""
+    doc = await db.nav_config.find_one({"type": "nav_config"}, {"_id": 0})
+    if not doc:
+        return {"top_nav": [i.model_dump() for i in DEFAULT_TOP_NAV], "bottom_nav": [i.model_dump() for i in DEFAULT_BOTTOM_NAV]}
+    return {"top_nav": doc.get("top_nav", []), "bottom_nav": doc.get("bottom_nav", [])}
+
+@api_router.put("/nav/config")
+async def update_nav_config(data: NavConfig, _=Depends(verify_admin)):
+    """Admin: saves navigation configuration."""
+    doc = data.model_dump()
+    doc["type"] = "nav_config"
+    doc["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.nav_config.replace_one({"type": "nav_config"}, doc, upsert=True)
+    return {"ok": True, "top_nav": len(data.top_nav), "bottom_nav": len(data.bottom_nav)}
+
+@api_router.get("/nav/config/full")
+async def get_nav_config_full(_=Depends(verify_admin)):
+    """Admin: returns full nav config including all available pages."""
+    config = await get_nav_config()
+    used_keys = set(i["key"] for i in config["top_nav"]) | set(i["key"] for i in config["bottom_nav"])
+    all_pages = [
+        {"key": "home",         "href": "/",                     "labels": {"en":"Home","it":"Home","es":"Inicio"}},
+        {"key": "arenaSystem",  "href": "/arena-system",         "labels": {"en":"Arena System","it":"Arena System","es":"Sistema Arena"}},
+        {"key": "athletes",     "href": "/for-athletes",         "labels": {"en":"Athletes","it":"Atleti","es":"Atletas"}},
+        {"key": "competition",  "href": "/competition",          "labels": {"en":"Competition","it":"Competizione","es":"Competición"}},
+        {"key": "amrap",        "href": "/amrap",                "labels": {"en":"AMRAP","it":"AMRAP","es":"AMRAP"}},
+        {"key": "crossfit",     "href": "/crossfit",             "labels": {"en":"CrossFit","it":"CrossFit","es":"CrossFit"}},
+        {"key": "gamification", "href": "/gamification",         "labels": {"en":"Gamification","it":"Gamification","es":"Gamificación"}},
+        {"key": "gyms",         "href": "/for-gyms-and-coaches", "labels": {"en":"Business","it":"Business","es":"Business"}},
+        {"key": "blog",         "href": "/blog",                 "labels": {"en":"Blog","it":"Blog","es":"Blog"}},
+        {"key": "app",          "href": "/get-the-app",          "labels": {"en":"Get the App","it":"Scarica App","es":"Descargar App"}},
+        {"key": "fitnessApp",   "href": "/fitness-challenge-app","labels": {"en":"Fitness Challenge App","it":"Fitness Challenge App","es":"Fitness Challenge App"}},
+        {"key": "support",      "href": "/support",              "labels": {"en":"Support","it":"Supporto","es":"Soporte"}},
+    ]
+    return {**config, "all_pages": all_pages}
+
+
 KNOWN_ROUTES = [
     {"slug": "/",                      "name": "Home",                    "section": "main"},
     {"slug": "/arena-system",          "name": "Arena System",            "section": "main"},

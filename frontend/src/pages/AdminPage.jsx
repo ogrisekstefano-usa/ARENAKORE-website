@@ -7,7 +7,7 @@ import {
   ChevronRight, AlertCircle, CheckCircle, Upload, Tag,
   Zap, ArrowLeft, Layers, ToggleLeft, ToggleRight,
   Activity, BarChart2, MousePointerClick, TrendingUp, RefreshCw,
-  Globe, Languages, Sparkles, Copy
+  Globe, Languages, Sparkles, Copy, Menu
 } from 'lucide-react';
 import { LOGO, BLOG_POSTS } from '../data/seo-content';
 
@@ -84,6 +84,7 @@ const TABS = [
   { id: 'analytics', label: 'Analytics',       icon: Activity },
   { id: 'content',   label: 'Content',         icon: FileText },
   { id: 'global',    label: 'Global Content',  icon: Globe },
+  { id: 'nav',       label: 'Navigation',      icon: Menu },
   { id: 'coverage',  label: 'Key Coverage',    icon: BarChart2 },
   { id: 'hero',      label: 'Hero Slides',     icon: Layers },
   { id: 'blog',      label: 'Blog',            icon: BookOpen },
@@ -1673,6 +1674,258 @@ function BlogManager({ call }) {
 
 /* ─── PAGES MANAGER ─── */
 /* ─── PAGES MANAGER (Auto-sync) ─── */
+
+/* ─── NAV MANAGER — drag & drop navigation editor ─── */
+const ALL_PAGES = [
+  { key: 'home',         href: '/',                     labels: { en: 'Home',                  it: 'Home',                    es: 'Inicio' } },
+  { key: 'arenaSystem',  href: '/arena-system',         labels: { en: 'Arena System',          it: 'Arena System',            es: 'Sistema Arena' } },
+  { key: 'athletes',     href: '/for-athletes',         labels: { en: 'Athletes',              it: 'Atleti',                  es: 'Atletas' } },
+  { key: 'competition',  href: '/competition',          labels: { en: 'Competition',           it: 'Competizione',            es: 'Competición' } },
+  { key: 'amrap',        href: '/amrap',                labels: { en: 'AMRAP',                 it: 'AMRAP',                   es: 'AMRAP' } },
+  { key: 'crossfit',     href: '/crossfit',             labels: { en: 'CrossFit',              it: 'CrossFit',                es: 'CrossFit' } },
+  { key: 'gamification', href: '/gamification',         labels: { en: 'Gamification',          it: 'Gamification',            es: 'Gamificación' } },
+  { key: 'gyms',         href: '/for-gyms-and-coaches', labels: { en: 'Business',              it: 'Business',                es: 'Business' } },
+  { key: 'blog',         href: '/blog',                 labels: { en: 'Blog',                  it: 'Blog',                    es: 'Blog' } },
+  { key: 'app',          href: '/get-the-app',          labels: { en: 'Get the App',           it: 'Scarica App',             es: 'Descargar App' } },
+  { key: 'fitnessApp',   href: '/fitness-challenge-app',labels: { en: 'Fitness Challenge App', it: 'Fitness Challenge App',   es: 'Fitness Challenge App' } },
+  { key: 'support',      href: '/support',              labels: { en: 'Support',               it: 'Supporto',                es: 'Soporte' } },
+];
+
+function NavManager({ call }) {
+  const [topNav, setTopNav]     = useState([]);
+  const [bottomNav, setBottomNav] = useState([]);
+  const [saving, setSaving]     = useState(false);
+  const [msg, setMsg]           = useState('');
+  const [editItem, setEditItem] = useState(null); // {zone, index} being label-edited
+  const [dragSrc, setDragSrc]   = useState(null); // {zone, index}
+
+  const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-2.5 py-1.5 rounded-[8px] outline-none focus:border-ak-cyan transition-colors";
+  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
+
+  const load = useCallback(async () => {
+    try {
+      const r = await call('get', '/nav/config/full');
+      setTopNav((r.top_nav || []).sort((a, b) => a.order - b.order));
+      setBottomNav((r.bottom_nav || []).sort((a, b) => a.order - b.order));
+    } catch { }
+  }, [call]);
+  useEffect(() => { load(); }, [load]);
+
+  const save = async () => {
+    setSaving(true); setMsg('');
+    try {
+      const payload = {
+        top_nav:    topNav.map((item, i) => ({ ...item, order: i })),
+        bottom_nav: bottomNav.map((item, i) => ({ ...item, order: i })),
+      };
+      await call('put', '/nav/config', payload);
+      setMsg('✓ Salvato! Il menù si aggiornerà al prossimo refresh.');
+    } catch (e) { setMsg(e?.response?.data?.detail || 'Errore'); }
+    finally { setSaving(false); }
+  };
+
+  // Keys already in a menu (to show as unavailable in pool)
+  const usedKeys = new Set([...topNav.map(i => i.key), ...bottomNav.map(i => i.key)]);
+  const pool = ALL_PAGES.filter(p => !usedKeys.has(p.key));
+
+  const addToZone = (page, zone) => {
+    const item = { ...page, active: true, order: 0 };
+    if (zone === 'top') setTopNav(prev => [...prev, item]);
+    else setBottomNav(prev => [...prev, item]);
+  };
+
+  const removeFromZone = (zone, index) => {
+    if (zone === 'top') setTopNav(prev => prev.filter((_, i) => i !== index));
+    else setBottomNav(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const toggleActive = (zone, index) => {
+    const setter = zone === 'top' ? setTopNav : setBottomNav;
+    setter(prev => prev.map((item, i) => i === index ? { ...item, active: !item.active } : item));
+  };
+
+  const updateLabel = (zone, index, lang, value) => {
+    const setter = zone === 'top' ? setTopNav : setBottomNav;
+    setter(prev => prev.map((item, i) =>
+      i === index ? { ...item, labels: { ...item.labels, [lang]: value } } : item
+    ));
+  };
+
+  // Drag and drop
+  const onDragStart = (zone, index) => setDragSrc({ zone, index });
+
+  const onDrop = (zone, dropIndex) => {
+    if (!dragSrc) return;
+    const getList = z => z === 'top' ? [...topNav] : [...bottomNav];
+    const setList = z => z === 'top' ? setTopNav : setBottomNav;
+
+    if (dragSrc.zone === zone) {
+      // Reorder within same zone
+      const list = getList(zone);
+      const [item] = list.splice(dragSrc.index, 1);
+      list.splice(dropIndex, 0, item);
+      setList(zone)(list.map((it, i) => ({ ...it, order: i })));
+    } else {
+      // Move between zones
+      const srcList = getList(dragSrc.zone);
+      const dstList = getList(zone);
+      const [item] = srcList.splice(dragSrc.index, 1);
+      dstList.splice(dropIndex, 0, item);
+      setList(dragSrc.zone)(srcList.map((it, i) => ({ ...it, order: i })));
+      setList(zone)(dstList.map((it, i) => ({ ...it, order: i })));
+    }
+    setDragSrc(null);
+  };
+
+  const onDropZone = (zone) => {
+    if (!dragSrc || dragSrc.zone === zone) return;
+    const srcList = dragSrc.zone === 'top' ? [...topNav] : [...bottomNav];
+    const dstList = zone === 'top' ? [...topNav] : [...bottomNav];
+    const [item] = srcList.splice(dragSrc.index, 1);
+    dstList.push(item);
+    if (dragSrc.zone === 'top') { setTopNav(srcList.map((it,i)=>({...it,order:i}))); setBottomNav(dstList.map((it,i)=>({...it,order:i}))); }
+    else { setBottomNav(srcList.map((it,i)=>({...it,order:i}))); setTopNav(dstList.map((it,i)=>({...it,order:i}))); }
+    setDragSrc(null);
+  };
+
+  const renderItem = (item, zone, index) => {
+    const isEditing = editItem?.zone === zone && editItem?.index === index;
+    return (
+      <div key={item.key}
+        draggable
+        onDragStart={() => onDragStart(zone, index)}
+        onDragOver={e => e.preventDefault()}
+        onDrop={() => onDrop(zone, index)}
+        className={`flex items-start gap-2 p-3 rounded-[10px] select-none transition-all ${
+          item.active === false ? 'opacity-40' : ''
+        }`}
+        style={{ background: '#0a0a0a', border: `1px solid ${dragSrc?.zone === zone && dragSrc?.index === index ? 'rgba(0,255,255,0.4)' : 'rgba(255,255,255,0.07)'}`, cursor: 'grab' }}>
+
+        {/* Drag handle */}
+        <div className="font-inter text-white/20 text-base mt-0.5 flex-shrink-0" title="Trascina per riordinare">⠿</div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+            <div className="space-y-1.5">
+              {['en','it','es'].map(l => (
+                <div key={l} className="flex items-center gap-1.5">
+                  <span className="font-inter text-[9px] font-bold uppercase w-5 text-white/40">{l}</span>
+                  <input className={`${inp} flex-1`} style={inpStyle}
+                    value={item.labels?.[l] || ''}
+                    onChange={e => updateLabel(zone, index, l, e.target.value)} />
+                </div>
+              ))}
+              <button onClick={() => setEditItem(null)} className="font-inter text-[10px] text-ak-cyan mt-1">✓ Fine</button>
+            </div>
+          ) : (
+            <div>
+              <div className="font-inter text-sm font-semibold text-white truncate">
+                {item.labels?.en || item.key}
+              </div>
+              <div className="font-inter text-[10px] text-white/30 mt-0.5">{item.href}</div>
+              {(item.labels?.it || item.labels?.es) && (
+                <div className="font-inter text-[9px] text-white/25 mt-0.5">
+                  {item.labels?.it && <span className="mr-2">IT: {item.labels.it}</span>}
+                  {item.labels?.es && <span>ES: {item.labels.es}</span>}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        {!isEditing && (
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <button onClick={() => toggleActive(zone, index)} title={item.active === false ? 'Attiva' : 'Disattiva'}
+              className={`font-inter text-[10px] font-bold px-1.5 py-0.5 rounded transition-all ${item.active === false ? 'text-white/30 hover:text-white' : 'text-ak-cyan'}`}>
+              {item.active === false ? '○' : '●'}
+            </button>
+            <button onClick={() => setEditItem({ zone, index })} title="Modifica etichette" className="p-1 text-white/30 hover:text-ak-cyan transition-colors">
+              <Pencil size={12} />
+            </button>
+            <button onClick={() => removeFromZone(zone, index)} title="Rimuovi dal menù" className="p-1 text-white/30 hover:text-red-400 transition-colors">
+              <X size={12} />
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const ZonePanel = ({ zone, items, title, color }) => (
+    <div className="flex flex-col" style={{ minHeight: '300px' }}>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-2 h-2 rounded-full" style={{ background: color }} />
+        <span className="font-inter text-xs font-bold uppercase tracking-wider text-white">{title}</span>
+        <span className="font-inter text-[10px] text-white/30">{items.filter(i => i.active !== false).length} attivi</span>
+      </div>
+      <div className="flex-1 space-y-1.5 min-h-[80px] rounded-[12px] p-2"
+        style={{ background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)' }}
+        onDragOver={e => e.preventDefault()}
+        onDrop={() => onDropZone(zone)}>
+        {items.length === 0 && (
+          <div className="flex items-center justify-center h-16 font-inter text-xs text-white/20">
+            Trascina voci qui
+          </div>
+        )}
+        {items.map((item, i) => renderItem(item, zone, i))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="font-anton text-2xl uppercase text-white">NAVIGATION MANAGER</h2>
+          <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
+            Drag & drop per riordinare · Trascina tra colonne per spostare · ● = visibile · ○ = nascosto
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {msg && <span className={`font-inter text-xs font-semibold ${msg.startsWith('✓') ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
+          <button onClick={save} disabled={saving}
+            className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-8 rounded-[12px] bg-ak-gold text-black disabled:opacity-60 hover:scale-[1.02] transition-transform"
+            style={{ height: '44px' }}>
+            <Save size={15} /> {saving ? 'Salvataggio...' : 'Salva Menù'}
+          </button>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6 mb-6">
+        <ZonePanel zone="top"    items={topNav}    title="Menù Top (Navbar)"   color="#00FFFF" />
+        <ZonePanel zone="bottom" items={bottomNav} title="Menù Bottom (Footer)" color="#FFD700" />
+      </div>
+
+      {/* Available pages pool */}
+      {pool.length > 0 && (
+        <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/30 mb-3">
+            Pagine disponibili — aggiungi a un menù
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {pool.map(page => (
+              <div key={page.key} className="flex items-center gap-1 rounded-[8px] overflow-hidden"
+                style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                <span className="font-inter text-xs text-white/60 px-3 py-2">{page.labels.en}</span>
+                <span className="font-inter text-[9px] text-white/25 pr-1">{page.href}</span>
+                <button onClick={() => addToZone(page, 'top')}
+                  className="px-2 py-2 font-inter text-[9px] font-bold uppercase text-ak-cyan hover:bg-ak-cyan/10 transition-colors border-l border-white/8"
+                  title="Aggiungi a menù top">+ TOP</button>
+                <button onClick={() => addToZone(page, 'bottom')}
+                  className="px-2 py-2 font-inter text-[9px] font-bold uppercase text-ak-gold hover:bg-ak-gold/10 transition-colors border-l border-white/8"
+                  title="Aggiungi a menù bottom">+ BOTTOM</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 function PagesManager({ call }) {
   const [pages, setPages]           = useState([]);
   const [selected, setSelected]     = useState(null);
@@ -2416,6 +2669,7 @@ export default function AdminPage() {
         {tab === 'analytics' && <AnalyticsDashboard call={call} />}
         {tab === 'content'   && <ContentEditor call={call} />}
         {tab === 'global'    && <GlobalContentEditor call={call} />}
+        {tab === 'nav'       && <NavManager call={call} />}
         {tab === 'coverage'  && <KeyCoverageView call={call} />}
         {tab === 'hero'      && <HeroSlidesManager call={call} />}
         {tab === 'blog'      && <BlogManager call={call} />}
