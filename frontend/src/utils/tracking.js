@@ -104,3 +104,21 @@ export function trackBusinessClick(source, cms_key) {
 export function trackScrollDepth(percent, page_name) {
   trackEvent(`scroll_${percent}`, { page_name });
 }
+
+/**
+ * Track a real conversion (app download click or pilot form submit).
+ * @param {Object} opts
+ * @param {string} opts.action         - "app_download" | "pilot_submit"
+ * @param {string} opts.source_cta_key - Which CMS key triggered this
+ * @param {string} [opts.page]
+ * @param {string} [opts.position]
+ */
+export function trackConversion({ action, source_cta_key, page = '', position = '' }) {
+  const language = localStorage.getItem('ak_lang') || 'en';
+  trackEvent('conversion_event', { action, source_cta_key, page, position, language });
+  fetch(`${API_BASE}/cms/conversion`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, source_cta_key, page, position, language, url: window.location.pathname }),
+  }).catch(() => {});
+}

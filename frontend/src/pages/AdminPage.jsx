@@ -857,19 +857,22 @@ function AnalyticsDashboard({ call }) {
   const [summary, setSummary]   = useState([]);
   const [recent, setRecent]     = useState([]);
   const [ctaStats, setCtaStats] = useState([]);
+  const [convStats, setConvStats] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [lastRefresh, setLastRefresh] = useState(null);
 
   const load = useCallback(async () => {
     try {
-      const [sum, rec, cta] = await Promise.all([
+      const [sum, rec, cta, conv] = await Promise.all([
         call('get', '/events/summary'),
         call('get', '/events/recent'),
         call('get', '/cms/cta-analytics').catch(() => []),
+        call('get', '/cms/conversion-analytics').catch(() => []),
       ]);
       setSummary(sum || []);
       setRecent(rec || []);
       setCtaStats(cta || []);
+      setConvStats(conv || []);
       setLastRefresh(new Date());
     } catch { }
     finally { setLoading(false); }
@@ -1064,6 +1067,44 @@ function AnalyticsDashboard({ call }) {
 
 
           {/* Recent events */}
+
+          {/* CTA → Conversion Funnel */}
+          {convStats.length > 0 && (
+            <div className="p-5 rounded-[14px] mb-6" style={{ background: '#0a0a0a', border: '1px solid rgba(52,211,153,0.15)' }}>
+              <div className="font-inter text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: '#34d399' }}>CTA → CONVERSION FUNNEL</div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                      {['CTA Key', 'Page', 'Position', 'Clicks', 'Conversions', 'Conv. Rate'].map(h => (
+                        <th key={h} className="text-left pb-2 pr-4 font-inter text-[9px] font-bold uppercase tracking-widest text-white/30">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {convStats.slice(0, 10).map((row, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                        <td className="py-2 pr-4 font-inter text-[10px] font-bold text-ak-cyan">{row.key}</td>
+                        <td className="py-2 pr-4 font-inter text-[10px] text-white/50">{row.page || '—'}</td>
+                        <td className="py-2 pr-4">
+                          {row.position ? <span className="font-inter text-[9px] text-purple-400 border border-purple-400/20 px-1.5 py-0.5 rounded">{row.position}</span> : <span className="text-white/20">—</span>}
+                        </td>
+                        <td className="py-2 pr-4 font-inter text-sm font-bold text-white">{row.clicks || 0}</td>
+                        <td className="py-2 pr-4 font-inter text-sm font-bold" style={{ color: '#34d399' }}>{row.conversions || 0}</td>
+                        <td className="py-2 font-inter text-sm font-bold">
+                          <span style={{ color: row.conversion_rate >= 10 ? '#34d399' : row.conversion_rate >= 3 ? '#FFD700' : '#a1a1aa' }}>
+                            {row.conversion_rate > 0 ? `${row.conversion_rate}%` : '—'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+
           <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-4">RECENT EVENTS (last 15)</div>
             {recentEvents.length === 0 ? (

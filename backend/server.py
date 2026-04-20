@@ -1186,6 +1186,59 @@ async def get_cta_analytics(_=Depends(verify_admin)):
     docs = await db.cms_cta_clicks.find({}, {"_id": 0}).sort("clicks", -1).to_list(200)
     return docs
 
+# ─── CONVERSION TRACKING ──────────────────────────────────────
+
+class ConversionEvent(BaseModel):
+    source_cta_key: str
+    page: str = ""
+    position: str = ""
+    action: str              # "app_download" | "pilot_submit"
+    language: str = "en"
+    url: Optional[str] = None
+
+@api_router.post("/cms/conversion")
+async def track_conversion(data: ConversionEvent):
+    now = datetime.now(timezone.utc).isoformat()
+    await db.cms_conversions.update_one(
+        {"source_cta_key": data.source_cta_key, "action": data.action, "page": data.page, "position": data.position},
+        {"$inc": {"conversions": 1}, "$set": {
+            "source_cta_key": data.source_cta_key, "action": data.action,
+            "page": data.page, "position": data.position,
+            "language": data.language, "last_conversion": now,
+        }},
+        upsert=True
+    )
+    await db.analytics_events.insert_one({
+        "event": "conversion_event",
+        "params": {"source_cta_key": data.source_cta_key, "action": data.action, "page": data.page, "position": data.position, "language": data.language},
+        "url": data.url, "ts": now, "server_ts": now,
+    })
+    return {"ok": True}
+
+@api_router.get("/cms/conversion-analytics")
+async def get_conversion_analytics(_=Depends(verify_admin)):
+    clicks   = await db.cms_cta_clicks.find({}, {"_id": 0}).to_list(500)
+    convs    = await db.cms_conversions.find({}, {"_id": 0}).to_list(500)
+    # Build conversion map: key+page+position → conversions
+    conv_map = {}
+    for c in convs:
+        k = f"{c['source_cta_key']}::{c.get('page','')}::{c.get('position','')}"
+        conv_map[k] = conv_map.get(k, 0) + c.get("conversions", 0)
+    # Join clicks with conversions
+    result = []
+    for cl in sorted(clicks, key=lambda x: -x.get("clicks", 0)):
+        k = f"{cl['key']}::{cl.get('page','')}::{cl.get('position','')}"
+        c_count = conv_map.get(k, 0)
+        c_rate  = round((c_count / cl["clicks"]) * 100, 1) if cl["clicks"] > 0 and c_count > 0 else 0
+        result.append({**cl, "conversions": c_count, "conversion_rate": c_rate})
+    # Also add conversions with no matching click entry
+    click_keys = {f"{c['key']}::{c.get('page','')}::{c.get('position','')}" for c in clicks}
+    for c in convs:
+        k = f"{c['source_cta_key']}::{c.get('page','')}::{c.get('position','')}"
+        if k not in click_keys:
+            result.append({"key": c["source_cta_key"], "page": c.get("page",""), "position": c.get("position",""), "language": c.get("language","en"), "clicks": 0, "conversions": c.get("conversions",0), "conversion_rate": 0})
+    return sorted(result, key=lambda x: -(x.get("conversions",0) + x.get("clicks",0)))
+
 
 @api_router.get("/cms/content/{slug}/completeness")
 async def check_completeness(slug: str, _=Depends(verify_admin)):

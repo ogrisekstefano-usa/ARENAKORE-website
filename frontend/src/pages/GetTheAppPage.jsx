@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Activity, Trophy, Swords, ArrowRight, ChevronDown } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
-import { trackGetAppClick } from '../utils/tracking';
+import { trackGetAppClick, trackConversion } from '../utils/tracking';
 import { useScrollTracking } from '../hooks/useScrollTracking';
 import usePageContent from '../hooks/usePageContent';
 
@@ -20,7 +20,10 @@ function StoreButton({ href, type, source }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer"
       data-testid={isApple ? 'app-store-btn' : 'play-store-btn'}
-      onClick={() => trackGetAppClick(source || 'get_the_app')}
+      onClick={() => {
+        trackGetAppClick(source || 'get_the_app');
+        trackConversion({ action: 'app_download', source_cta_key: 'cta_get_app', page: 'get-the-app', position: source || 'hero' });
+      }}
       className="inline-flex items-center gap-4 rounded-[14px] border border-white/20 hover:border-white/60 transition-all group"
       style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', height: '64px', padding: '0 24px', minWidth: '180px' }}>
       {isApple ? (

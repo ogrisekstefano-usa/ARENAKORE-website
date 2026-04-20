@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { trackConversion } from '../utils/tracking';
 import {
   ChevronDown, CheckCircle, ArrowRight, Zap, Users,
   TrendingUp, Shield, Trophy, Calendar, AlertCircle
@@ -41,6 +42,7 @@ function PilotForm({ id = 'pilot-form' }) {
         owner_name: form.owner_name, email: form.email,
         phone: form.phone || null,
       });
+      trackConversion({ action: 'pilot_submit', source_cta_key: 'cta_pilot', page: 'gym-pilot', position: 'form' });
       setSuccess(true);
     } catch {
       setError(t('pilot.form_error_send'));
