@@ -1675,7 +1675,7 @@ function BlogManager({ call }) {
 /* ─── PAGES MANAGER ─── */
 /* ─── PAGES MANAGER (Auto-sync) ─── */
 
-/* ─── NAV MANAGER — drag & drop navigation editor ─── */
+/* ─── NAV MANAGER ─── */
 const ALL_PAGES = [
   { key: 'home',         href: '/',                     labels: { en: 'Home',                  it: 'Home',                    es: 'Inicio' } },
   { key: 'arenaSystem',  href: '/arena-system',         labels: { en: 'Arena System',          it: 'Arena System',            es: 'Sistema Arena' } },
@@ -1691,17 +1691,18 @@ const ALL_PAGES = [
   { key: 'support',      href: '/support',              labels: { en: 'Support',               it: 'Supporto',                es: 'Soporte' } },
 ];
 
+// Module-level drag source — persists across all React renders and browser events
+let _dragSrc = null;
+
 function NavManager({ call }) {
   const [topNav, setTopNav]       = useState([]);
   const [bottomNav, setBottomNav] = useState([]);
   const [saving, setSaving]       = useState(false);
   const [msg, setMsg]             = useState('');
   const [editItem, setEditItem]   = useState(null);
-  const [dragOver, setDragOver]   = useState(null); // {zone, index} hovered drop target
-  // useRef for drag source — avoids stale closure in onDrop
-  const dragSrc = React.useRef(null);
+  const [dropTarget, setDropTarget] = useState(null); // visual feedback only
 
-  const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-2.5 py-1.5 rounded-[8px] outline-none focus:border-ak-cyan transition-colors";
+  const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-2.5 py-1.5 rounded-[8px] outline-none focus:border-ak-cyan";
   const inpStyle = { background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.12)' };
 
   const load = useCallback(async () => {
@@ -1720,146 +1721,165 @@ function NavManager({ call }) {
         top_nav:    topNav.map((item, i) => ({ ...item, order: i })),
         bottom_nav: bottomNav.map((item, i) => ({ ...item, order: i })),
       });
-      setMsg('✓ Salvato! Reload del sito per vedere le modifiche.');
-    } catch (e) { setMsg(e?.response?.data?.detail || 'Errore'); }
+      setMsg('✓ Salvato! Il sito aggiornerà la navigazione al prossimo caricamento della pagina.');
+    } catch (e) { setMsg(e?.response?.data?.detail || 'Errore salvataggio'); }
     finally { setSaving(false); }
   };
 
-  /* ── Drag & Drop (HTML5 dataTransfer — works across React renders) ── */
-  const handleDragStart = (e, zone, index) => {
-    dragSrc.current = { zone, index };
+  /* ── Helpers ── */
+  const getList  = (zone) => zone === 'top' ? topNav : bottomNav;
+  const setList  = (zone) => zone === 'top' ? setTopNav : setBottomNav;
+  const cloneList = (zone) => [...(zone === 'top' ? topNav : bottomNav)];
+
+  const toggleActive = (zone, idx) =>
+    setList(zone)(prev => prev.map((it, i) => i === idx ? { ...it, active: !it.active } : it));
+
+  const removeItem = (zone, idx) =>
+    setList(zone)(prev => prev.filter((_, i) => i !== idx));
+
+  const updateLabel = (zone, idx, lang, val) =>
+    setList(zone)(prev => prev.map((it, i) => i === idx ? { ...it, labels: { ...it.labels, [lang]: val } } : it));
+
+  const addPage = (page, zone) =>
+    setList(zone)(prev => [...prev, { ...page, active: true, order: prev.length }]);
+
+  /* ── Drag & Drop — uses module-level _dragSrc for reliability ── */
+  const onDragStart = (e, zone, idx) => {
+    _dragSrc = { zone, idx };
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', JSON.stringify({ zone, index }));
+    // Store as string for cross-browser compatibility
+    e.dataTransfer.setData('text/plain', `${zone}::${idx}`);
+    e.currentTarget.style.opacity = '0.4';
   };
 
-  const handleDragOver = (e, zone, index) => {
+  const onDragEnd = (e) => {
+    e.currentTarget.style.opacity = '';
+    setDropTarget(null);
+    // Don't clear _dragSrc here — drop fires after dragend in some browsers
+  };
+
+  const onDragOver = (e, zone, idx) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    setDragOver({ zone, index: index ?? -1 });
+    setDropTarget({ zone, idx });
   };
 
-  const handleDrop = (e, zone, dropIndex) => {
+  const onDrop = (e, toZone, toIdx) => {
     e.preventDefault();
-    setDragOver(null);
-    let src;
-    try { src = JSON.parse(e.dataTransfer.getData('text/plain')); } catch { src = dragSrc.current; }
+    e.stopPropagation();
+    setDropTarget(null);
+
+    // Read drag source (dataTransfer is most reliable)
+    let src = _dragSrc;
+    try {
+      const raw = e.dataTransfer.getData('text/plain');
+      if (raw && raw.includes('::')) {
+        const [z, i] = raw.split('::');
+        src = { zone: z, idx: parseInt(i, 10) };
+      }
+    } catch {}
+    _dragSrc = null;
+
     if (!src) return;
+    const { zone: fromZone, idx: fromIdx } = src;
 
-    const topCopy    = [...topNav];
-    const bottomCopy = [...bottomNav];
-    const srcList    = src.zone === 'top' ? topCopy : bottomCopy;
-    const dstList    = zone    === 'top' ? topCopy : bottomCopy;
-
-    const [item] = srcList.splice(src.index, 1);
-
-    if (src.zone === zone) {
-      // Reorder in same column
-      const insertAt = dropIndex >= src.index ? Math.max(0, dropIndex - 1) : dropIndex;
-      srcList.splice(insertAt < 0 ? srcList.length : insertAt, 0, item);
+    if (fromZone === toZone) {
+      // ── Reorder within same column ──
+      if (fromIdx === toIdx) return;
+      const arr = cloneList(fromZone);
+      const [item] = arr.splice(fromIdx, 1);
+      arr.splice(toIdx > fromIdx ? toIdx - 1 : toIdx, 0, item);
+      setList(fromZone)(arr.map((it, i) => ({ ...it, order: i })));
     } else {
-      // Move to other column
-      dstList.splice(dropIndex < 0 ? dstList.length : dropIndex, 0, item);
+      // ── Move between columns ──
+      const srcArr = cloneList(fromZone);
+      const dstArr = cloneList(toZone);
+      const [item] = srcArr.splice(fromIdx, 1);
+      dstArr.splice(toIdx, 0, item);
+      setList(fromZone)(srcArr.map((it, i) => ({ ...it, order: i })));
+      setList(toZone)(dstArr.map((it, i) => ({ ...it, order: i })));
     }
-
-    setTopNav(topCopy.map((it, i) => ({ ...it, order: i })));
-    setBottomNav(bottomCopy.map((it, i) => ({ ...it, order: i })));
-    dragSrc.current = null;
   };
 
-  const handleDragEnd = () => { dragSrc.current = null; setDragOver(null); };
-
-  /* ── Helpers ── */
-  const toggleActive = (zone, index) => {
-    const setter = zone === 'top' ? setTopNav : setBottomNav;
-    setter(prev => prev.map((item, i) => i === index ? { ...item, active: !item.active } : item));
-  };
-  const removeItem = (zone, index) => {
-    if (zone === 'top') setTopNav(prev => prev.filter((_, i) => i !== index));
-    else setBottomNav(prev => prev.filter((_, i) => i !== index));
-  };
-  const updateLabel = (zone, index, lang, value) => {
-    const setter = zone === 'top' ? setTopNav : setBottomNav;
-    setter(prev => prev.map((item, i) => i === index ? { ...item, labels: { ...item.labels, [lang]: value } } : item));
-  };
-  const addPage = (page, zone) => {
-    const item = { ...page, active: true, order: 9999 };
-    if (zone === 'top') setTopNav(prev => [...prev, item]);
-    else setBottomNav(prev => [...prev, item]);
+  const onDropZone = (e, zone) => {
+    // Dropped on empty zone area (append to end)
+    onDrop(e, zone, getList(zone).length);
   };
 
-  /* ── Render one draggable nav item ── */
-  const renderItem = (item, zone, index) => {
-    const isEditing = editItem?.zone === zone && editItem?.index === index;
-    const isDragging = dragSrc.current?.zone === zone && dragSrc.current?.index === index;
-    const isOver = dragOver?.zone === zone && dragOver?.index === index;
+  /* ── Render item ── */
+  const renderItem = (item, zone, idx) => {
+    const isEditing = editItem?.zone === zone && editItem?.idx === idx;
+    const isOver    = dropTarget?.zone === zone && dropTarget?.idx === idx;
     return (
-      <div key={`${zone}-${item.key}-${index}`}
-        draggable
-        onDragStart={e => handleDragStart(e, zone, index)}
-        onDragOver={e => handleDragOver(e, zone, index)}
-        onDrop={e => handleDrop(e, zone, index)}
-        onDragEnd={handleDragEnd}
-        className={`flex items-start gap-2 p-3 rounded-[10px] transition-all ${
-          item.active === false ? 'opacity-40' : ''
-        }`}
+      <div key={`${zone}-${item.key}`}
+        draggable={!isEditing}
+        onDragStart={e => onDragStart(e, zone, idx)}
+        onDragEnd={onDragEnd}
+        onDragOver={e => onDragOver(e, zone, idx)}
+        onDrop={e => onDrop(e, zone, idx)}
         style={{
-          background: isOver ? 'rgba(0,255,255,0.06)' : '#0a0a0a',
-          border: `1px solid ${isOver ? 'rgba(0,255,255,0.4)' : isDragging ? 'rgba(255,215,0,0.3)' : 'rgba(255,255,255,0.08)'}`,
-          cursor: 'grab',
-          opacity: isDragging ? 0.5 : 1,
-          transform: isOver ? 'translateY(-2px)' : 'none',
+          background: isOver ? 'rgba(0,255,255,0.07)' : '#0a0a0a',
+          border: `1px solid ${isOver ? 'rgba(0,255,255,0.5)' : 'rgba(255,255,255,0.08)'}`,
+          borderRadius: 10, padding: '10px 12px',
+          marginBottom: 6,
+          display: 'flex', alignItems: 'flex-start', gap: 8,
+          cursor: isEditing ? 'default' : 'grab',
+          opacity: item.active === false ? 0.4 : 1,
+          transition: 'border-color .15s, background .15s',
+          boxShadow: isOver ? '0 0 0 2px rgba(0,255,255,0.15)' : 'none',
         }}>
+
         {/* Drag handle */}
-        <div className="text-white/30 text-base mt-0.5 flex-shrink-0 hover:text-white/60 transition-colors"
-          title="Trascina per riordinare" style={{ userSelect: 'none', fontSize: 16 }}>⠿</div>
+        <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 16, flexShrink: 0, marginTop: 1, cursor: 'grab', userSelect: 'none' }}
+          title="Trascina">⠿</span>
+
         {/* Content */}
-        <div className="flex-1 min-w-0">
+        <div style={{ flex: 1, minWidth: 0 }}>
           {isEditing ? (
-            <div className="space-y-1.5">
+            <div>
               {['en','it','es'].map(l => (
-                <div key={l} className="flex items-center gap-2">
-                  <span className="font-inter text-[9px] font-black uppercase w-4 text-white/40 flex-shrink-0">{l}</span>
-                  <input className={`${inp} flex-1 text-xs`} style={inpStyle}
+                <div key={l} style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
+                  <span style={{ fontFamily:'monospace', fontSize:10, color:'rgba(255,255,255,0.35)', width:16, flexShrink:0 }}>{l}</span>
+                  <input className={inp} style={inpStyle}
                     value={item.labels?.[l] || ''}
-                    onChange={e => updateLabel(zone, index, l, e.target.value)}
-                    placeholder={`Label ${l.toUpperCase()}...`} />
+                    onChange={e => updateLabel(zone, idx, l, e.target.value)}
+                    placeholder={`Etichetta ${l.toUpperCase()}`} />
                 </div>
               ))}
               <button onClick={() => setEditItem(null)}
-                className="font-inter text-[10px] font-bold text-ak-cyan mt-1 hover:underline">
-                ✓ Conferma
+                style={{ fontFamily:'Inter,sans-serif', fontSize:10, color:'#00FFFF', marginTop:4, cursor:'pointer', background:'none', border:'none' }}>
+                ✓ Fatto
               </button>
             </div>
           ) : (
             <div>
-              <div className="font-inter text-sm font-semibold text-white truncate">
+              <div style={{ fontFamily:'Inter,sans-serif', fontWeight:600, fontSize:14, color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
                 {item.labels?.en || item.key}
               </div>
-              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                <span className="font-inter text-[10px] text-white/30">{item.href}</span>
-                {item.labels?.it && <span className="font-inter text-[9px] text-white/25">IT: {item.labels.it}</span>}
-                {item.labels?.es && <span className="font-inter text-[9px] text-white/25">ES: {item.labels.es}</span>}
+              <div style={{ display:'flex', gap:8, marginTop:2, flexWrap:'wrap' }}>
+                <span style={{ fontFamily:'Inter,sans-serif', fontSize:10, color:'rgba(255,255,255,0.3)' }}>{item.href}</span>
+                {item.labels?.it && <span style={{ fontFamily:'Inter,sans-serif', fontSize:9, color:'rgba(255,255,255,0.22)' }}>IT: {item.labels.it}</span>}
+                {item.labels?.es && <span style={{ fontFamily:'Inter,sans-serif', fontSize:9, color:'rgba(255,255,255,0.22)' }}>ES: {item.labels.es}</span>}
               </div>
             </div>
           )}
         </div>
-        {/* Action buttons */}
+
+        {/* Actions */}
         {!isEditing && (
-          <div className="flex items-center gap-1 flex-shrink-0 ml-1">
-            <button onClick={() => toggleActive(zone, index)}
+          <div style={{ display:'flex', alignItems:'center', gap:4, flexShrink:0 }}>
+            <button onClick={() => toggleActive(zone, idx)}
               title={item.active === false ? 'Rendi visibile' : 'Nascondi'}
-              className={`font-inter text-[11px] w-5 h-5 flex items-center justify-center rounded transition-all ${
-                item.active === false ? 'text-white/20 hover:text-white' : 'text-ak-cyan hover:text-ak-cyan/70'
-              }`}>
+              style={{ background:'none', border:'none', cursor:'pointer', fontSize:13, color: item.active === false ? 'rgba(255,255,255,0.2)' : '#00FFFF', padding:'2px 3px' }}>
               {item.active === false ? '○' : '●'}
             </button>
-            <button onClick={() => setEditItem({ zone, index })} title="Modifica etichette"
-              className="p-1 text-white/30 hover:text-ak-gold transition-colors rounded">
-              <Pencil size={11} />
+            <button onClick={() => setEditItem({ zone, idx })} title="Modifica etichette"
+              style={{ background:'none', border:'none', cursor:'pointer', padding:'2px 3px', color:'rgba(255,255,255,0.3)' }}>
+              <Pencil size={12} />
             </button>
-            <button onClick={() => removeItem(zone, index)} title="Rimuovi dal menù"
-              className="p-1 text-white/30 hover:text-red-400 transition-colors rounded">
-              <X size={11} />
+            <button onClick={() => removeItem(zone, idx)} title="Rimuovi"
+              style={{ background:'none', border:'none', cursor:'pointer', padding:'2px 3px', color:'rgba(255,255,255,0.3)' }}>
+              <X size={12} />
             </button>
           </div>
         )}
@@ -1867,110 +1887,125 @@ function NavManager({ call }) {
     );
   };
 
-  /* ── Zone panel ── */
-  const ZonePanel = ({ zone, items, title, color, hint }) => {
-    const activeCount = items.filter(i => i.active !== false).length;
-    return (
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
-          <span className="font-inter text-sm font-bold uppercase tracking-wider text-white">{title}</span>
-          <span className="font-inter text-[10px] text-white/30">{activeCount}/{items.length} visibili</span>
-          <span className="font-inter text-[9px] text-white/20 ml-1">{hint}</span>
-        </div>
-        <div className="space-y-1.5 rounded-[14px] p-2 min-h-[120px]"
-          style={{ background: 'rgba(255,255,255,0.015)', border: '1px dashed rgba(255,255,255,0.08)' }}
-          onDragOver={e => handleDragOver(e, zone, -1)}
-          onDrop={e => handleDrop(e, zone, items.length)}>
-          {items.length === 0 && (
-            <div className="flex items-center justify-center h-16 font-inter text-xs text-white/20 italic">
-              Trascina voci qui o usa + dal pannello sotto
-            </div>
-          )}
-          {items.map((item, i) => renderItem(item, zone, i))}
-        </div>
-      </div>
-    );
-  };
-
-  /* ── Pool: ALL pages with add buttons ── */
   const topKeys    = new Set(topNav.map(i => i.key));
   const bottomKeys = new Set(bottomNav.map(i => i.key));
+
+  const ColumnHeader = ({ zone, items, color, title, hint }) => (
+    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+      <div style={{ width:8, height:8, borderRadius:'50%', background:color, flexShrink:0 }} />
+      <span style={{ fontFamily:'"Anton","Arial Black",sans-serif', fontSize:14, color:'#fff', letterSpacing:'0.08em', textTransform:'uppercase' }}>{title}</span>
+      <span style={{ fontFamily:'Inter,sans-serif', fontSize:10, color:'rgba(255,255,255,0.3)' }}>
+        {items.filter(i => i.active !== false).length}/{items.length} visibili
+      </span>
+      <span style={{ fontFamily:'Inter,sans-serif', fontSize:9, color:'rgba(255,255,255,0.18)', flex:1 }}>{hint}</span>
+    </div>
+  );
 
   return (
     <div>
       {/* Header */}
-      <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
         <div>
-          <h2 className="font-anton text-2xl uppercase text-white">NAVIGATION MANAGER</h2>
-          <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
-            <strong className="text-white/60">Come usarlo:</strong>{'  '}
-            Trascina le voci (⠿) per riordinare o spostarle tra i menù.
-            Usa ● per nascondere una voce, ✏ per cambiare l'etichetta, × per rimuoverla.
-            Aggiungi pagine con i pulsanti qui sotto.
+          <h2 className="font-anton text-2xl uppercase text-white mb-1">NAVIGATION MANAGER</h2>
+          <p style={{ fontFamily:'Inter,sans-serif', fontSize:12, color:'#a1a1aa', maxWidth:560 }}>
+            <strong style={{ color:'rgba(255,255,255,0.6)' }}>Come usarlo:</strong>{' '}
+            Trascina il simbolo <strong style={{ color:'#fff' }}>⠿</strong> per riordinare o spostare tra i menù.
+            Usa <strong style={{ color:'#00FFFF' }}>●</strong> per nascondere, <strong style={{ color:'#FFD700' }}>✏</strong> per cambiare etichetta,
+            <strong style={{ color:'#ff4444' }}> ×</strong> per rimuovere.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {msg && <span className={`font-inter text-xs font-semibold ${msg.startsWith('✓') ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          {msg && <span style={{ fontFamily:'Inter,sans-serif', fontSize:12, fontWeight:600, color: msg.startsWith('✓') ? '#00FFFF' : '#f87171', maxWidth:280 }}>{msg}</span>}
           <button onClick={save} disabled={saving}
             className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-8 rounded-[12px] bg-ak-gold text-black disabled:opacity-60 hover:scale-[1.02] transition-transform"
-            style={{ height: '44px' }}>
+            style={{ height:44 }}>
             <Save size={15} /> {saving ? 'Salvataggio...' : 'Salva Menù'}
           </button>
         </div>
       </div>
 
       {/* Two columns */}
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <ZonePanel zone="top"    items={topNav}    title="Menù Top (Navbar)"    color="#00FFFF" hint="— mostrato nella barra di navigazione" />
-        <ZonePanel zone="bottom" items={bottomNav} title="Menù Bottom (Footer)"  color="#FFD700" hint="— mostrato nel footer del sito" />
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:32 }}>
+        {/* Top Nav */}
+        <div>
+          <ColumnHeader zone="top" items={topNav} color="#00FFFF" title="Menù Top (Navbar)" hint="— barra di navigazione in alto" />
+          <div onDragOver={e => { e.preventDefault(); setDropTarget({ zone:'top', idx:-1 }); }}
+               onDrop={e => onDropZone(e, 'top')}
+               style={{ minHeight:80, borderRadius:12, padding:8,
+                 background:'rgba(255,255,255,0.015)', border:'1px dashed rgba(255,255,255,0.08)' }}>
+            {topNav.length === 0 && (
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:60, fontFamily:'Inter,sans-serif', fontSize:12, color:'rgba(255,255,255,0.2)', fontStyle:'italic' }}>
+                Trascina qui o usa i pulsanti sotto
+              </div>
+            )}
+            {topNav.map((item, i) => renderItem(item, 'top', i))}
+          </div>
+        </div>
+
+        {/* Bottom Nav */}
+        <div>
+          <ColumnHeader zone="bottom" items={bottomNav} color="#FFD700" title="Menù Bottom (Footer)" hint="— footer del sito" />
+          <div onDragOver={e => { e.preventDefault(); setDropTarget({ zone:'bottom', idx:-1 }); }}
+               onDrop={e => onDropZone(e, 'bottom')}
+               style={{ minHeight:80, borderRadius:12, padding:8,
+                 background:'rgba(255,255,255,0.015)', border:'1px dashed rgba(255,255,255,0.08)' }}>
+            {bottomNav.length === 0 && (
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:60, fontFamily:'Inter,sans-serif', fontSize:12, color:'rgba(255,255,255,0.2)', fontStyle:'italic' }}>
+                Trascina qui o usa i pulsanti sotto
+              </div>
+            )}
+            {bottomNav.map((item, i) => renderItem(item, 'bottom', i))}
+          </div>
+        </div>
       </div>
 
-      {/* ── Add pages pool ── */}
-      <div className="rounded-[14px] overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
-        <div className="px-5 py-3 flex items-center gap-2" style={{ background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <Plus size={14} className="text-ak-cyan" />
-          <span className="font-inter text-xs font-bold uppercase tracking-wider text-white">Aggiungi voce al menù</span>
-          <span className="font-inter text-[10px] text-white/30 ml-1">— clicca TOP o BOTTOM per aggiungere la pagina al menù corrispondente</span>
+      {/* Pool — all pages with add buttons */}
+      <div style={{ borderRadius:14, overflow:'hidden', border:'1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ padding:'12px 20px', background:'#0a0a0a', borderBottom:'1px solid rgba(255,255,255,0.06)',
+          display:'flex', alignItems:'center', gap:8 }}>
+          <Plus size={14} color="#00FFFF" />
+          <span style={{ fontFamily:'"Anton","Arial Black",sans-serif', fontSize:13, color:'#fff', textTransform:'uppercase', letterSpacing:'0.08em' }}>
+            Aggiungi voce al menù
+          </span>
+          <span style={{ fontFamily:'Inter,sans-serif', fontSize:10, color:'rgba(255,255,255,0.3)' }}>
+            — clicca TOP o BOTTOM per aggiungere
+          </span>
         </div>
-        <div className="p-4">
-          <div className="space-y-1.5">
-            {ALL_PAGES.map(page => {
-              const inTop    = topKeys.has(page.key);
-              const inBottom = bottomKeys.has(page.key);
-              return (
-                <div key={page.key} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-[10px]"
-                  style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="min-w-0">
-                      <span className="font-inter text-sm font-semibold text-white">{page.labels.en}</span>
-                      <span className="font-inter text-[10px] text-white/30 ml-2">{page.href}</span>
-                    </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      {inTop    && <span className="font-inter text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(0,255,255,0.1)', color: '#00FFFF', border: '1px solid rgba(0,255,255,0.2)' }}>TOP</span>}
-                      {inBottom && <span className="font-inter text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,215,0,0.1)', color: '#FFD700', border: '1px solid rgba(255,215,0,0.2)' }}>BOTTOM</span>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button onClick={() => !inTop && addPage(page, 'top')}
-                      disabled={inTop}
-                      className="font-inter text-[10px] font-black uppercase px-3 py-1.5 rounded-[8px] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                      style={{ background: inTop ? 'rgba(0,255,255,0.05)' : 'rgba(0,255,255,0.1)', color: '#00FFFF', border: '1px solid rgba(0,255,255,0.25)' }}>
-                      {inTop ? '✓ TOP' : '+ TOP'}
-                    </button>
-                    <button onClick={() => !inBottom && addPage(page, 'bottom')}
-                      disabled={inBottom}
-                      className="font-inter text-[10px] font-black uppercase px-3 py-1.5 rounded-[8px] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                      style={{ background: inBottom ? 'rgba(255,215,0,0.05)' : 'rgba(255,215,0,0.1)', color: '#FFD700', border: '1px solid rgba(255,215,0,0.25)' }}>
-                      {inBottom ? '✓ BOTTOM' : '+ BOTTOM'}
-                    </button>
+        <div style={{ padding:16 }}>
+          {ALL_PAGES.map(page => {
+            const inTop    = topKeys.has(page.key);
+            const inBottom = bottomKeys.has(page.key);
+            return (
+              <div key={page.key} style={{
+                display:'flex', alignItems:'center', justifyContent:'space-between',
+                padding:'10px 12px', marginBottom:4, borderRadius:10,
+                background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.05)',
+              }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10, minWidth:0 }}>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontWeight:600, fontSize:13, color:'#fff' }}>{page.labels.en}</span>
+                  <span style={{ fontFamily:'Inter,sans-serif', fontSize:10, color:'rgba(255,255,255,0.28)' }}>{page.href}</span>
+                  <div style={{ display:'flex', gap:4 }}>
+                    {inTop    && <span style={{ fontFamily:'Inter,sans-serif', fontSize:9, fontWeight:700, padding:'2px 6px', borderRadius:4, background:'rgba(0,255,255,0.1)', color:'#00FFFF', border:'1px solid rgba(0,255,255,0.2)' }}>TOP</span>}
+                    {inBottom && <span style={{ fontFamily:'Inter,sans-serif', fontSize:9, fontWeight:700, padding:'2px 6px', borderRadius:4, background:'rgba(255,215,0,0.1)', color:'#FFD700', border:'1px solid rgba(255,215,0,0.2)' }}>BOTTOM</span>}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-          <p className="font-inter text-[10px] text-white/25 mt-4 italic">
-            ✏ Vuoi aggiungere una pagina che non è in lista? Scrivimi e la creo insieme a te.
+                <div style={{ display:'flex', gap:6, flexShrink:0 }}>
+                  <button onClick={() => !inTop && addPage(page, 'top')} disabled={inTop}
+                    style={{ fontFamily:'Inter,sans-serif', fontSize:10, fontWeight:800, padding:'5px 10px', borderRadius:8, cursor: inTop ? 'not-allowed' : 'pointer', opacity: inTop ? 0.3 : 1,
+                      background:'rgba(0,255,255,0.1)', color:'#00FFFF', border:'1px solid rgba(0,255,255,0.25)' }}>
+                    {inTop ? '✓ TOP' : '+ TOP'}
+                  </button>
+                  <button onClick={() => !inBottom && addPage(page, 'bottom')} disabled={inBottom}
+                    style={{ fontFamily:'Inter,sans-serif', fontSize:10, fontWeight:800, padding:'5px 10px', borderRadius:8, cursor: inBottom ? 'not-allowed' : 'pointer', opacity: inBottom ? 0.3 : 1,
+                      background:'rgba(255,215,0,0.1)', color:'#FFD700', border:'1px solid rgba(255,215,0,0.25)' }}>
+                    {inBottom ? '✓ BOTTOM' : '+ BOTTOM'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+          <p style={{ fontFamily:'Inter,sans-serif', fontSize:10, color:'rgba(255,255,255,0.2)', marginTop:12, fontStyle:'italic' }}>
+            Vuoi aggiungere una pagina che non è in lista? Scrivimi — la creo insieme a te.
           </p>
         </div>
       </div>
@@ -1980,6 +2015,7 @@ function NavManager({ call }) {
 
 
 function PagesManager({ call }) {
+
   const [pages, setPages]           = useState([]);
   const [selected, setSelected]     = useState(null);
   const [form, setForm]             = useState({});
