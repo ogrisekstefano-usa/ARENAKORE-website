@@ -7,12 +7,13 @@
     "amrap": "AMRAP",
     "forGyms": "Gimnasios",
     "blog": "Blog",
-    "startChallenge": "Descarga App",
+    "startChallenge": "Empieza Tu Desafío",
     "arenaSystem": "Arena System",
     "forAthletes": "Para Atletas",
     "forGymsCoaches": "Para Gimnasios",
     "getApp": "Descarga App",
-    "business": "Business"
+    "business": "Business",
+    "athletes": "Atletas"
   },
   "footer": {
     "tagline": "Plataforma de competición fitness para atletas reales.",

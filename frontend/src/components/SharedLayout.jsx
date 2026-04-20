@@ -66,15 +66,14 @@ export function InnerNavbar() {
   }, []);
 
   const NAV = [
-    { key: 'nav.home',          href: '/',                   highlight: false },
-    { key: 'nav.arenaSystem',   href: '/arena-system',        highlight: false },
-    { key: 'nav.forAthletes',   href: '/for-athletes',        highlight: true  },
-    { key: 'nav.competition',   href: '/workout-competition', highlight: false },
-    { key: 'nav.amrap',         href: '/amrap-training',      highlight: false },
-    { key: 'nav.crossfit',      href: '/crossfit-challenge',  highlight: false },
-    { key: 'nav.business',      href: '/gym-challenge-pilot', highlight: false },
-    { key: 'nav.blog',          href: '/blog',                highlight: false },
-    { key: 'nav.getApp',        href: '/get-the-app',         highlight: false },
+    { key: 'nav.home',        href: '/',                    highlight: false },
+    { key: 'nav.arenaSystem', href: '/arena-system',         highlight: false },
+    { key: 'nav.athletes',    href: '/for-athletes',         highlight: true  },
+    { key: 'nav.competition', href: '/workout-competition',  highlight: false },
+    { key: 'nav.amrap',       href: '/amrap-training',       highlight: false },
+    { key: 'nav.crossfit',    href: '/crossfit-challenge',   highlight: false },
+    { key: 'nav.business',    href: '/gym-challenge-pilot',  highlight: false },
+    { key: 'nav.blog',        href: '/blog',                 highlight: false },
   ];
 
   const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
@@ -117,7 +116,7 @@ export function InnerNavbar() {
             className="hidden sm:inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-4 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
             style={{ height: '36px' }}
           >
-            <Zap size={13} fill="black" /> {t('nav.getApp')}
+            <Zap size={13} fill="black" /> {t('nav.startChallenge')}
           </Link>
           <button onClick={() => setOpen(!open)} className="lg:hidden text-white p-1" data-testid="nav-mobile-toggle">
             {open ? <X size={22} /> : <Menu size={22} />}
