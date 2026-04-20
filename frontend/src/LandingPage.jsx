@@ -324,7 +324,7 @@ export default function LandingPage() {
             <div>
               <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">THE PLATFORM</div>
               <h2 className="font-anton text-4xl md:text-6xl uppercase leading-none text-white">
-                ONE SYSTEM.<br /><span style={{ color: '#00FFFF' }}>ANY DISCIPLINE.</span>
+                {cms('positioning_h2', 'ONE SYSTEM. ANY DISCIPLINE.')}
               </h2>
             </div>
             <div>
@@ -417,7 +417,7 @@ export default function LandingPage() {
                 data-testid="solution-learn-more"
                 className="inline-flex items-center gap-2 font-inter font-bold text-sm text-ak-cyan hover:underline"
               >
-                See how NEXUS works <ArrowRight size={14} />
+                {t('home.solution.learnMore')} <ArrowRight size={14} />
               </Link>
             </div>
             {/* Right: quick stats */}
@@ -442,8 +442,8 @@ export default function LandingPage() {
       <section data-testid="how-it-works-section" className="py-24 px-6 sm:px-10 bg-black">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14 ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">HOW IT WORKS</div>
-            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">4 STEPS. NO EXCUSES.</h2>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">{cms('how_badge', t('home.howItWorks.badge'))}</div>
+            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">{cms('how_h2', t('home.howItWorks.h2'))}</h2>
           </div>
           <div className="relative">
             {/* Connector line desktop */}
@@ -474,8 +474,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14 ak-reveal">
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">EVERY ARENA</div>
-            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">BUILT FOR EVERY DISCIPLINE.</h2>
-            <p className="font-inter text-sm text-white mt-4 max-w-xl mx-auto">One ranking system. One identity. Any sport.</p>
+            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">{cms('disciplines_h2', t('home.useCases.h2'))}</h2>
+            <p className="font-inter text-sm text-white mt-4 max-w-xl mx-auto">{cms('disciplines_sub', 'One ranking system. One identity. Any sport.')}</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {DISCIPLINES.map((d, i) => (
@@ -528,10 +528,10 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-px" style={{ background: '#FFD700' }} />
-                <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase" style={{ color: '#FFD700' }}>FOR GYMS & COACHES</span>
+                <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase" style={{ color: '#FFD700' }}>{cms('gyms_badge', t('home.gyms.badge'))}</span>
               </div>
               <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-                BUILT FOR GYMS<br />THAT WANT<br />
+                {cms('gyms_h2', t('home.gyms.h2_line1'))}<br />
                 <span style={{ color: '#FFD700' }}>ENGAGED MEMBERS.</span>
               </h2>
               <p className="font-inter text-base text-white mb-8 leading-relaxed">
@@ -541,14 +541,14 @@ export default function LandingPage() {
               </p>
               <div className="space-y-3 mb-8">
                 {[
-                  '+40% member retention',
-                  'Live challenge system — no manual setup',
-                  'Box vs box competition across locations',
-                  '14-day free pilot. No commitment.',
-                ].map((t, i) => (
+                  cms('gyms_f1', t('home.gyms.f1')),
+                  cms('gyms_f2', t('home.gyms.f2')),
+                  cms('gyms_f3', t('home.gyms.f3')),
+                  cms('gyms_f4', t('home.gyms.f4')),
+                ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <CheckCircle size={15} style={{ color: '#FFD700', flexShrink: 0 }} />
-                    <span className="font-inter text-sm text-white">{t}</span>
+                    <span className="font-inter text-sm text-white">{item}</span>
                   </div>
                 ))}
               </div>
@@ -558,7 +558,7 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
                 style={{ height: '52px' }}
               >
-                <Zap size={16} fill="black" /> Start a 14-day Pilot
+                <Zap size={16} fill="black" /> {cms('gyms_cta', t('home.gyms.cta'))}
               </Link>
               <Link to="/for-athletes" data-testid="home-for-athletes-link"
                 className="inline-flex items-center gap-2 font-inter font-semibold text-sm text-ak-cyan hover:underline">

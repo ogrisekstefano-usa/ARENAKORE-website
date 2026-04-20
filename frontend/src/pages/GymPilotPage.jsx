@@ -196,12 +196,12 @@ export default function GymPilotPage() {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-1.5 rounded-full bg-ak-cyan flex-shrink-0" />
-            <span className="font-inter text-sm font-semibold text-white">No setup. No disruption. We activate your athletes in 48 hours.</span>
+            <span className="font-inter text-sm font-semibold text-white">{t('pilot.reinforcement_1')}</span>
           </div>
           <div className="hidden sm:block w-px h-5 bg-white/10" />
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-1.5 rounded-full bg-ak-gold flex-shrink-0" />
-            <span className="font-inter text-sm font-semibold text-white">20–30 athletes. 14 days. Real results.</span>
+            <span className="font-inter text-sm font-semibold text-white">{t('pilot.reinforcement_2')}</span>
           </div>
         </div>
       </section>
