@@ -267,7 +267,7 @@ export default function LandingPage() {
             <Link to="/get-the-app" data-testid="hero-download-app-btn"
               onClick={() => {
                 trackGetAppClick('hero', heroSlides[slide]?.sport, 'hero_cta_primary');
-                trackCMSCTAClick('cta_primary', cms('cta_primary', 'Download the App'), 'homepage_hero');
+                trackCMSCTAClick({ key: 'cta_primary', text: cms('cta_primary', 'Download the App'), page: 'homepage', position: 'hero' });
               }}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
@@ -276,7 +276,7 @@ export default function LandingPage() {
             <Link to="/gym-challenge-pilot" data-testid="hero-for-gyms-btn"
               onClick={() => {
                 trackBusinessClick('hero', 'hero_cta_secondary');
-                trackCMSCTAClick('cta_secondary', cms('cta_secondary', 'For Gyms & Coaches'), 'homepage_hero');
+                trackCMSCTAClick({ key: 'cta_secondary', text: cms('cta_secondary', 'For Gyms & Coaches'), page: 'homepage', position: 'hero' });
               }}
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '60px' }}>

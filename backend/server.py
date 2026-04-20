@@ -1150,21 +1150,32 @@ class CTAClickEvent(BaseModel):
     text: str
     language: str = "en"
     page: str = ""
+    position: str = ""   # hero | kpi_block | final_cta | navbar | footer
     url: Optional[str] = None
 
 @api_router.post("/cms/cta-click")
 async def track_cta_click(data: CTAClickEvent):
-    """Track CTA clicks with CMS key attribution."""
+    """Track CTA clicks with full context (key + page + position + language)."""
     now = datetime.now(timezone.utc).isoformat()
+    # Upsert: group by key + language + page + position
     await db.cms_cta_clicks.update_one(
-        {"key": data.key, "language": data.language, "page": data.page},
-        {"$inc": {"clicks": 1}, "$set": {"last_click": now, "text": data.text, "key": data.key, "language": data.language, "page": data.page}},
+        {"key": data.key, "language": data.language, "page": data.page, "position": data.position},
+        {
+            "$inc": {"clicks": 1},
+            "$set": {
+                "last_click": now,
+                "text": data.text,
+                "key": data.key,
+                "language": data.language,
+                "page": data.page,
+                "position": data.position,
+            }
+        },
         upsert=True
     )
-    # Also log to analytics_events
     await db.analytics_events.insert_one({
         "event": "cta_click",
-        "params": {"key": data.key, "text": data.text, "language": data.language, "page": data.page},
+        "params": {"key": data.key, "text": data.text, "language": data.language, "page": data.page, "position": data.position},
         "url": data.url,
         "ts": now, "server_ts": now,
     })
@@ -1172,7 +1183,7 @@ async def track_cta_click(data: CTAClickEvent):
 
 @api_router.get("/cms/cta-analytics")
 async def get_cta_analytics(_=Depends(verify_admin)):
-    docs = await db.cms_cta_clicks.find({}, {"_id": 0}).sort("clicks", -1).to_list(100)
+    docs = await db.cms_cta_clicks.find({}, {"_id": 0}).sort("clicks", -1).to_list(200)
     return docs
 
 

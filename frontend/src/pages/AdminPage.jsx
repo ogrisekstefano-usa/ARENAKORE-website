@@ -1045,9 +1045,10 @@ function AnalyticsDashboard({ call }) {
                   <div key={i} className="flex items-center gap-3">
                     <div className="font-inter text-[10px] font-bold w-4 text-white/40 text-right">{i+1}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
+                      <div className="flex items-center gap-2 flex-wrap mb-0.5">
                         <span className="font-inter text-xs font-semibold text-white truncate">{item.text || item.key}</span>
                         <span className="font-inter text-[9px] text-ak-cyan border border-ak-cyan/20 px-1 rounded">{item.key}</span>
+                        {item.position && <span className="font-inter text-[9px] text-purple-400 border border-purple-400/20 px-1 rounded">📍 {item.position}</span>}
                         <span className="font-inter text-[9px] text-white/30">{item.language?.toUpperCase()} · {item.page}</span>
                       </div>
                       <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,215,0,0.08)' }}>
