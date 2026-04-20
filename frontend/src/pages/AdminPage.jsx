@@ -462,6 +462,9 @@ function ContentEditor({ call }) {
   const [versions, setVersions]         = useState([]);
   const [showVersions, setShowVersions] = useState(false);
   const [publishing, setPublishing]     = useState('');
+  const [versionNote, setVersionNote]   = useState('');
+  const [versionAuthor, setVersionAuthor] = useState('admin');
+
 
 
   useEffect(() => {
@@ -520,8 +523,11 @@ function ContentEditor({ call }) {
     }
     setSaving(true); setMsg('');
     try {
-      await call('put', `/cms/content/${selectedPage}`, sections);
+      const note = versionNote.trim() || 'No note provided';
+      const author = versionAuthor.trim() || 'admin';
+      await call('put', `/cms/content/${selectedPage}?note=${encodeURIComponent(note)}&created_by=${encodeURIComponent(author)}`, sections);
       setMsg('Saved!');
+      setVersionNote(''); // clear note after save
       // Reload completeness
       const completeness = await call('get', `/cms/content/${selectedPage}/completeness`).catch(() => ({}));
       setPageCompleteness(completeness || {});
@@ -623,7 +629,26 @@ function ContentEditor({ call }) {
                 <h3 className="font-anton text-2xl uppercase text-white">/{selectedPage}</h3>
                 <p className="font-inter text-xs text-white/40 mt-1">{sections.length} editable fields</p>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex flex-col gap-3">
+                {/* Note + author row */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text" value={versionNote}
+                    onChange={e => setVersionNote(e.target.value)}
+                    placeholder="Version note (optional) — e.g. 'Updated hero for Q2 campaign'"
+                    className="flex-1 font-inter text-xs text-white placeholder-white/25 px-3 py-2 rounded-[8px] outline-none focus:border-white/30 transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', minWidth: '260px' }}
+                  />
+                  <input
+                    type="text" value={versionAuthor}
+                    onChange={e => setVersionAuthor(e.target.value)}
+                    placeholder="Author"
+                    className="font-inter text-xs text-white placeholder-white/25 px-3 py-2 rounded-[8px] outline-none focus:border-white/30 transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', width: '100px' }}
+                  />
+                </div>
+                {/* Action buttons row */}
+                <div className="flex items-center gap-2 flex-wrap">
                 <button onClick={save} disabled={saving}
                   className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[10px] bg-ak-gold text-black disabled:opacity-60"
                   style={{ height: '36px' }}>
@@ -654,7 +679,8 @@ function ContentEditor({ call }) {
                   <RefreshCw size={11} /> {versions.length} versions
                 </button>
                 {msg && <span className={`font-inter text-xs ${msg.startsWith('✓') || msg === 'Saved!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
-              </div>
+                </div>  {/* close action buttons row */}
+              </div>   {/* close flex-col */}
             </div>
 
             {/* Version history panel */}
@@ -666,17 +692,30 @@ function ContentEditor({ call }) {
                     const isPublished = v.status === 'published';
                     const isDraft = v.status === 'draft';
                     return (
-                      <div key={v.version_id} className="flex items-center justify-between p-3 rounded-[10px]"
+                      <div key={v.version_id} className="flex items-start justify-between p-3 rounded-[10px] gap-3"
                         style={{ background: '#111', border: `1px solid ${isPublished ? 'rgba(0,255,255,0.2)' : 'rgba(255,255,255,0.05)'}` }}>
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className="font-inter text-[9px] font-bold uppercase px-1.5 py-0.5 rounded"
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <span className="font-inter text-[9px] font-bold uppercase px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5"
                             style={{ background: isPublished ? 'rgba(0,255,255,0.15)' : 'rgba(255,255,255,0.05)', color: isPublished ? '#00FFFF' : '#555' }}>
                             {v.status}
                           </span>
-                          <span className="font-inter text-xs text-white/50 truncate">
-                            v{versions.length - i} · {v.sections_count} fields · {new Date(v.created_at).toLocaleString('en-GB', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}
-                            {v.rolled_back_from && <span className="text-yellow-500 ml-1">↩ rollback</span>}
-                          </span>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-inter text-xs text-white/70 font-semibold">v{versions.length - i}</span>
+                              <span className="font-inter text-[10px] text-white/40">
+                                {new Date(v.created_at).toLocaleString('en-GB', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}
+                              </span>
+                              {v.created_by && v.created_by !== 'admin' && (
+                                <span className="font-inter text-[10px] text-ak-cyan">by {v.created_by}</span>
+                              )}
+                              <span className="font-inter text-[10px] text-white/25">{v.sections_count} fields</span>
+                              {v.rolled_back_from && <span className="font-inter text-[9px] text-yellow-500">↩ rollback</span>}
+                            </div>
+                            <div className="font-inter text-[10px] mt-1 italic truncate max-w-xs"
+                              style={{ color: v.note === 'No note provided' ? '#444' : '#a1a1aa' }}>
+                              "{v.note || 'No note provided'}"
+                            </div>
+                          </div>
                         </div>
                         <div className="flex items-center gap-1.5 flex-shrink-0">
                           {!isPublished && (

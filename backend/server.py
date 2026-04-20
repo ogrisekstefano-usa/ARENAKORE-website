@@ -1002,11 +1002,14 @@ async def get_page_content_full(slug: str, _=Depends(verify_admin)):
     return await _get_or_default_page(slug)
 
 @api_router.put("/cms/content/{slug}")
-async def update_page_content(slug: str, sections: List[ContentSection], _=Depends(verify_admin)):
+async def update_page_content(slug: str, sections: List[ContentSection],
+                               note: Optional[str] = None,
+                               created_by: Optional[str] = "admin",
+                               _=Depends(verify_admin)):
     doc = await db.cms_content.find_one({"slug": slug})
     now = datetime.now(timezone.utc).isoformat()
 
-    # Create version entry (draft)
+    # Create version entry (draft) with author + note
     version_id = str(uuid.uuid4())
     version = {
         "id": str(uuid.uuid4()),
@@ -1017,6 +1020,8 @@ async def update_page_content(slug: str, sections: List[ContentSection], _=Depen
         "sections": [s.model_dump() for s in sections],
         "sections_count": len(sections),
         "created_at": now,
+        "created_by": (created_by or "admin").strip(),
+        "note": (note.strip() if note and note.strip() else "No note provided"),
         "published_at": None,
     }
     await db.cms_versions.insert_one(version)
