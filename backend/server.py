@@ -725,17 +725,43 @@ async def get_page_content_full(slug: str, _=Depends(verify_admin)):
 @api_router.put("/cms/content/{slug}")
 async def update_page_content(slug: str, sections: List[ContentSection], _=Depends(verify_admin)):
     doc = await db.cms_content.find_one({"slug": slug})
+    now = datetime.now(timezone.utc).isoformat()
+    # Simple version history (keep last 5)
+    history_entry = {"saved_at": now, "sections_count": len(sections)}
     data = {
         "slug": slug,
         "sections": [s.model_dump() for s in sections],
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": now,
     }
     if doc:
+        old_history = doc.get("history", [])[-4:]  # keep last 4 + new = 5
+        data["history"] = old_history + [history_entry]
         await db.cms_content.update_one({"slug": slug}, {"$set": data})
     else:
         data["id"] = str(uuid.uuid4())
+        data["history"] = [history_entry]
         await db.cms_content.insert_one(data)
     return {"ok": True, "slug": slug, "sections": len(sections)}
+
+@api_router.get("/cms/content/{slug}/completeness")
+async def check_completeness(slug: str, _=Depends(verify_admin)):
+    """Returns completeness % per language for a page."""
+    doc = await _get_or_default_page(slug)
+    sections = doc.get("sections", [])
+    if not sections:
+        return {}
+    langs = set()
+    for s in sections:
+        t = s.get("translations", {}) if isinstance(s, dict) else s.translations
+        langs.update(t.keys())
+    en_keys = {(s.get("key") if isinstance(s, dict) else s.key) for s in sections}
+    result = {}
+    for lang in langs:
+        filled = sum(1 for s in sections
+                     if (s.get("translations", {}) if isinstance(s, dict) else s.translations).get(lang, ""))
+        total  = len(sections)
+        result[lang] = {"filled": filled, "total": total, "pct": round(filled / total * 100)}
+    return result
 
 @api_router.post("/cms/content/{slug}/translate")
 async def translate_page_content(slug: str, req: TranslateRequest, _=Depends(verify_admin)):
@@ -818,6 +844,108 @@ async def get_cms_pages_list(_=Depends(verify_admin)):
          "section_count": len(DEFAULT_PAGES.get(slug, []))}
         for slug in DEFAULT_PAGES
     ]
+
+
+@api_router.get("/cms/content/{slug}/completeness")
+async def check_completeness(slug: str, _=Depends(verify_admin)):
+    doc = await _get_or_default_page(slug)
+    sections = doc.get("sections", [])
+    if not sections: return {}
+    langs = set()
+    for s in sections:
+        t = s.get("translations", {}) if isinstance(s, dict) else s.translations
+        langs.update(t.keys())
+    result = {}
+    for lang in langs:
+        filled = sum(1 for s in sections
+                     if (s.get("translations", {}) if isinstance(s, dict) else s.translations).get(lang, ""))
+        total = len(sections)
+        result[lang] = {"filled": filled, "total": total, "pct": round(filled / total * 100)}
+    return result
+
+# ─── CMS GLOBAL CONTENT ───────────────────────────────────────
+
+GLOBAL_DEFAULTS = [
+    {"key": "nav_home",         "group": "navbar",  "translations": {"en": "Home", "it": "Home", "es": "Inicio"}},
+    {"key": "nav_arena_system", "group": "navbar",  "translations": {"en": "Arena System", "it": "Arena System", "es": "Sistema Arena"}},
+    {"key": "nav_athletes",     "group": "navbar",  "translations": {"en": "Athletes", "it": "Atleti", "es": "Atletas"}},
+    {"key": "nav_competition",  "group": "navbar",  "translations": {"en": "Competition", "it": "Competizione", "es": "Competición"}},
+    {"key": "nav_amrap",        "group": "navbar",  "translations": {"en": "AMRAP", "it": "AMRAP", "es": "AMRAP"}},
+    {"key": "nav_crossfit",     "group": "navbar",  "translations": {"en": "CrossFit", "it": "CrossFit", "es": "CrossFit"}},
+    {"key": "nav_business",     "group": "navbar",  "translations": {"en": "Business", "it": "Business", "es": "Business"}},
+    {"key": "nav_blog",         "group": "navbar",  "translations": {"en": "Blog", "it": "Blog", "es": "Blog"}},
+    {"key": "nav_cta",          "group": "navbar",  "translations": {"en": "Start Your Challenge", "it": "Inizia la Sfida", "es": "Empieza Tu Desafío"}},
+    {"key": "cta_download_app", "group": "cta",     "translations": {"en": "Download the App", "it": "Scarica l'App", "es": "Descarga la App"}},
+    {"key": "cta_for_gyms",     "group": "cta",     "translations": {"en": "For Gyms & Coaches", "it": "Per Palestre & Coach", "es": "Para Gimnasios & Coaches"}},
+    {"key": "cta_pilot",        "group": "cta",     "translations": {"en": "Start Your Pilot", "it": "Avvia il Pilot", "es": "Inicia el Piloto"}},
+    {"key": "cta_enter_arena",  "group": "cta",     "translations": {"en": "Enter the Arena", "it": "Entra nell'Arena", "es": "Entra en la Arena"}},
+    {"key": "footer_tagline",   "group": "footer",  "translations": {"en": "Global competition platform for athletes and gyms.", "it": "Piattaforma competitiva globale per atleti e palestre.", "es": "Plataforma de competición global para atletas y gimnasios."}},
+    {"key": "footer_copyright", "group": "footer",  "translations": {"en": "© 2026 ArenaKore. All rights reserved.", "it": "© 2026 ArenaKore. Tutti i diritti riservati.", "es": "© 2026 ArenaKore. Todos los derechos reservados."}},
+    {"key": "prove_it",         "group": "system",  "translations": {"en": "PROVE IT.", "it": "DIMOSTRALO.", "es": "DEMUÉSTRALO."}},
+]
+
+@api_router.get("/cms/global")
+async def get_global_content(lang: str = "en"):
+    docs = await db.cms_global.find({}, {"_id": 0}).to_list(200)
+    items = docs if docs else GLOBAL_DEFAULTS
+    return {item["key"]: item.get("translations", {}).get(lang) or item.get("translations", {}).get("en", "") for item in items}
+
+@api_router.get("/cms/global/full")
+async def get_global_full(_=Depends(verify_admin)):
+    docs = await db.cms_global.find({}, {"_id": 0}).to_list(200)
+    return docs if docs else GLOBAL_DEFAULTS
+
+@api_router.put("/cms/global")
+async def update_global_content(items: List[Dict[str, Any]], _=Depends(verify_admin)):
+    for item in items:
+        k = item.get("key")
+        if not k: continue
+        item["updated_at"] = datetime.now(timezone.utc).isoformat()
+        if await db.cms_global.find_one({"key": k}):
+            await db.cms_global.update_one({"key": k}, {"$set": item})
+        else:
+            item.setdefault("id", str(uuid.uuid4()))
+            await db.cms_global.insert_one(item)
+    return {"ok": True, "updated": len(items)}
+
+@api_router.post("/cms/global/seed")
+async def seed_global_content(_=Depends(verify_admin)):
+    count = await db.cms_global.count_documents({})
+    if count > 0: return {"ok": True, "seeded": 0, "message": f"Already has {count} items"}
+    for item in GLOBAL_DEFAULTS:
+        doc = {**item, "id": str(uuid.uuid4()), "updated_at": datetime.now(timezone.utc).isoformat()}
+        await db.cms_global.insert_one(doc)
+    return {"ok": True, "seeded": len(GLOBAL_DEFAULTS)}
+
+@api_router.post("/cms/global/translate")
+async def translate_global_content(req: TranslateRequest, _=Depends(verify_admin)):
+    docs = await db.cms_global.find({}, {"_id": 0}).to_list(200)
+    items = docs if docs else GLOBAL_DEFAULTS
+    target = req.target_lang.lower()
+    lang_name = req.target_lang_name or target
+    to_translate = [{"key": d["key"], "en": d.get("translations", {}).get("en", "")} for d in items if d.get("translations", {}).get("en")]
+    if not to_translate: raise HTTPException(400, "Nothing to translate")
+    prompt = "\n".join([f"{i+1}. [{x['key']}]: {x['en']}" for i, x in enumerate(to_translate)])
+    try:
+        import json as _json
+        resp = await asyncio.to_thread(lambda: openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "system", "content": f"Translate ArenaKore UI strings EN→{lang_name}. Bold, direct. Return JSON: {{key: translation}}"}, {"role": "user", "content": prompt}],
+            response_format={"type": "json_object"}, temperature=0.3))
+        translations = _json.loads(resp.choices[0].message.content)
+    except Exception as e: raise HTTPException(500, str(e))
+    for item in items:
+        k = item["key"]
+        if k in translations:
+            item.setdefault("translations", {})[target] = translations[k]
+            item["updated_at"] = datetime.now(timezone.utc).isoformat()
+            if await db.cms_global.find_one({"key": k}):
+                await db.cms_global.update_one({"key": k}, {"$set": item})
+            else:
+                item["id"] = str(uuid.uuid4())
+                await db.cms_global.insert_one(item)
+    return {"ok": True, "translated": len(translations), "lang": target}
+
 
 # ─── STATS ────────────────────────────────────────────────────
 @api_router.get("/admin/stats")

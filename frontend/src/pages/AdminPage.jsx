@@ -80,14 +80,15 @@ function LoginScreen({ onLogin }) {
 
 /* ─── SIDEBAR ─── */
 const TABS = [
-  { id: 'dashboard', label: 'Dashboard',     icon: LayoutDashboard },
-  { id: 'analytics', label: 'Analytics',     icon: Activity },
-  { id: 'content',   label: 'Content',       icon: FileText },
-  { id: 'hero',      label: 'Hero Slides',   icon: Layers },
-  { id: 'blog',      label: 'Blog',          icon: BookOpen },
-  { id: 'pages',     label: 'SEO Pages',     icon: Globe },
-  { id: 'media',     label: 'Media',         icon: Image },
-  { id: 'pilots',    label: 'Pilot Requests',icon: Users },
+  { id: 'dashboard', label: 'Dashboard',       icon: LayoutDashboard },
+  { id: 'analytics', label: 'Analytics',       icon: Activity },
+  { id: 'content',   label: 'Content',         icon: FileText },
+  { id: 'global',    label: 'Global Content',  icon: Globe },
+  { id: 'hero',      label: 'Hero Slides',     icon: Layers },
+  { id: 'blog',      label: 'Blog',            icon: BookOpen },
+  { id: 'pages',     label: 'SEO Pages',       icon: FileText },
+  { id: 'media',     label: 'Media',           icon: Image },
+  { id: 'pilots',    label: 'Pilot Requests',  icon: Users },
 ];
 
 function Sidebar({ tab, setTab, onLogout }) {
@@ -156,6 +157,149 @@ function Dashboard({ call }) {
   );
 }
 
+/* ─── GLOBAL CONTENT EDITOR ─── */
+const GROUPS = { navbar: 'Navbar', cta: 'CTA Buttons', footer: 'Footer', system: 'System' };
+
+function GlobalContentEditor({ call }) {
+  const [items, setItems]     = useState([]);
+  const [activeLang, setActiveLang] = useState('en');
+  const [saving, setSaving]   = useState(false);
+  const [translating, setTranslating] = useState('');
+  const [msg, setMsg]         = useState('');
+
+  const load = useCallback(() =>
+    call('get', '/cms/global/full').then(setItems).catch(() => setItems([]))
+  , [call]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const updateItem = (key, lang, val) => {
+    setItems(prev => prev.map(item =>
+      item.key === key ? { ...item, translations: { ...item.translations, [lang]: val } } : item
+    ));
+  };
+
+  const save = async () => {
+    setSaving(true); setMsg('');
+    try {
+      await call('put', '/cms/global', items);
+      setMsg('Saved!');
+    } catch { setMsg('Error'); } finally { setSaving(false); }
+  };
+
+  const seed = async () => {
+    setSaving(true);
+    try {
+      const r = await call('post', '/cms/global/seed', {});
+      setMsg(r.message || `Seeded ${r.seeded} items`);
+      load();
+    } catch { setMsg('Error seeding'); } finally { setSaving(false); }
+  };
+
+  const translateLang = async (langCode, langName) => {
+    setTranslating(langCode); setMsg('');
+    try {
+      const r = await call('post', '/cms/global/translate', { target_lang: langCode, target_lang_name: langName });
+      setMsg(`✓ Translated ${r.translated} items to ${langCode.toUpperCase()}`);
+      load();
+    } catch (e) { setMsg(e?.response?.data?.detail || 'Translation failed'); }
+    finally { setTranslating(''); }
+  };
+
+  const groupedItems = {};
+  items.forEach(item => {
+    const g = item.group || 'other';
+    if (!groupedItems[g]) groupedItems[g] = [];
+    groupedItems[g].push(item);
+  });
+
+  const inp = "w-full font-inter text-sm text-white placeholder-white/25 px-3 py-2 rounded-[10px] outline-none focus:border-ak-cyan transition-colors";
+  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.1)' };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="font-anton text-2xl uppercase text-white">GLOBAL CONTENT</h2>
+          <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
+            Navbar · Footer · CTAs · System labels — {items.length} items
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {items.length === 0 && (
+            <button onClick={seed} disabled={saving}
+              className="font-inter text-xs font-bold uppercase px-4 rounded-[10px] border border-ak-cyan text-ak-cyan hover:bg-ak-cyan hover:text-black transition-all disabled:opacity-50"
+              style={{ height: '34px' }}>
+              Seed Defaults
+            </button>
+          )}
+          <button onClick={save} disabled={saving}
+            className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[10px] bg-ak-gold text-black disabled:opacity-60"
+            style={{ height: '36px' }}>
+            <Save size={13} /> {saving ? 'Saving...' : 'Save All'}
+          </button>
+          {msg && <span className={`font-inter text-xs ${msg.startsWith('✓') || msg === 'Saved!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
+        </div>
+      </div>
+
+      {/* Language tabs + AI translate */}
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
+        {[{code:'en',label:'EN',flag:'🌍'},{code:'it',label:'IT',flag:'🇮🇹'},{code:'es',label:'ES',flag:'🇪🇸'}].map(l => (
+          <button key={l.code} onClick={() => setActiveLang(l.code)}
+            className={`inline-flex items-center gap-1.5 font-inter text-xs font-bold uppercase px-3 py-1.5 rounded-[8px] transition-all ${
+              activeLang === l.code ? 'bg-ak-cyan/15 text-ak-cyan border border-ak-cyan/35' : 'text-white/50 hover:text-white border border-white/8'
+            }`}>
+            {l.flag} {l.label}
+          </button>
+        ))}
+        {[{code:'it',name:'Italian'},{code:'es',name:'Spanish'}].map(l => (
+          <button key={`tr-${l.code}`} onClick={() => translateLang(l.code, l.name)} disabled={!!translating}
+            className="inline-flex items-center gap-1 font-inter text-[10px] text-white/30 hover:text-ak-gold transition-colors disabled:opacity-40 px-2 py-1.5 border border-white/5 rounded-[8px]">
+            <Sparkles size={10} />
+            {translating === l.code ? 'Translating...' : `AI ${l.code.toUpperCase()}`}
+          </button>
+        ))}
+      </div>
+
+      {/* Grouped items */}
+      {Object.entries(groupedItems).map(([group, groupItems]) => (
+        <div key={group} className="mb-8">
+          <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/30 mb-3">
+            {GROUPS[group] || group.toUpperCase()}
+          </div>
+          <div className="space-y-2">
+            {groupItems.map(item => {
+              const val = item.translations?.[activeLang] || '';
+              const enVal = item.translations?.en || '';
+              return (
+                <div key={item.key} className="flex items-center gap-3 p-3 rounded-[10px]"
+                  style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="w-36 flex-shrink-0">
+                    <div className="font-inter text-[10px] font-bold uppercase tracking-wider text-ak-cyan truncate">{item.key}</div>
+                  </div>
+                  <input type="text" value={val}
+                    onChange={e => updateItem(item.key, activeLang, e.target.value)}
+                    className={`${inp} flex-1`} style={inpStyle}
+                    placeholder={activeLang !== 'en' ? `EN: ${enVal}` : 'Value...'} />
+                  {activeLang !== 'en' && !val && enVal && (
+                    <span className="font-inter text-[9px] text-yellow-500 flex-shrink-0">⚠ Missing</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+      {items.length === 0 && (
+        <div className="text-center py-12 border border-dashed border-white/10 rounded-[14px]">
+          <Globe size={24} className="text-white/15 mx-auto mb-2" />
+          <p className="font-inter text-sm text-white/30">No global content. Click "Seed Defaults" to start.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── CONTENT EDITOR (CMS Multi-language) ─── */
 const LANGS = [
   { code: 'en', label: 'EN', name: 'English',  flag: '🌍' },
@@ -174,6 +318,7 @@ function ContentEditor({ call }) {
   const [newLang, setNewLang]   = useState({ code: '', name: '' });
   const [msg, setMsg]           = useState('');
   const [customLangs, setCustomLangs] = useState([]);
+  const [pageCompleteness, setPageCompleteness] = useState({});
 
   useEffect(() => {
     call('get', '/cms/pages-list').then(setPages).catch(() => setPages([]));
@@ -182,14 +327,17 @@ function ContentEditor({ call }) {
   const loadPage = async (slug) => {
     setSelectedPage(slug); setMsg('');
     try {
-      const doc = await call('get', `/cms/content/${slug}/full`);
+      const [doc, completeness] = await Promise.all([
+        call('get', `/cms/content/${slug}/full`),
+        call('get', `/cms/content/${slug}/completeness`).catch(() => ({})),
+      ]);
       const secs = doc.sections || [];
       setSections(secs.map(s => ({ ...s, translations: { ...s.translations } })));
-      // Detect available languages from content
       const detected = new Set();
       secs.forEach(s => Object.keys(s.translations || {}).forEach(l => detected.add(l)));
       const extra = [...detected].filter(l => !LANGS.find(x => x.code === l));
       setCustomLangs(extra.map(c => ({ code: c, label: c.toUpperCase(), name: c })));
+      setPageCompleteness(completeness || {});
     } catch { setSections([]); }
   };
 
@@ -263,6 +411,24 @@ function ContentEditor({ call }) {
             </button>
           ))}
         </div>
+        {/* Completeness legend */}
+        {pageCompleteness && Object.keys(pageCompleteness).length > 0 && (
+          <div className="mt-4 p-3 rounded-[10px] space-y-1.5" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="font-inter text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">Completeness</div>
+            {Object.entries(pageCompleteness).sort(([a],[b])=>a.localeCompare(b)).map(([lang, info]) => (
+              <div key={lang} className="flex items-center gap-2">
+                <span className="font-inter text-[10px] font-bold uppercase w-6 text-white/50">{lang}</span>
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                  <div className="h-full rounded-full transition-all"
+                    style={{ width: `${info.pct}%`, background: info.pct === 100 ? '#00FFFF' : info.pct >= 50 ? '#FFD700' : '#FF2D2D' }} />
+                </div>
+                <span className="font-inter text-[10px] font-bold" style={{ color: info.pct === 100 ? '#00FFFF' : info.pct >= 50 ? '#FFD700' : '#FF2D2D' }}>
+                  {info.pct === 100 ? '✅' : info.pct >= 50 ? '⚠️' : '❌'} {info.pct}%
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Editor */}
@@ -1408,6 +1574,7 @@ export default function AdminPage() {
         {tab === 'dashboard' && <Dashboard call={call} />}
         {tab === 'analytics' && <AnalyticsDashboard call={call} />}
         {tab === 'content'   && <ContentEditor call={call} />}
+        {tab === 'global'    && <GlobalContentEditor call={call} />}
         {tab === 'hero'      && <HeroSlidesManager call={call} />}
         {tab === 'blog'      && <BlogManager call={call} />}
         {tab === 'pages'     && <PagesManager call={call} />}
