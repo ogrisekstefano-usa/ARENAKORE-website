@@ -1,3 +1,4 @@
+import { ROUTES } from './config/routes';
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -46,14 +47,14 @@ export default function LandingPage() {
   useScrollTracking('home');
 
   const DISCIPLINES = [
-    { title: t('home.d1_title'), sub: t('home.d1_sub'), desc: t('home.d1_desc'), href: '/fitness-challenge-app', color: '#00FFFF', img: IMGS.barbell, primary: true },
-    { title: t('home.d2_title'), sub: t('home.d2_sub'), desc: t('home.d2_desc'), href: '/workout-competition',  color: '#FFD700', img: IMG_RUNNER },
-    { title: t('home.d3_title'), sub: t('home.d3_sub'), desc: t('home.d3_desc'), href: '/workout-competition',  color: '#FF2D2D', img: IMG_BASKETBALL },
-    { title: t('home.d4_title'), sub: t('home.d4_sub'), desc: t('home.d4_desc'), href: '/workout-competition',  color: '#00FFFF', img: IMG_SWIMMER },
-    { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: '/workout-competition',  color: '#FFD700', bg: 'linear-gradient(135deg,#0a1a00 0%,#000 100%)' },
-    { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: '/workout-competition',  color: '#00FFFF', bg: 'linear-gradient(135deg,#001a2a 0%,#000 100%)' },
-    { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: '/gym-challenge-pilot',  color: '#FFD700', img: IMGS.competition },
-    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: '/for-athletes',         color: '#FF2D2D', img: IMGS.pullup },
+    { title: t('home.d1_title'), sub: t('home.d1_sub'), desc: t('home.d1_desc'), href: ROUTES.fitnessApp, color: '#00FFFF', img: IMGS.barbell, primary: true },
+    { title: t('home.d2_title'), sub: t('home.d2_sub'), desc: t('home.d2_desc'), href: ROUTES.competition,  color: '#FFD700', img: IMG_RUNNER },
+    { title: t('home.d3_title'), sub: t('home.d3_sub'), desc: t('home.d3_desc'), href: ROUTES.competition,  color: '#FF2D2D', img: IMG_BASKETBALL },
+    { title: t('home.d4_title'), sub: t('home.d4_sub'), desc: t('home.d4_desc'), href: ROUTES.competition,  color: '#00FFFF', img: IMG_SWIMMER },
+    { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: ROUTES.competition,  color: '#FFD700', bg: 'linear-gradient(135deg,#0a1a00 0%,#000 100%)' },
+    { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: ROUTES.competition,  color: '#00FFFF', bg: 'linear-gradient(135deg,#001a2a 0%,#000 100%)' },
+    { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: ROUTES.gyms,  color: '#FFD700', img: IMGS.competition },
+    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: ROUTES.athletes,         color: '#FF2D2D', img: IMGS.pullup },
   ];
 
   const HOW_STEPS = [
@@ -216,7 +217,7 @@ export default function LandingPage() {
           </p>
           {/* CTAs */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link to="/get-the-app" data-testid="hero-download-app-btn"
+            <Link to={ROUTES.app} data-testid="hero-download-app-btn"
               onClick={() => {
                 trackGetAppClick('hero', heroSlides[slide]?.sport, 'hero_cta_primary');
                 trackCMSCTAClick({ key: 'cta_primary', text: cms('cta_primary', 'Download the App'), page: 'homepage', position: 'hero' });
@@ -225,7 +226,7 @@ export default function LandingPage() {
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {cms('cta_primary', t('home.cta_primary'))}
             </Link>
-            <Link to="/gym-challenge-pilot" data-testid="hero-for-gyms-btn"
+            <Link to={ROUTES.gyms} data-testid="hero-for-gyms-btn"
               onClick={() => {
                 trackBusinessClick('hero', 'hero_cta_secondary');
                 trackCMSCTAClick({ key: 'cta_secondary', text: cms('cta_secondary', 'For Gyms & Coaches'), page: 'homepage', position: 'hero' });
@@ -365,7 +366,7 @@ export default function LandingPage() {
                 ))}
               </div>
               <Link
-                to="/fitness-challenge-app"
+                to={ROUTES.fitnessApp}
                 data-testid="solution-learn-more"
                 className="inline-flex items-center gap-2 font-inter font-bold text-sm text-ak-cyan hover:underline"
               >
@@ -467,7 +468,7 @@ export default function LandingPage() {
           <div className="mt-12 ak-reveal p-6 rounded-[14px] text-center" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.15)' }}>
             <p className="font-inter text-sm text-white leading-relaxed">
               <span style={{ color: '#00FFFF' }} className="font-bold">ArenaKore</span> {t('home.disciplines_global')}
-              {' '}<Link to="/fitness-challenge-app" className="underline" style={{ color: '#FFD700' }}>{t('home.disciplines_start')}</Link> — {t('home.positioning_tomorrow_val')}
+              {' '}<Link to={ROUTES.fitnessApp} className="underline" style={{ color: '#FFD700' }}>{t('home.disciplines_start')}</Link> — {t('home.positioning_tomorrow_val')}
             </p>
           </div>
         </div>
@@ -503,14 +504,14 @@ export default function LandingPage() {
                 ))}
               </div>
               <Link
-                to="/gym-challenge-pilot"
+                to={ROUTES.gyms}
                 data-testid="gyms-pilot-cta"
                 className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
                 style={{ height: '52px' }}
               >
                 <Zap size={16} fill="black" /> {cms('gyms_cta', t('home.gyms.cta'))}
               </Link>
-              <Link to="/for-athletes" data-testid="home-for-athletes-link"
+              <Link to={ROUTES.athletes} data-testid="home-for-athletes-link"
                 className="inline-flex items-center gap-2 font-inter font-semibold text-sm text-ak-cyan hover:underline">
                 {t('home.for_athletes_link')} <ArrowRight size={14} />
               </Link>
@@ -549,12 +550,12 @@ export default function LandingPage() {
             {t('home.finalCta.sub')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/gym-challenge-pilot" data-testid="final-cta-btn"
+            <Link to={ROUTES.gyms} data-testid="final-cta-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {t('home.finalCta.cta')}
             </Link>
-            <Link to="/for-gyms" data-testid="final-gyms-btn"
+            <Link to={ROUTES.gyms} data-testid="final-gyms-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-white transition-colors"
               style={{ height: '60px' }}>
               {t('home.finalCta.gyms')} <ArrowRight size={16} />

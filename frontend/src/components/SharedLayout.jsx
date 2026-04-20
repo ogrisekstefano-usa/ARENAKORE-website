@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronRight, Zap, Globe, LogIn, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LOGO } from '../data/seo-content';
+import { ROUTES, NAV_ITEMS } from '../config/routes';
 import LangModal from './LangModal';
 import TranslationBanner from './TranslationBanner';
 import { trackGetAppClick, trackBusinessClick } from '../utils/tracking';
@@ -90,16 +91,12 @@ export function InnerNavbar() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  const NAV = [
-    { cmsKey: 'nav_home',        i18nKey: 'nav.home',        href: '/',                    highlight: false },
-    { cmsKey: 'nav_arena_system',i18nKey: 'nav.arenaSystem', href: '/arena-system',         highlight: false },
-    { cmsKey: 'nav_athletes',    i18nKey: 'nav.athletes',    href: '/for-athletes',         highlight: true  },
-    { cmsKey: 'nav_competition', i18nKey: 'nav.competition', href: '/workout-competition',  highlight: false },
-    { cmsKey: 'nav_amrap',       i18nKey: 'nav.amrap',       href: '/amrap-training',       highlight: false },
-    { cmsKey: 'nav_crossfit',    i18nKey: 'nav.crossfit',    href: '/crossfit-challenge',   highlight: false },
-    { cmsKey: 'nav_business',    i18nKey: 'nav.business',    href: '/gym-challenge-pilot',  highlight: false },
-    { cmsKey: 'nav_blog',        i18nKey: 'nav.blog',        href: '/blog',                 highlight: false },
-  ];
+  const NAV = NAV_ITEMS.map(item => ({
+    cmsKey:    item.cmsKey,
+    i18nKey:   item.i18nKey,
+    href:      item.route,
+    highlight: item.highlight || false,
+  }));
 
   const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
 
@@ -136,7 +133,7 @@ export function InnerNavbar() {
 
         <div className="flex items-center gap-2">
           <Link
-            to="/get-the-app"
+            to={ROUTES.app}
             data-testid="nav-start-challenge-btn"
             onClick={() => trackGetAppClick('navbar')}
             className="hidden sm:inline-flex items-center gap-1.5 font-inter font-black text-[10px] uppercase tracking-wide px-3 rounded-[12px] bg-ak-gold text-black hover:scale-105 transition-transform whitespace-nowrap"
@@ -164,7 +161,7 @@ export function InnerNavbar() {
           ))}
           <div className="pt-3 flex items-center justify-between">
             <LangSwitcher />
-            <Link to="/gym-challenge-pilot" onClick={() => setOpen(false)}
+            <Link to={ROUTES.gyms} onClick={() => setOpen(false)}
               className="inline-flex items-center gap-2 font-inter font-black text-sm uppercase tracking-wider rounded-[14px] bg-ak-gold text-black px-5"
               style={{ height: '44px' }}>
               <Zap size={15} fill="black" /> {t('nav.startChallenge')}
@@ -228,18 +225,16 @@ export function InnerFooter() {
               <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.pages')}</div>
               <ul className="space-y-2.5">
                 {[
-                  [t('nav.home'),        '/'],
-                  [t('nav.arenaSystem'), '/arena-system'],
-                  [t('nav.athletes'),    '/for-athletes'],
-                  [t('nav.competition'), '/workout-competition'],
-                  [t('nav.amrap'),       '/amrap-training'],
-                  [t('nav.crossfit'),    '/crossfit-challenge'],
-                  [t('nav.fitnessApp'),   '/fitness-challenge-app'],
-                  [t('footer.gamification'), '/fitness-gamification'],
-                  [t('nav.forGymsCoaches'), '/for-gyms'],
-                  [t('nav.business'),    '/gym-challenge-pilot'],
-                  [t('nav.blog'),        '/blog'],
-                  [t('nav.getApp'),      '/get-the-app'],
+                  [t('nav.home'),           ROUTES.home],
+                  [t('nav.arenaSystem'),    ROUTES.arenaSystem],
+                  [t('nav.athletes'),       ROUTES.athletes],
+                  [t('nav.competition'),    ROUTES.competition],
+                  [t('nav.amrap'),          ROUTES.amrap],
+                  [t('nav.crossfit'),       ROUTES.crossfit],
+                  [t('nav.gamification'),   ROUTES.gamification],
+                  [t('nav.forGymsCoaches'), ROUTES.gyms],
+                  [t('nav.blog'),           ROUTES.blog],
+                  [t('nav.getApp'),         ROUTES.app],
                 ].map(([label, href]) => (
                   <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
                 ))}
@@ -252,7 +247,7 @@ export function InnerFooter() {
                 <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{t('footer.supportCenter')}</Link></li>
                 <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
               </ul>
-              <Link to="/get-the-app"
+              <Link to={ROUTES.app}
                 onClick={() => trackGetAppClick('footer')}
                 className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
                 style={{ height: '38px' }}>

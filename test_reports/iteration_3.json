@@ -1,0 +1,66 @@
+{
+  "summary": "Comprehensive routing/navigation refactor testing for ARENAKORE. Tested: navbar (9 items), footer (10 page links), 6 legacy redirects, 5 new canonical routes, Hero CTA link, GymPilotPage form, and Italian language switching. 14/15 test scenarios passed. One minor pre-existing CMS override issue with IT translation of 'FOR GYMS & COACHES' nav label.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "CMS API (all pages)",
+        "issue": "401 errors on CMS API calls visible in console on every page load. App handles gracefully with i18n/static fallback. 'Offline mode' badge not shown. Pre-existing issue, does not affect functionality."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Italian language switch → navbar 'FOR GYMS & COACHES' label",
+        "issue": "When switching to IT, the 'FOR GYMS & COACHES' nav link (nav_gyms CMS key) does NOT translate to 'PER PALESTRE & COACH'. This is because useGlobalContent(lang) returns the CMS-stored English value 'FOR GYMS & COACHES' which overrides the i18n fallback. Other nav items (ATLETI, COMPETIZIONE) DO translate correctly. Hero CTA secondary button correctly shows 'PER PALESTRE & COACH' (uses usePageContent which correctly falls back to i18n). The i18n key nav.forGymsCoaches='Per Palestre & Coach' exists in IT translations but is shadowed by CMS global content.",
+        "affected_selectors": [".hidden.lg\\:flex a[href='/for-gyms-and-coaches']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_3.json"],
+  "action_items": [
+    "MINOR: Fix IT translation for nav 'FOR GYMS & COACHES' - the CMS global content key 'nav_gyms' stores an English-only value which overrides the i18n Italian 'Per Palestre & Coach'. Either add Italian CMS content for nav_gyms OR make useGlobalContent language-aware when falling back."
+  ],
+  "critical_code_review_comments": [
+    "validateNavigation() correctly runs at startup and logs '[ROUTES] Validated 9 nav items, 14 routes. ✓' — ROUTES single source of truth is working",
+    "REDIRECTS map in App.js using Object.entries() correctly generates all 6 legacy <Navigate replace> redirects",
+    "Footer Pages column correctly uses ROUTES.* for all 10 links — no hardcoded paths",
+    "LandingPage hero secondary CTA uses ROUTES.gyms (/for-gyms-and-coaches) correctly",
+    "GymPilotPage loads at /for-gyms-and-coaches with pilot form (5 input fields present)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "97%"
+  },
+  "test_credentials": "No auth required for public pages tested",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 6 legacy redirects verified working. Navbar: 9 items with correct canonical routes. Footer: 10 page items + 2 support items (no duplicates). All new canonical routes (/competition, /amrap, /crossfit, /gamification, /for-gyms-and-coaches) load correctly. validateNavigation() logs '9 nav items, 14 routes ✓' at startup. Known minor issue: IT language - 'FOR GYMS & COACHES' nav label stays English because CMS global content overrides i18n (pre-existing CMS issue). Hero CTA 'FOR GYMS & COACHES' correctly links to /for-gyms-and-coaches. GymPilotPage has pilot form with 5 inputs.",
+  "passing_tests": [
+    "Navbar: exactly 9 items (HOME, ARENA SYSTEM, ATHLETES, COMPETITION, AMRAP, CROSSFIT, GAMIFICATION, FOR GYMS & COACHES, BLOG)",
+    "Navbar: no duplicates, no 'Business' or 'Pilot' label",
+    "Footer Pages column: exactly 10 items (Home through Get the App), no duplicates, no old routes",
+    "Redirect: /gym-challenge-pilot → /for-gyms-and-coaches",
+    "Redirect: /workout-competition → /competition",
+    "Redirect: /amrap-training → /amrap",
+    "Redirect: /crossfit-challenge → /crossfit",
+    "Redirect: /fitness-gamification → /gamification",
+    "Redirect: /for-gyms → /for-gyms-and-coaches",
+    "New route /competition loads WorkoutCompetitionPage correctly",
+    "New route /amrap loads AmrapPage correctly",
+    "New route /crossfit loads CrossfitPage correctly",
+    "New route /gamification loads GamificationPage correctly",
+    "New route /for-gyms-and-coaches loads GymPilotPage with pilot form (5 inputs)",
+    "Hero CTA 'FOR GYMS & COACHES' links to and navigates to /for-gyms-and-coaches",
+    "IT language: most nav labels translate (ATLETI, COMPETIZIONE) — hero content in Italian",
+    "validateNavigation() logs '[ROUTES] Validated 9 nav items, 14 routes. ✓' at startup"
+  ],
+  "failing_tests": [
+    "IT language: 'FOR GYMS & COACHES' nav item does not translate to 'PER PALESTRE & COACH' — CMS override returns English value instead of falling back to i18n"
+  ]
+}

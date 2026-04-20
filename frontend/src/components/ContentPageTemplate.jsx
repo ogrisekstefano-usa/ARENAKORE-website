@@ -1,3 +1,4 @@
+import { ROUTES } from '../config/routes';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, ChevronDown, Download, Zap } from 'lucide-react';
@@ -171,12 +172,12 @@ export default function ContentPageTemplate({ page }) {
           <h2 className="font-anton text-4xl md:text-5xl uppercase text-white mb-4">{t('ui.prove_it')}</h2>
           <p className="font-inter text-base text-white mb-8">{t('ui.no_excuses')}</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link to="/get-the-app" data-testid="bottom-cta-btn"
+            <Link to={ROUTES.app} data-testid="bottom-cta-btn"
               className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '52px' }}>
               <Download size={18} /> {t('cta.downloadApp')}
             </Link>
-            <Link to="/gym-challenge-pilot"
+            <Link to={ROUTES.gyms}
               className="inline-flex items-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all"
               style={{ height: '52px' }}>
               {t('ui.for_gyms_coaches')}

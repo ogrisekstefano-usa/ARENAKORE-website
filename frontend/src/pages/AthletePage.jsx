@@ -1,3 +1,4 @@
+import { ROUTES } from '../config/routes';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, Trophy, Users, Scan, Activity, ChevronDown, ArrowRight, Swords, Star, Radio } from 'lucide-react';
@@ -71,13 +72,13 @@ export default function AthletePage() {
           </p>
 
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link to="/get-the-app" data-testid="athlete-hero-cta"
+            <Link to={ROUTES.app} data-testid="athlete-hero-cta"
               onClick={() => trackConversion({ action: 'app_download', source_cta_key: 'hero_cta', page: 'for-athletes', position: 'hero' })}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {cms('hero_cta', t('cta.downloadApp'))}
             </Link>
-            <Link to="/arena-system" data-testid="athlete-enter-arena-btn"
+            <Link to={ROUTES.arenaSystem} data-testid="athlete-enter-arena-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/25 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
               style={{ height: '60px' }}>
               {cms('final_cta', t('cta.enterArena'))} <ArrowRight size={16} />
@@ -351,13 +352,13 @@ export default function AthletePage() {
             {cms('final_body', t('athlete.finalPush.body'))}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/get-the-app" data-testid="athlete-final-cta"
+            <Link to={ROUTES.app} data-testid="athlete-final-cta"
               onClick={() => trackConversion({ action: 'app_download', source_cta_key: 'final_cta', page: 'for-athletes', position: 'final_cta' })}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-lg px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '64px' }}>
               <Zap size={22} fill="black" /> {cms('hero_cta', t('cta.downloadApp'))}
             </Link>
-            <Link to="/arena-system" data-testid="athlete-final-arena"
+            <Link to={ROUTES.arenaSystem} data-testid="athlete-final-arena"
               className="inline-flex items-center justify-center gap-2 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
               style={{ height: '64px' }}>
               {cms('final_cta', t('cta.enterArena'))} <ArrowRight size={16} />

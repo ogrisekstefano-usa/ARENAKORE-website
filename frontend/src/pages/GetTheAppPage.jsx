@@ -1,3 +1,4 @@
+import { ROUTES } from '../config/routes';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -217,7 +218,7 @@ export default function GetTheAppPage() {
               {cms('sport_h2_line1', t('getApp.sport_h2_line1'))}<br /><span style={{ color: '#FFD700' }}>{cms('sport_h2_line2', t('getApp.sport_h2_line2'))}</span>
             </h2>
             <p className="font-inter text-base text-white mb-8 leading-relaxed">{cms('sport_body', t('getApp.sport_body'))}</p>
-            <Link to="/arena-system" className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-cyan hover:underline">
+            <Link to={ROUTES.arenaSystem} className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-cyan hover:underline">
               {t('getApp.sport_link')} <ArrowRight size={14} />
             </Link>
           </div>
@@ -290,7 +291,7 @@ export default function GetTheAppPage() {
             <StoreButton href={PLAY_STORE_URL} type="android" source="final_cta" />
           </div>
 
-          <Link to="/arena-system" data-testid="final-learn-link"
+          <Link to={ROUTES.arenaSystem} data-testid="final-learn-link"
             className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-cyan hover:underline">
             {cms('final_learn', t('getApp.final_learn'))} <ArrowRight size={14} />
           </Link>

@@ -1,54 +1,66 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import ScrollToTop from './components/ScrollToTop';
 import { usePageTracking } from './hooks/usePageTracking';
 import { initGA } from './utils/tracking';
 import { useGlobalSelector } from './components/LangModal';
-import LoginPage from './pages/LoginPage';
-import LandingPage from './LandingPage';
-import ArenaSystemPage from './pages/ArenaSystemPage';
-import FitnessChallengePage from './pages/FitnessChallengePage';
-import CrossfitPage from './pages/CrossfitPage';
-import WorkoutCompetitionPage from './pages/WorkoutCompetitionPage';
-import AmrapPage from './pages/AmrapPage';
-import GamificationPage from './pages/GamificationPage';
-import ForGymsPage from './pages/ForGymsPage';
-import GymPilotPage from './pages/GymPilotPage';
-import GetTheAppPage from './pages/GetTheAppPage';
-import AthletePage from './pages/AthletePage';
-import BlogPage from './pages/BlogPage';
-import BlogArticlePage from './pages/BlogArticlePage';
-import SupportPage from './pages/SupportPage';
-import AdminPage from './pages/AdminPage';
+import { validateNavigation } from './utils/validateRoutes';
+import { ROUTES, REDIRECTS } from './config/routes';
 
-// Inner component so hooks have Router context
+import LoginPage              from './pages/LoginPage';
+import LandingPage            from './LandingPage';
+import ArenaSystemPage        from './pages/ArenaSystemPage';
+import FitnessChallengePage   from './pages/FitnessChallengePage';
+import CrossfitPage           from './pages/CrossfitPage';
+import WorkoutCompetitionPage from './pages/WorkoutCompetitionPage';
+import AmrapPage              from './pages/AmrapPage';
+import GamificationPage       from './pages/GamificationPage';
+import ForGymsPage            from './pages/ForGymsPage';
+import GymPilotPage           from './pages/GymPilotPage';
+import GetTheAppPage          from './pages/GetTheAppPage';
+import AthletePage            from './pages/AthletePage';
+import BlogPage               from './pages/BlogPage';
+import BlogArticlePage        from './pages/BlogArticlePage';
+import SupportPage            from './pages/SupportPage';
+import AdminPage              from './pages/AdminPage';
+
+// Validate routes at startup (dev mode only)
+validateNavigation();
+
 function AppRoutes() {
   usePageTracking();
-  useGlobalSelector(); // auto-detect language + country on first visit
+  useGlobalSelector();
   return (
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/arena-system" element={<ArenaSystemPage />} />
-        <Route path="/competition-system" element={<ArenaSystemPage />} />
-        <Route path="/fitness-challenge-app" element={<FitnessChallengePage />} />
-        <Route path="/crossfit-challenge" element={<CrossfitPage />} />
-        <Route path="/workout-competition" element={<WorkoutCompetitionPage />} />
-        <Route path="/amrap-training" element={<AmrapPage />} />
-        <Route path="/fitness-gamification" element={<GamificationPage />} />
-        <Route path="/for-gyms" element={<ForGymsPage />} />
-        <Route path="/gym-challenge-pilot" element={<GymPilotPage />} />
-        <Route path="/get-the-app" element={<GetTheAppPage />} />
-        <Route path="/for-athletes" element={<AthletePage />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog/:slug" element={<BlogArticlePage />} />
-        <Route path="/support" element={<SupportPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<LoginPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/*" element={<AdminPage />} />
+        {/* ── CANONICAL ROUTES ── */}
+        <Route path={ROUTES.home}         element={<LandingPage />} />
+        <Route path={ROUTES.arenaSystem}  element={<ArenaSystemPage />} />
+        <Route path={ROUTES.athletes}     element={<AthletePage />} />
+        <Route path={ROUTES.competition}  element={<WorkoutCompetitionPage />} />
+        <Route path={ROUTES.amrap}        element={<AmrapPage />} />
+        <Route path={ROUTES.crossfit}     element={<CrossfitPage />} />
+        <Route path={ROUTES.gamification} element={<GamificationPage />} />
+        <Route path={ROUTES.gyms}         element={<GymPilotPage />} />
+        <Route path={ROUTES.app}          element={<GetTheAppPage />} />
+        <Route path={ROUTES.blog}         element={<BlogPage />} />
+        <Route path="/blog/:slug"         element={<BlogArticlePage />} />
+        <Route path={ROUTES.support}      element={<SupportPage />} />
+        <Route path={ROUTES.login}        element={<LoginPage />} />
+        <Route path="/register"           element={<LoginPage />} />
+        <Route path={ROUTES.admin}        element={<AdminPage />} />
+        <Route path="/admin/*"            element={<AdminPage />} />
+
+        {/* ── SEO PAGES (not in main nav, kept for backlinks) ── */}
+        <Route path={ROUTES.fitnessApp}   element={<FitnessChallengePage />} />
+        <Route path="/for-gyms-seo"       element={<ForGymsPage />} />
+
+        {/* ── LEGACY REDIRECTS (301-equivalent) ── */}
+        {Object.entries(REDIRECTS).map(([from, to]) => (
+          <Route key={from} path={from} element={<Navigate to={to} replace />} />
+        ))}
       </Routes>
     </>
   );

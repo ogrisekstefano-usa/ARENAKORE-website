@@ -1,3 +1,4 @@
+import { ROUTES } from '../config/routes';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -125,10 +126,10 @@ export default function BlogPage() {
           <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-4">{t('ui.blog_stop_reading')}</h2>
           <p className="font-inter text-sm text-white mb-8">{t('ui.blog_stop_sub')}</p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link to="/get-the-app" className="inline-flex items-center gap-3 font-inter font-black uppercase text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform" style={{ height: '48px' }}>
+            <Link to={ROUTES.app} className="inline-flex items-center gap-3 font-inter font-black uppercase text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform" style={{ height: '48px' }}>
               {t('ui.blog_app_cta')} <ArrowRight size={16} />
             </Link>
-            <Link to="/gym-challenge-pilot" className="inline-flex items-center gap-3 font-inter font-bold uppercase text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all" style={{ height: '48px' }}>
+            <Link to={ROUTES.gyms} className="inline-flex items-center gap-3 font-inter font-bold uppercase text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all" style={{ height: '48px' }}>
               {t('ui.blog_gym_cta')}
             </Link>
           </div>

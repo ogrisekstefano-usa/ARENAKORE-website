@@ -1604,6 +1604,8 @@ GLOBAL_DEFAULTS = [
     {"key": "nav_competition",      "group": "navbar",    "translations": {"en": "Competition",    "it": "Competizione",  "es": "Competición"}},
     {"key": "nav_amrap",            "group": "navbar",    "translations": {"en": "AMRAP",          "it": "AMRAP",         "es": "AMRAP"}},
     {"key": "nav_crossfit",         "group": "navbar",    "translations": {"en": "CrossFit",       "it": "CrossFit",      "es": "CrossFit"}},
+    {"key": "nav_gyms",             "group": "navbar",    "translations": {"en": "For Gyms & Coaches", "it": "Per Palestre & Coach", "es": "Para Gimnasios & Coaches"}},
+    {"key": "nav_gamification",     "group": "navbar",    "translations": {"en": "Gamification",    "it": "Gamification",  "es": "Gamificación"}},
     {"key": "nav_business",         "group": "navbar",    "translations": {"en": "Business",       "it": "Business",      "es": "Business"}},
     {"key": "nav_blog",             "group": "navbar",    "translations": {"en": "Blog",           "it": "Blog",          "es": "Blog"}},
     {"key": "nav_cta",              "group": "navbar",    "translations": {"en": "Start Your Challenge", "it": "Inizia la Sfida", "es": "Empieza Tu Desafío"}},
@@ -1723,22 +1725,20 @@ async def get_admin_stats(_=Depends(verify_admin)):
         "hero_slides": await db.hero_slides.count_documents({}),
     }
 
-# All known routes — single source of truth
+# All known routes — single source of truth (mirrors frontend ROUTES config)
 KNOWN_ROUTES = [
-    {"slug": "/",                    "name": "Home",               "section": "main"},
-    {"slug": "/arena-system",        "name": "Arena System",        "section": "main"},
-    {"slug": "/for-athletes",        "name": "Athletes",            "section": "main"},
-    {"slug": "/workout-competition", "name": "Competition",         "section": "main"},
-    {"slug": "/amrap-training",      "name": "AMRAP Training",      "section": "main"},
-    {"slug": "/crossfit-challenge",  "name": "CrossFit",            "section": "main"},
-    {"slug": "/gym-challenge-pilot", "name": "Business / Pilot",    "section": "main"},
-    {"slug": "/blog",                "name": "Blog",                "section": "main"},
-    {"slug": "/get-the-app",         "name": "Get the App",         "section": "main"},
-    {"slug": "/for-gyms",            "name": "For Gyms",            "section": "secondary"},
-    {"slug": "/fitness-challenge-app","name": "Fitness Challenge App","section": "secondary"},
-    {"slug": "/fitness-gamification","name": "Fitness Gamification","section": "secondary"},
-    {"slug": "/support",             "name": "Support",             "section": "support"},
-    {"slug": "/for-athletes",        "name": "For Athletes",        "section": "secondary"},
+    {"slug": "/",                      "name": "Home",                    "section": "main"},
+    {"slug": "/arena-system",          "name": "Arena System",            "section": "main"},
+    {"slug": "/for-athletes",          "name": "Athletes",                "section": "main"},
+    {"slug": "/competition",           "name": "Competition",             "section": "main"},
+    {"slug": "/amrap",                 "name": "AMRAP",                   "section": "main"},
+    {"slug": "/crossfit",              "name": "CrossFit",                "section": "main"},
+    {"slug": "/gamification",          "name": "Gamification",            "section": "main"},
+    {"slug": "/for-gyms-and-coaches",  "name": "For Gyms & Coaches",      "section": "main"},
+    {"slug": "/blog",                  "name": "Blog",                    "section": "main"},
+    {"slug": "/get-the-app",           "name": "Get the App",             "section": "main"},
+    {"slug": "/fitness-challenge-app", "name": "Fitness Challenge App",   "section": "secondary"},
+    {"slug": "/support",               "name": "Support",                 "section": "support"},
 ]
 
 @api_router.get("/cms/pages")

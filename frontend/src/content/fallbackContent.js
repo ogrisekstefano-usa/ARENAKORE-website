@@ -286,7 +286,8 @@ export const FALLBACK_GLOBAL = {
   nav_competition:      'Competition',
   nav_amrap:            'AMRAP',
   nav_crossfit:         'CrossFit',
-  nav_business:         'Business',
+  nav_gamification:     'Gamification',
+  nav_gyms:             'For Gyms & Coaches',
   nav_blog:             'Blog',
   nav_cta:              'Start Your Challenge',
 

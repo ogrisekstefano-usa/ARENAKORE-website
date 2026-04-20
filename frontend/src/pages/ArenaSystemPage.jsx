@@ -1,3 +1,4 @@
+import { ROUTES } from '../config/routes';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -78,7 +79,7 @@ export default function ArenaSystemPage() {
             {cms('hero_sub2', t('arena.hero_sub2'))}
           </p>
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-10">
-            <Link to="/get-the-app" data-testid="arena-download-btn"
+            <Link to={ROUTES.app} data-testid="arena-download-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Download size={20} /> {t('cta.downloadApp')}
@@ -163,11 +164,11 @@ export default function ArenaSystemPage() {
                 {cms('sport_body', t('arena.sport_body'))}
               </p>
               <div className="flex flex-col gap-2">
-                <Link to="/gym-challenge-pilot" data-testid="multisport-gyms-link"
+                <Link to={ROUTES.gyms} data-testid="multisport-gyms-link"
                   className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-gold hover:underline">
                   {t('ui.for_gyms_coaches')} <ArrowRight size={14} />
                 </Link>
-                <Link to="/for-athletes" data-testid="multisport-athletes-link"
+                <Link to={ROUTES.athletes} data-testid="multisport-athletes-link"
                   className="inline-flex items-center gap-2 font-inter text-sm font-semibold text-ak-cyan hover:underline">
                   {t('cta.enter_arena')} <ArrowRight size={14} />
                 </Link>
@@ -215,12 +216,12 @@ export default function ArenaSystemPage() {
             {cms('final_body', t('arena.final_body'))}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/get-the-app" data-testid="arena-final-download"
+            <Link to={ROUTES.app} data-testid="arena-final-download"
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '56px' }}>
               <Download size={18} /> {t('cta.downloadApp')}
             </Link>
-            <Link to="/gym-challenge-pilot" data-testid="arena-final-gyms"
+            <Link to={ROUTES.gyms} data-testid="arena-final-gyms"
               className="inline-flex items-center justify-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-ak-gold hover:text-ak-gold transition-all"
               style={{ height: '56px' }}>
               {t('cta.forGyms')} <ArrowRight size={14} />

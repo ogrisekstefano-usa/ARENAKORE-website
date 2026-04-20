@@ -1,3 +1,4 @@
+import { ROUTES } from '../config/routes';
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { ArrowLeft, Clock, ArrowRight } from 'lucide-react';
@@ -88,7 +89,7 @@ export default function BlogArticlePage() {
       <div className="w-8 h-8 border-2 border-ak-cyan border-t-transparent rounded-full animate-spin" />
     </div>
   );
-  if (notFound) return <Navigate to="/blog" replace />;
+  if (notFound) return <Navigate to={ROUTES.blog} replace />;
 
   const related = BLOG_POSTS.filter(p => p.slug !== slug).slice(0, 2);
 
@@ -103,7 +104,7 @@ export default function BlogArticlePage() {
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.9) 100%)' }} />
         </div>
         <div className="max-w-3xl mx-auto px-6 sm:px-10 py-8">
-          <Link to="/blog" className="inline-flex items-center gap-2 font-inter text-xs font-semibold text-ak-cyan mb-6 hover:underline">
+          <Link to={ROUTES.blog} className="inline-flex items-center gap-2 font-inter text-xs font-semibold text-ak-cyan mb-6 hover:underline">
             <ArrowLeft size={14} /> Blog
           </Link>
           <div className="flex items-center gap-4 mb-4">
@@ -128,10 +129,10 @@ export default function BlogArticlePage() {
             <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">{t('ui.blog_try_arena')}</div>
             <p className="font-inter text-sm text-white mb-4">{t('ui.blog_try_body')}</p>
             <div className="flex flex-wrap gap-3">
-              <Link to="/get-the-app" className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[12px] bg-ak-gold text-black" style={{ height: '38px' }}>
+              <Link to={ROUTES.app} className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[12px] bg-ak-gold text-black" style={{ height: '38px' }}>
                 {t('cta.downloadApp')}
               </Link>
-              <Link to="/fitness-challenge-app" className="inline-flex items-center gap-2 font-inter text-xs font-semibold text-ak-cyan hover:underline" style={{ height: '38px' }}>
+              <Link to={ROUTES.fitnessApp} className="inline-flex items-center gap-2 font-inter text-xs font-semibold text-ak-cyan hover:underline" style={{ height: '38px' }}>
                 {t('nav.arenaSystem')} <ArrowRight size={13} />
               </Link>
             </div>
