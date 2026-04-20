@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import ScrollToTop from './components/ScrollToTop';
 import { usePageTracking } from './hooks/usePageTracking';
 import { initGA } from './utils/tracking';
+import { useGlobalSelector } from './components/LangModal';
 import LandingPage from './LandingPage';
 import ArenaSystemPage from './pages/ArenaSystemPage';
 import FitnessChallengePage from './pages/FitnessChallengePage';
@@ -23,6 +24,7 @@ import AdminPage from './pages/AdminPage';
 // Inner component so hooks have Router context
 function AppRoutes() {
   usePageTracking();
+  useGlobalSelector(); // auto-detect language + country on first visit
   return (
     <>
       <ScrollToTop />

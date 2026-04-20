@@ -153,7 +153,11 @@ export function InnerNavbar() {
 export function InnerFooter() {
   const { t, i18n } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
-  const currentLang = i18n.language?.slice(0, 2).toUpperCase() || 'EN';
+  const currentLang    = i18n.language?.slice(0, 2).toUpperCase() || 'EN';
+  const currentCountry = localStorage.getItem('arena_country') || '';
+
+  const FLAGS = { IT: '🇮🇹', ES: '🇪🇸', EN: '🌍', US: '🇺🇸', GB: '🇬🇧', DE: '🇩🇪', FR: '🇫🇷', AU: '🇦🇺', CA: '🇨🇦', AE: '🇦🇪' };
+  const displayFlag = FLAGS[currentCountry] || FLAGS[currentLang] || '🌍';
 
   return (
     <>
@@ -217,10 +221,11 @@ export function InnerFooter() {
               <button
                 onClick={() => setLangOpen(true)}
                 data-testid="footer-lang-btn"
-                className="flex items-center gap-1.5 font-inter text-xs text-white/50 hover:text-ak-cyan transition-colors"
+                className="flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white transition-colors border border-white/10 hover:border-white/25 px-3 py-1.5 rounded-full"
               >
-                <Globe size={13} />
-                <span>{currentLang}</span>
+                <span>{displayFlag}</span>
+                <span className="font-bold">{currentLang}</span>
+                {currentCountry && <span className="text-white/30">· {currentCountry}</span>}
               </button>
             </div>
           </div>
