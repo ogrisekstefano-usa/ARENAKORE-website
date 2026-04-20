@@ -5,6 +5,7 @@ import ScrollToTop from './components/ScrollToTop';
 import { usePageTracking } from './hooks/usePageTracking';
 import { initGA } from './utils/tracking';
 import { useGlobalSelector } from './components/LangModal';
+import LoginPage from './pages/LoginPage';
 import LandingPage from './LandingPage';
 import ArenaSystemPage from './pages/ArenaSystemPage';
 import FitnessChallengePage from './pages/FitnessChallengePage';
@@ -44,6 +45,8 @@ function AppRoutes() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogArticlePage />} />
         <Route path="/support" element={<SupportPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<LoginPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>

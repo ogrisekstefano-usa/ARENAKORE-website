@@ -1,15 +1,15 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-import os, logging, uuid, hashlib, hmac, asyncio
+import os, logging, uuid, hashlib, hmac, asyncio, bcrypt, jwt, secrets
 import resend
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional, Any, Dict
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -25,6 +25,170 @@ db = client[os.environ['DB_NAME']]
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
+
+# ─── AUTH HELPERS ─────────────────────────────────────────────
+JWT_SECRET    = os.environ.get('JWT_SECRET', 'arenakore-fallback-secret')
+JWT_ALGORITHM = 'HS256'
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+def verify_password(plain: str, hashed: str) -> bool:
+    try:
+        return bcrypt.checkpw(plain.encode(), hashed.encode())
+    except Exception:
+        return False
+
+def create_access_token(user_id: str, email: str) -> str:
+    payload = {"sub": user_id, "email": email, "exp": datetime.now(timezone.utc) + timedelta(minutes=60), "type": "access"}
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+def create_refresh_token(user_id: str) -> str:
+    payload = {"sub": user_id, "exp": datetime.now(timezone.utc) + timedelta(days=7), "type": "refresh"}
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+def _set_auth_cookies(response: Response, access: str, refresh: str):
+    response.set_cookie("access_token", access,  httponly=True, secure=False, samesite="lax", max_age=3600,   path="/")
+    response.set_cookie("refresh_token", refresh, httponly=True, secure=False, samesite="lax", max_age=604800, path="/")
+
+def _clear_auth_cookies(response: Response):
+    response.delete_cookie("access_token",  path="/")
+    response.delete_cookie("refresh_token", path="/")
+
+async def get_current_user(request: Request) -> dict:
+    token = request.cookies.get("access_token")
+    if not token:
+        auth = request.headers.get("Authorization", "")
+        if auth.startswith("Bearer "):
+            token = auth[7:]
+    if not token:
+        raise HTTPException(401, "Not authenticated")
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        if payload.get("type") != "access":
+            raise HTTPException(401, "Invalid token type")
+        user = await db.ak_users.find_one({"id": payload["sub"]}, {"_id": 0})
+        if not user:
+            raise HTTPException(401, "User not found")
+        user.pop("password_hash", None)
+        console_user = {k: v for k, v in user.items() if k != 'password_hash'}
+        logger.info(f"AUTH USER: {console_user}")
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(401, "Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(401, "Invalid token")
+
+# ─── USER MODEL ───────────────────────────────────────────────
+class AKUser(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: str
+    name: str
+    password_hash: str
+    role: str = "athlete"
+    ak_credits: int = 0
+    rank: str = "Rookie"
+    level: int = 1
+    sport_preference: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+def _safe_user(u: dict) -> dict:
+    """Return user dict without password, safe for API responses."""
+    u = dict(u)
+    u.pop("password_hash", None)
+    u.pop("_id", None)
+    if isinstance(u.get("created_at"), datetime):
+        u["created_at"] = u["created_at"].isoformat()
+    return u
+
+# ─── AUTH ENDPOINTS ───────────────────────────────────────────
+class RegisterIn(BaseModel):
+    email: str
+    password: str
+    name: str
+
+class LoginIn(BaseModel):
+    email: str
+    password: str
+
+@api_router.post("/auth/register")
+async def register(data: RegisterIn, response: Response):
+    email = data.email.lower().strip()
+    existing = await db.ak_users.find_one({"email": email})
+    if existing:
+        raise HTTPException(400, "Email already registered")
+    user = AKUser(email=email, name=data.name.strip(), password_hash=hash_password(data.password))
+    doc = user.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    await db.ak_users.insert_one(doc)
+    access  = create_access_token(user.id, user.email)
+    refresh = create_refresh_token(user.id)
+    _set_auth_cookies(response, access, refresh)
+    logger.info(f"AUTH USER: {_safe_user(doc)}")
+    return {"user": _safe_user(doc), "access_token": access}
+
+@api_router.post("/auth/login")
+async def login(data: LoginIn, response: Response):
+    email = data.email.lower().strip()
+    user  = await db.ak_users.find_one({"email": email}, {"_id": 0})
+    if not user or not verify_password(data.password, user.get("password_hash", "")):
+        raise HTTPException(401, "Invalid credentials")
+    access  = create_access_token(user["id"], user["email"])
+    refresh = create_refresh_token(user["id"])
+    _set_auth_cookies(response, access, refresh)
+    safe = _safe_user(user)
+    logger.info(f"AUTH USER: {safe}")
+    return {"user": safe, "access_token": access}
+
+@api_router.post("/auth/logout")
+async def logout(response: Response):
+    _clear_auth_cookies(response)
+    return {"ok": True}
+
+@api_router.get("/auth/me")
+async def get_me(current_user: dict = Depends(get_current_user)):
+    logger.info(f"AUTH USER: {current_user}")
+    return {"user": current_user}
+
+@api_router.post("/auth/refresh")
+async def refresh_token(request: Request, response: Response):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(401, "No refresh token")
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        if payload.get("type") != "refresh":
+            raise HTTPException(401, "Invalid refresh token")
+        user = await db.ak_users.find_one({"id": payload["sub"]}, {"_id": 0})
+        if not user:
+            raise HTTPException(401, "User not found")
+        access = create_access_token(user["id"], user["email"])
+        response.set_cookie("access_token", access, httponly=True, secure=False, samesite="lax", max_age=3600, path="/")
+        return {"ok": True, "user": _safe_user(user)}
+    except jwt.InvalidTokenError:
+        raise HTTPException(401, "Invalid refresh token")
+
+@api_router.patch("/auth/me")
+async def update_me(updates: Dict[str, Any], current_user: dict = Depends(get_current_user)):
+    allowed = {"name", "sport_preference", "ak_credits", "rank", "level"}
+    safe_updates = {k: v for k, v in updates.items() if k in allowed}
+    if not safe_updates:
+        raise HTTPException(400, "No valid fields")
+    await db.ak_users.update_one({"id": current_user["id"]}, {"$set": safe_updates})
+    updated = await db.ak_users.find_one({"id": current_user["id"]}, {"_id": 0})
+    return {"user": _safe_user(updated)}
+
+# Seed admin on startup
+async def _seed_admin():
+    admin_email = os.environ.get("ADMIN_EMAIL", "admin@arenakore.com")
+    admin_password = os.environ.get("ADMIN_PASSWORD", "ArenaKore2026!")
+    existing = await db.ak_users.find_one({"email": admin_email})
+    if not existing:
+        user = AKUser(email=admin_email, name="Admin", password_hash=hash_password(admin_password), role="admin")
+        doc = user.model_dump(); doc["created_at"] = doc["created_at"].isoformat()
+        await db.ak_users.insert_one(doc)
+        logger.info(f"Admin user seeded: {admin_email}")
+    await db.ak_users.create_index("email", unique=True)
 
 # ─── ADMIN AUTH ───────────────────────────────────────────────
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'ArenaKore2026!')
@@ -648,3 +812,8 @@ app.add_middleware(CORSMiddleware, allow_credentials=True,
 
 @app.on_event("shutdown")
 async def shutdown_db_client(): client.close()
+
+@app.on_event("startup")
+async def startup_event():
+    await _seed_admin()
+    logger.info("ArenaKore API started — auth system ready")
