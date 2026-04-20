@@ -4,32 +4,32 @@ import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../utils/tracking';
 
 const SPORTS = [
-  { id: 'athletics',     label: 'Athletics',          emoji: '🏃' },
-  { id: 'badminton',     label: 'Badminton',           emoji: '🏸' },
-  { id: 'baseball',      label: 'Baseball',            emoji: '⚾' },
-  { id: 'basketball',    label: 'Basketball',          emoji: '🏀' },
-  { id: 'boxing',        label: 'Boxing',              emoji: '🥊' },
-  { id: 'crossfit',      label: 'CrossFit',            emoji: '⚡' },
-  { id: 'cycling',       label: 'Cycling',             emoji: '🚴' },
-  { id: 'football',      label: 'Football',            emoji: '⚽' },
-  { id: 'golf',          label: 'Golf',                emoji: '⛳' },
-  { id: 'gymnastics',    label: 'Gymnastics',          emoji: '🤸' },
-  { id: 'handball',      label: 'Handball',            emoji: '🤾' },
-  { id: 'hockey',        label: 'Hockey',              emoji: '🏑' },
-  { id: 'mma',           label: 'MMA',                 emoji: '🥋' },
-  { id: 'motorsport',    label: 'Motorsport',          emoji: '🏎️' },
-  { id: 'padel',         label: 'Padel',               emoji: '🎾' },
-  { id: 'rugby',         label: 'Rugby',               emoji: '🏉' },
-  { id: 'running',       label: 'Running',             emoji: '🏃‍♂️' },
-  { id: 'skiing',        label: 'Skiing',              emoji: '🎿' },
-  { id: 'surf',          label: 'Surf',                emoji: '🏄' },
-  { id: 'swimming',      label: 'Swimming',            emoji: '🏊' },
-  { id: 'tennis',        label: 'Tennis',              emoji: '🎾' },
-  { id: 'triathlon',     label: 'Triathlon',           emoji: '🏊‍♂️' },
-  { id: 'volleyball',    label: 'Volleyball',          emoji: '🏐' },
-  { id: 'weightlifting', label: 'Weightlifting',       emoji: '🏋️' },
-  { id: 'yoga',          label: 'Yoga',                emoji: '🧘' },
-  { id: 'other',         label: null,                  emoji: '🎯' },
+  { id: 'athletics',     i18nKey: 'ui.sport_athletics',     emoji: '🏃' },
+  { id: 'badminton',     i18nKey: 'ui.sport_badminton',     emoji: '🏸' },
+  { id: 'baseball',      i18nKey: 'ui.sport_baseball',      emoji: '⚾' },
+  { id: 'basketball',    i18nKey: 'ui.sport_basketball',    emoji: '🏀' },
+  { id: 'boxing',        i18nKey: 'ui.sport_boxing',        emoji: '🥊' },
+  { id: 'crossfit',      i18nKey: 'ui.sport_crossfit',      emoji: '⚡' },
+  { id: 'cycling',       i18nKey: 'ui.sport_cycling',       emoji: '🚴' },
+  { id: 'football',      i18nKey: 'ui.sport_football',      emoji: '⚽' },
+  { id: 'golf',          i18nKey: 'ui.sport_golf',          emoji: '⛳' },
+  { id: 'gymnastics',    i18nKey: 'ui.sport_gymnastics',    emoji: '🤸' },
+  { id: 'handball',      i18nKey: 'ui.sport_handball',      emoji: '🤾' },
+  { id: 'hockey',        i18nKey: 'ui.sport_hockey',        emoji: '🏑' },
+  { id: 'mma',           i18nKey: 'ui.sport_mma',           emoji: '🥋' },
+  { id: 'motorsport',    i18nKey: 'ui.sport_motorsport',    emoji: '🏎️' },
+  { id: 'padel',         i18nKey: 'ui.sport_padel',         emoji: '🎾' },
+  { id: 'rugby',         i18nKey: 'ui.sport_rugby',         emoji: '🏉' },
+  { id: 'running',       i18nKey: 'ui.sport_running',       emoji: '🏃‍♂️' },
+  { id: 'skiing',        i18nKey: 'ui.sport_skiing',        emoji: '🎿' },
+  { id: 'surf',          i18nKey: 'ui.sport_surf',          emoji: '🏄' },
+  { id: 'swimming',      i18nKey: 'ui.sport_swimming',      emoji: '🏊' },
+  { id: 'tennis',        i18nKey: 'ui.sport_tennis',        emoji: '🎾' },
+  { id: 'triathlon',     i18nKey: 'ui.sport_triathlon',     emoji: '🏊‍♂️' },
+  { id: 'volleyball',    i18nKey: 'ui.sport_volleyball',    emoji: '🏐' },
+  { id: 'weightlifting', i18nKey: 'ui.sport_weightlifting', emoji: '🏋️' },
+  { id: 'yoga',          i18nKey: 'ui.sport_yoga',          emoji: '🧘' },
+  { id: 'other',         i18nKey: 'ui.sport_other',         emoji: '🎯' },
 ];
 
 const STORAGE_KEY = 'arena_sport_preference';
@@ -83,7 +83,7 @@ export default function SportSelector({ onSelect, compact = false }) {
   const displayName   = selectedSport
     ? (selected === 'other' && customInput.trim().length >= 2
         ? customInput.trim()
-        : selectedSport.label)
+        : t(selectedSport.i18nKey))
     : null;
 
   return (
@@ -126,7 +126,7 @@ export default function SportSelector({ onSelect, compact = false }) {
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
               >
                 <span style={{ fontSize: '15px', flexShrink: 0 }}>{sport.emoji}</span>
-                <span className="truncate">{sport.id === 'other' ? t('ui.sport_other') : sport.label}</span>
+                <span className="truncate">{t(sport.i18nKey)}</span>
                 {isSelected && !isOther && (
                   <span className="ml-auto flex-shrink-0 w-1.5 h-1.5 rounded-full bg-ak-cyan" />
                 )}
@@ -169,7 +169,7 @@ export default function SportSelector({ onSelect, compact = false }) {
         {displayName && selected !== 'other' && (
           <p className="font-inter text-xs mt-5 uppercase tracking-widest"
             style={{ color: 'rgba(255,255,255,0.25)', textAlign: compact ? 'left' : 'center' }}>
-            Arena: <span className="text-ak-cyan">{displayName}</span> — {t('ui.sport_selector_sub', 'tap to change')}
+            Arena: <span className="text-ak-cyan">{displayName}</span> — {t('ui.sport_tap_change')}
           </p>
         )}
       </div>

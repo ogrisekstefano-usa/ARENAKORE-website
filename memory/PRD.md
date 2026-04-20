@@ -1,83 +1,106 @@
-# ARENAKORE Landing Page — PRD
+# ARENAKORE — PRD (Product Requirements Document)
 
 ## Overview
-Sito web ufficiale ARENAKORE (www.arenakore.com). Landing page Cyber-Brutalist per l'app sportiva di identità atletica digitale.
+Sito web ufficiale ARENAKORE (www.arenakore.com). Piattaforma di competizione fitness multi-sport. Full-stack React SPA + FastAPI + MongoDB.
 
 ## Date
 - Created: 2026-04-14
-- Last updated: 2026-04-14
+- Last updated: 2026-04-20
 
 ## Architecture
-- **Frontend**: React 19 (serving as the landing page via `LandingPage.jsx`)
-- **Backend**: FastAPI (not used for landing page)
-- **Database**: MongoDB (not used for landing page)
-- **Standalone file**: `public/arenakore.html` — HTML5 + Tailwind CDN (for deployment on www.arenakore.com)
+- **Frontend**: React 19, i18next (EN/IT/ES), Tailwind CSS, Recharts
+- **Backend**: FastAPI, MongoDB (Motor async), JWT Auth
+- **CMS**: Headless CMS custom (cms_content, cms_global, cms_versions collections)
+- **AI**: OpenAI GPT-4o-mini via Emergent LLM Key (auto-translations)
+- **Email**: Resend (Gym Pilot notifications)
 
 ## Visual Identity
 - **Background**: OLED Black (#000)
-- **Primary Cyan**: #00FFFF (Atleti / NÈXUS)
+- **Cyan**: #00FFFF (Atleti / NÈXUS)
 - **Gold**: #FFD700 (Business / Sfide / Arena)
-- **White**: #FFFFFF only
-- **Style**: Cyber-Brutalist, tecnico, pulito
-- **Fonts**: Anton (headings) + IBM Plex Mono (body/mono)
-- **Buttons**: border-radius 14px, generous height
+- **Red**: #FF2D2D (errori/warning SOLO)
+- **Style**: Cyber-Brutalist
+- **Fonts**: Anton (headings) + IBM Plex Mono / Inter (body)
 
-## Multi-Page SEO Website Structure (Added April 2026)
-- **/** — Home (LandingPage.jsx)
-- **/fitness-challenge-app** — Fitness Challenge App page
-- **/crossfit-challenge** — CrossFit Challenge & Box vs Box
-- **/workout-competition** — Workout Competition Platform
-- **/amrap-training** — AMRAP Training Tracker
-- **/fitness-gamification** — Fitness Gamification (+40% retention data)
-- **/for-gyms** — For Gyms & CrossFit Boxes (14-day pilot)
-- **/blog** — Blog with 5 articles
-- **/blog/:slug** — Individual article pages
-- **/support** — Support page
+## Multi-Page Structure
+- **/** — Homepage (LandingPage.jsx)
+- **/arena-system** — Arena System
+- **/for-athletes** — Per Atleti (AthletePage.jsx)
+- **/gym-challenge-pilot** — Gym Pilot (GymPilotPage.jsx)
+- **/get-the-app** — Download App (GetTheAppPage.jsx)
+- **/fitness-challenge-app** — SEO (ContentPageTemplate)
+- **/crossfit-challenge** — SEO (ContentPageTemplate)
+- **/workout-competition** — SEO (ContentPageTemplate)
+- **/amrap-training** — SEO (ContentPageTemplate)
+- **/fitness-gamification** — SEO (ContentPageTemplate)
+- **/for-gyms** — SEO (ContentPageTemplate)
+- **/blog** — Blog lista (BlogPage.jsx)
+- **/blog/:slug** — Blog articolo (BlogArticlePage.jsx)
+- **/support** — Supporto (SupportPage.jsx)
+- **/admin** — CMS Admin (AdminPage.jsx)
 
-## SEO Data
-- Each page has unique SEO title (≤60 chars), meta description (≤155 chars)
-- H1, structured sections, FAQs, internal links, keywords
-- Managed via `src/data/seo-content.js`
-- All meta tags updated dynamically via useSEO hook
-1. **Navbar** — Fixed, backdrop-blur on scroll, Logo ARENAKORE (ARENA white + KORE cyan) + ACCEDI button
-2. **Hero** — Fullscreen background (hooded founder figure) con overlay 72%, badge NÈXUS, H1, 2 CTA buttons 56px (INIZIA COME ATLETA cyan + SEI UN PRO? ENTRA QUI gold), scroll indicator
-3. **Stats Strip** — 4 animated counters: Kore Attivi, K-Rating Max, K-Flux Record, Discipline
-4. **KORE ID** — Two-column layout: text + feature list + CTA, phone mockup right
-5. **App Preview** — 4 phone screenshots in alternating heights layout
-6. **Sistema NÈXUS** (id="nexus") — 4-card grid: K-RATING, K-TIMELINE, K-SCAN, DNA UNIVERSALE (cyan top borders)
-7. **DNA Universale** — Recharts RadarChart (VEL/FOR/RES/AGI/TEC/POT) + attribute progress bars
-8. **ARENA Competitiva** (id="arena") — Athletes background + "L'ELITE SI CONFRONTA" + gold feature cards + SFIDA DNA
-9. **Business** (id="business") — PER COACH E PALESTRE, 4 gold cards (CREA SFIDE, GESTISCI ATLETI, ANALYTICS, HUB UFFICIALE), stats 50+/1K+/15+
-10. **Download CTA** — "ENTRA NELL'ARENA" + App Store/Google Play buttons
-11. **Footer** — Watermark logo + 4-column links + "SISTEMA ATTIVO" live indicator
+## What's Been Implemented
 
-## Text Color System
-- Primary: `#FFFFFF` (headings)
-- Secondary: `#E0E0E0` Grigio Ghiaccio (descriptions, body)
-- Technical: `#00FFFF` (numbers, data)
-- Gold: `#FFD700` (business/arena accents)
-- No opacity-based text colors anywhere
+### Phase 1 (April 14-15, 2026)
+- Single-page HTML/Tailwind prototype → Full-Stack React + FastAPI migration
+- Headless CMS with strict validation, AI translation (OpenAI), versioning
+- JWT Authentication (admin@arenakore.com / ArenaKore2026!)
+- Hero Slider CMS-controlled
+- A/B Testing system
 
-## Files
-- `/app/frontend/src/LandingPage.jsx` — Main React landing page
-- `/app/frontend/src/App.js` — Simple wrapper
-- `/app/frontend/src/App.css` — Animations & custom effects (glow, reveal, bounce)
-- `/app/frontend/tailwind.config.js` — Extended with ak-cyan, ak-gold, font-anton, font-ibm-mono
-- `/app/frontend/public/arenakore.html` — **STANDALONE HTML5 file for deployment**
+### Phase 2 (April 15-18, 2026)
+- Multilingual i18n (EN/IT/ES) via i18next
+- Resend email integration (Gym Pilot notifications)
+- SEO pages via ContentPageTemplate (5 pages)
+- TranslationBanner component
+- LangModal footer language switcher
 
-## Backlog (P1)
-- [ ] Replace AI-generated hero image with actual founder photo (high-res)
-- [ ] Add App Store / Google Play real links
-- [ ] Add ARENA BUSINESS landing page link
-- [ ] Add ACCEDI link to app URL
-- [ ] SEO meta tags, OG tags, Twitter Card
-- [ ] Cookie consent banner
-- [ ] Contact form or newsletter signup
-- [ ] Performance: lazy-load images
+### Phase 3 (April 20, 2026) — COMPLETED
+**ZERO HARDCODED TEXT CAMPAIGN**
+- ✅ SportSelector: "Other"→`t('ui.sport_other')`, placeholder→`t('ui.sport_type_placeholder')`, "Save"→`t('ui.sport_save')`, ALL 25 sport names now use i18n keys
+- ✅ SharedLayout footer: "Universal Competition System"→`t('footer.universalSystem')`, "Sign in"→`t('ui.sign_in')`, footer links localized
+- ✅ BlogPage: H1 uses `t('ui.blog_title')`, "Read"→`t('ui.blog_read')`
+- ✅ BlogArticlePage: "PROVA ARENAKORE"→`t('ui.blog_try_arena')`, "ALTRI ARTICOLI"→`t('ui.blog_more_articles')`, language-aware post content via `translations` field
+- ✅ LandingPage: DISCIPLINES and HOW_STEPS moved inside component, use t() keys. Positioning section, gyms section, solution stats all translated
+- ✅ ArenaSystemPage: All `cms()` fallbacks now use `t('arena.*')` keys. DISCIPLINES inside component with `t('arena.d1-d8')`
+- ✅ ContentPageTemplate: Uses `getLocalizedPage(page, lang)` to show IT/ES translations from seo-content.js
+- ✅ seo-content.js: Added `PAGE_TRANSLATIONS` with full IT/ES translations for all 5 SEO pages + `getLocalizedPage()` function
+- ✅ Blog multilingual: Backend `BlogPost` model has `translations: Optional[Dict]` field; AdminPage BlogManager has IT/ES language tabs; Frontend reads `post.translations[lang]` on render
+- ✅ Locale files: 525 keys perfectly synced across EN/IT/ES (added `arena` namespace, `home.d1-d8`, `footer.universalSystem`, sport names, etc.)
 
-## P2 Features
-- [ ] Animated counter with smooth easing (requestAnimationFrame)
-- [ ] Video background option for hero
-- [ ] Testimonials section with athlete quotes
-- [ ] Blog/news section
-- [ ] Multi-language support (IT/EN)
+## Key Files of Reference
+- `/app/frontend/src/LandingPage.jsx` — Homepage
+- `/app/frontend/src/pages/AdminPage.jsx` — CMS Admin (~2100 lines)
+- `/app/frontend/src/pages/AthletePage.jsx` — For Athletes page
+- `/app/frontend/src/pages/ArenaSystemPage.jsx` — Arena System
+- `/app/frontend/src/components/SportSelector.jsx` — Sport selector (fully translated)
+- `/app/frontend/src/components/SharedLayout.jsx` — Navbar + Footer
+- `/app/frontend/src/components/ContentPageTemplate.jsx` — SEO template
+- `/app/frontend/src/data/seo-content.js` — SEO page data + IT/ES translations
+- `/app/frontend/src/locales/{en,it,es}/translation.json` — 525 keys each
+- `/app/backend/server.py` — FastAPI backend
+
+## DB Collections
+- `ak_users`: `{id, email, name, password_hash, ak_credits, rank}`
+- `cms_content`: `{slug, status, sections: [{key, value, lang}]}`
+- `cms_global`: `{key, translations: {en, it, es}}`
+- `cms_versions`: versioning
+- `blog_posts`: `{id, slug, title, excerpt, content, translations: {it: {title,excerpt,content}, es: {...}}, ...}`
+- `hero_slides`: `{id, image_url, sport_label, order, is_active}`
+
+## Credentials
+- Admin: admin@arenakore.com / ArenaKore2026!
+- Preview URL: https://talent-card-refactor.preview.emergentagent.com
+
+## Backlog
+### P1
+- [ ] Blog post content IT/ES translations (5 existing posts need content in IT/ES)
+- [ ] CMS: populate IT/ES content for all pages (currently empty, falls back to i18n)
+
+### P2
+- [ ] Language fallbacks/AI auto-translation for Blog Posts (similar to cms_content)
+- [ ] Add language selector to desktop navbar (currently only footer)
+
+### P3
+- [ ] Real App Store / Play Store links
+- [ ] Admin: split AdminPage.jsx (~2100 lines) into separate modules

@@ -64,8 +64,8 @@ export default function LandingPage() {
   ];
 
   useSEO({
-    title: 'ArenaKore — The Multi-Sport Competition Platform',
-    description: 'Turn every performance into a challenge. Any sport, any discipline. Daily challenges, live rankings, validated performance. The competition never ends.',
+    title: cms('seo_title', 'ArenaKore — The Multi-Sport Competition Platform'),
+    description: cms('seo_description', t('home.sub')),
   });
 
   // CMS IS THE SOURCE OF TRUTH.
