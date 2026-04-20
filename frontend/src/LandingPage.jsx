@@ -33,6 +33,7 @@ const IMG_RUNNER     = 'https://images.unsplash.com/photo-1589104666851-dffe3a15
 const IMG_BASKETBALL = 'https://images.pexels.com/photos/30050102/pexels-photo-30050102.jpeg?auto=compress&cs=tinysrgb&w=800';
 const IMG_SWIMMER    = 'https://images.unsplash.com/photo-1682353242312-2e1f8c5dfd9a?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
 const IMG_GOLF       = 'https://images.unsplash.com/photo-1609408960307-ed11e7fb151f?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
+const IMG_SURF       = 'https://images.pexels.com/photos/20071425/pexels-photo-20071425.jpeg?auto=compress&cs=tinysrgb&w=800';
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -47,14 +48,14 @@ export default function LandingPage() {
   useScrollTracking('home');
 
   const DISCIPLINES = [
-    { title: t('home.d1_title'), sub: t('home.d1_sub'), desc: t('home.d1_desc'), href: ROUTES.fitnessApp, color: '#00FFFF', img: IMGS.barbell, primary: true },
-    { title: t('home.d2_title'), sub: t('home.d2_sub'), desc: t('home.d2_desc'), href: ROUTES.competition,  color: '#FFD700', img: IMG_RUNNER },
-    { title: t('home.d3_title'), sub: t('home.d3_sub'), desc: t('home.d3_desc'), href: ROUTES.competition,  color: '#FF2D2D', img: IMG_BASKETBALL },
-    { title: t('home.d4_title'), sub: t('home.d4_sub'), desc: t('home.d4_desc'), href: ROUTES.competition,  color: '#00FFFF', img: IMG_SWIMMER },
-    { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: ROUTES.competition,  color: '#FFD700', bg: 'linear-gradient(135deg,#0a1a00 0%,#000 100%)' },
-    { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: ROUTES.competition,  color: '#00FFFF', bg: 'linear-gradient(135deg,#001a2a 0%,#000 100%)' },
-    { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: ROUTES.gyms,  color: '#FFD700', img: IMGS.competition },
-    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: ROUTES.athletes,         color: '#FF2D2D', img: IMGS.pullup },
+    { title: t('home.d1_title'), sub: t('home.d1_sub'), desc: t('home.d1_desc'), href: ROUTES.fitnessApp, color: '#00FFFF', img: cms('d1_img', IMGS.barbell), primary: true },
+    { title: t('home.d2_title'), sub: t('home.d2_sub'), desc: t('home.d2_desc'), href: ROUTES.competition, color: '#FFD700', img: cms('d2_img', IMG_RUNNER) },
+    { title: t('home.d3_title'), sub: t('home.d3_sub'), desc: t('home.d3_desc'), href: ROUTES.competition, color: '#FF2D2D', img: cms('d3_img', IMG_BASKETBALL) },
+    { title: t('home.d4_title'), sub: t('home.d4_sub'), desc: t('home.d4_desc'), href: ROUTES.competition, color: '#00FFFF', img: cms('d4_img', IMG_SWIMMER) },
+    { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: ROUTES.competition, color: '#FFD700', img: cms('d5_img', IMG_GOLF) },
+    { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: ROUTES.competition, color: '#00FFFF', img: cms('d6_img', IMG_SURF) },
+    { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: ROUTES.gyms,        color: '#FFD700', img: cms('d7_img', IMGS.competition) },
+    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: ROUTES.athletes,    color: '#FF2D2D', img: cms('d8_img', IMGS.pullup) },
   ];
 
   const HOW_STEPS = [
@@ -512,8 +513,9 @@ export default function LandingPage() {
                 <Zap size={16} fill="black" /> {cms('gyms_cta', t('home.gyms.cta'))}
               </Link>
               <Link to={ROUTES.athletes} data-testid="home-for-athletes-link"
-                className="inline-flex items-center gap-2 font-inter font-semibold text-sm text-ak-cyan hover:underline">
-                {t('home.for_athletes_link')} <ArrowRight size={14} />
+                className="inline-flex items-center justify-center gap-2 font-inter font-bold uppercase tracking-wider text-sm px-6 rounded-[12px] border border-white/20 text-white hover:border-white transition-colors"
+                style={{ height: '52px' }}>
+                {cms('gyms_athletes_cta', t('home.for_athletes_link'))} <ArrowRight size={14} />
               </Link>
             </div>
             {/* Stats */}
