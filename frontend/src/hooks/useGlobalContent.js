@@ -1,20 +1,24 @@
 /**
- * ArenaKore CMS Global Content — STRICT MODE
- * Chain: CMS(lang) → CMS(EN) → "" (never hardcoded fallback in production)
- * DEV: console.error for missing keys
+ * ArenaKore CMS Global Content — OFFLINE-SAFE
+ *
+ * Chain: CMS(lang) → CMS(EN) → FALLBACK_GLOBAL → _deprecated → ""
+ *
+ * If backend is down → FALLBACK_GLOBAL provides navbar/footer content.
  */
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { FALLBACK_GLOBAL } from '../content/fallbackContent';
 
-const API    = process.env.REACT_APP_BACKEND_URL + '/api';
-const IS_DEV = process.env.NODE_ENV !== 'production';
+const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
 const _globalCache = {};
+let _globalFailed  = false;
 
 export function useGlobalContent(language = 'en') {
-  const [data, setData]     = useState({});
-  const [enData, setEnData] = useState({});
-  const [loaded, setLoaded] = useState(false);
+  const [data, setData]       = useState({});
+  const [enData, setEnData]   = useState({});
+  const [loaded, setLoaded]   = useState(false);
+  const [offline, setOffline] = useState(false);
   const lang = (language || 'en').slice(0, 2);
 
   useEffect(() => {
@@ -23,8 +27,8 @@ export function useGlobalContent(language = 'en') {
 
     const fetchLang = !_globalCache[cacheKey]
       ? axios.get(`${API}/cms/global?lang=${lang}`)
-          .then(r => { _globalCache[cacheKey] = r.data || {}; })
-          .catch(() => { _globalCache[cacheKey] = {}; })
+          .then(r => { _globalCache[cacheKey] = r.data || {}; _globalFailed = false; })
+          .catch(() => { _globalCache[cacheKey] = {}; _globalFailed = true; })
       : Promise.resolve();
 
     const fetchEn = (lang !== 'en' && !_globalCache[enKey])
@@ -36,34 +40,31 @@ export function useGlobalContent(language = 'en') {
     Promise.all([fetchLang, fetchEn]).then(() => {
       setData(_globalCache[cacheKey] || {});
       setEnData(lang === 'en' ? (_globalCache[cacheKey] || {}) : (_globalCache[enKey] || {}));
+      setOffline(_globalFailed);
       setLoaded(true);
     });
   }, [lang]);
 
   /**
-   * STRICT: CMS(lang) → CMS(EN) → ""
-   * @param {string} key
-   * @param {string} [_deprecated] - API compat only, ignored in prod
+   * Chain: CMS(lang) → CMS(EN) → FALLBACK_GLOBAL → _deprecated → ""
    */
   const global = useCallback((key, _deprecated) => {
-    if (!loaded) return '';
+    if (!loaded) return _deprecated || FALLBACK_GLOBAL[key] || '';
 
     if (data[key] != null && data[key] !== '') return data[key];
 
-    if (enData[key] != null && enData[key] !== '') {
-      if (IS_DEV && lang !== 'en') {
-        console.error(`[CMS Global] MISSING "${key}" for "${lang}" → EN fallback`);
-      }
-      return enData[key];
-    }
+    if (enData[key] != null && enData[key] !== '') return enData[key];
 
-    if (IS_DEV) {
-      console.error(`[CMS Global STRICT] "${key}" NOT IN CMS for "${lang}"`);
-    }
-    return IS_DEV ? (_deprecated || '') : '';
-  }, [data, enData, loaded, lang]);
+    // 3. Static fallback
+    if (FALLBACK_GLOBAL[key] != null && FALLBACK_GLOBAL[key] !== '') return FALLBACK_GLOBAL[key];
 
-  return { global, loaded, rawGlobal: data };
+    // 4. Deprecated parameter
+    if (_deprecated != null && _deprecated !== '') return _deprecated;
+
+    return '';
+  }, [data, enData, loaded]);
+
+  return { global, loaded, rawGlobal: data, offline };
 }
 
 export async function prefetchGlobalContent(language = 'en') {
@@ -76,6 +77,6 @@ export async function prefetchGlobalContent(language = 'en') {
     return _globalCache[key];
   } catch {
     _globalCache[key] = {};
-    return {};
+    return _globalCache[key];
   }
 }

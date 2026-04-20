@@ -70,9 +70,9 @@ export function InnerNavbar() {
   const loc = useLocation();
   const { t, i18n } = useTranslation();
   const lang = i18n.language?.slice(0, 2) || 'en';
-  const { global: g } = useGlobalContent(lang);
+  const { global: g, offline: isOffline } = useGlobalContent(lang);
 
-  // Nav labels: CMS → i18n fallback
+  // Nav labels: CMS → i18n fallback (fallbackContent covers the rest)
   const navLabel = (cmsKey, i18nKey) => g(cmsKey, t(i18nKey));
 
   // Safe auth access
@@ -173,6 +173,16 @@ export function InnerNavbar() {
         </div>
       )}
     </nav>
+    {/* Offline mode badge — shown when CMS API is unreachable */}
+    {isOffline && (
+      <div
+        data-testid="offline-badge"
+        className="fixed top-16 right-4 z-40 font-inter text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
+        style={{ background: 'rgba(255,215,0,0.12)', border: '1px solid rgba(255,215,0,0.3)', color: 'rgba(255,215,0,0.7)' }}
+      >
+        Offline mode
+      </div>
+    )}
     {/* Translation completeness banner — appears below nav for non-EN when incomplete */}
     <TranslationBanner
       slug={loc.pathname.replace('/', '').replace(/-/g, '-') || 'homepage'}

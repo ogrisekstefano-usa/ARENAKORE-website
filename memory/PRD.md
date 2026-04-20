@@ -55,7 +55,14 @@ Sito web ufficiale ARENAKORE (www.arenakore.com). Piattaforma di competizione fi
 - TranslationBanner component
 - LangModal footer language switcher
 
-### Phase 3 (April 20, 2026) — COMPLETED
+### Phase 4 (April 20, 2026) — COMPLETED
+**OFFLINE SAFE MODE — CMS FALLBACK SYSTEM**
+- ✅ Created `/app/frontend/src/content/fallbackContent.js` — 128 keys EN for FALLBACK_PAGES + FALLBACK_GLOBAL
+- ✅ Updated `usePageContent.js`: chain CMS(lang) → CMS(EN) → FALLBACK_PAGES[slug][key] → _deprecated_fallback → ""
+- ✅ Updated `useGlobalContent.js`: chain CMS(lang) → CMS(EN) → FALLBACK_GLOBAL[key] → _deprecated → ""
+- ✅ Added `offline` boolean returned from both hooks
+- ✅ Added "Offline mode" badge in navbar when CMS API is down
+- ✅ Frontend NEVER renders empty text — always shows EN content when CMS unavailable
 **ZERO HARDCODED TEXT CAMPAIGN**
 - ✅ SportSelector: "Other"→`t('ui.sport_other')`, placeholder→`t('ui.sport_type_placeholder')`, "Save"→`t('ui.sport_save')`, ALL 25 sport names now use i18n keys
 - ✅ SharedLayout footer: "Universal Competition System"→`t('footer.universalSystem')`, "Sign in"→`t('ui.sign_in')`, footer links localized
