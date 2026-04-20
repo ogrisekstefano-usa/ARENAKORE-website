@@ -16,98 +16,72 @@ Sito web ufficiale ARENAKORE (www.arenakore.com). Piattaforma di competizione fi
 
 ## Visual Identity
 - **Background**: OLED Black (#000)
-- **Cyan**: #00FFFF (Atleti / NÈXUS)
-- **Gold**: #FFD700 (Business / Sfide / Arena)
-- **Red**: #FF2D2D (errori/warning SOLO)
-- **Style**: Cyber-Brutalist
-- **Fonts**: Anton (headings) + IBM Plex Mono / Inter (body)
+- **Cyan**: #00FFFF | **Gold**: #FFD700 | **Red**: #FF2D2D (errori ONLY)
+- **Style**: Cyber-Brutalist | **Fonts**: Anton + IBM Plex Mono / Inter
 
 ## Multi-Page Structure
-- **/** — Homepage (LandingPage.jsx)
-- **/arena-system** — Arena System
-- **/for-athletes** — Per Atleti (AthletePage.jsx)
-- **/gym-challenge-pilot** — Gym Pilot (GymPilotPage.jsx)
-- **/get-the-app** — Download App (GetTheAppPage.jsx)
-- **/fitness-challenge-app** — SEO (ContentPageTemplate)
-- **/crossfit-challenge** — SEO (ContentPageTemplate)
-- **/workout-competition** — SEO (ContentPageTemplate)
-- **/amrap-training** — SEO (ContentPageTemplate)
-- **/fitness-gamification** — SEO (ContentPageTemplate)
-- **/for-gyms** — SEO (ContentPageTemplate)
-- **/blog** — Blog lista (BlogPage.jsx)
-- **/blog/:slug** — Blog articolo (BlogArticlePage.jsx)
-- **/support** — Supporto (SupportPage.jsx)
-- **/admin** — CMS Admin (AdminPage.jsx)
+- **/** — Homepage | **/arena-system** — Arena System | **/for-athletes** — Per Atleti
+- **/gym-challenge-pilot** — Gym Pilot | **/get-the-app** — Download App
+- **/fitness-challenge-app, /crossfit-challenge, /workout-competition, /amrap-training, /fitness-gamification** — SEO (ContentPageTemplate)
+- **/blog, /blog/:slug** — Blog | **/support** — Supporto | **/admin** — CMS Admin
 
 ## What's Been Implemented
 
-### Phase 1 (April 14-15, 2026)
-- Single-page HTML/Tailwind prototype → Full-Stack React + FastAPI migration
-- Headless CMS with strict validation, AI translation (OpenAI), versioning
-- JWT Authentication (admin@arenakore.com / ArenaKore2026!)
-- Hero Slider CMS-controlled
-- A/B Testing system
+### Phase 1-2 (April 14-18, 2026)
+- Full-Stack React + FastAPI + MongoDB migration
+- Headless CMS with AI translation (OpenAI), versioning, A/B testing
+- JWT Auth, Resend email, Hero Slider, Analytics
 
-### Phase 2 (April 15-18, 2026)
-- Multilingual i18n (EN/IT/ES) via i18next
-- Resend email integration (Gym Pilot notifications)
-- SEO pages via ContentPageTemplate (5 pages)
-- TranslationBanner component
-- LangModal footer language switcher
-
-### Phase 4 (April 20, 2026) — COMPLETED
-**OFFLINE SAFE MODE — CMS FALLBACK SYSTEM**
-- ✅ Created `/app/frontend/src/content/fallbackContent.js` — 128 keys EN for FALLBACK_PAGES + FALLBACK_GLOBAL
-- ✅ Updated `usePageContent.js`: chain CMS(lang) → CMS(EN) → FALLBACK_PAGES[slug][key] → _deprecated_fallback → ""
-- ✅ Updated `useGlobalContent.js`: chain CMS(lang) → CMS(EN) → FALLBACK_GLOBAL[key] → _deprecated → ""
-- ✅ Added `offline` boolean returned from both hooks
-- ✅ Added "Offline mode" badge in navbar when CMS API is down
-- ✅ Frontend NEVER renders empty text — always shows EN content when CMS unavailable
+### Phase 3 (April 20, 2026)
 **ZERO HARDCODED TEXT CAMPAIGN**
-- ✅ SportSelector: "Other"→`t('ui.sport_other')`, placeholder→`t('ui.sport_type_placeholder')`, "Save"→`t('ui.sport_save')`, ALL 25 sport names now use i18n keys
-- ✅ SharedLayout footer: "Universal Competition System"→`t('footer.universalSystem')`, "Sign in"→`t('ui.sign_in')`, footer links localized
-- ✅ BlogPage: H1 uses `t('ui.blog_title')`, "Read"→`t('ui.blog_read')`
-- ✅ BlogArticlePage: "PROVA ARENAKORE"→`t('ui.blog_try_arena')`, "ALTRI ARTICOLI"→`t('ui.blog_more_articles')`, language-aware post content via `translations` field
-- ✅ LandingPage: DISCIPLINES and HOW_STEPS moved inside component, use t() keys. Positioning section, gyms section, solution stats all translated
-- ✅ ArenaSystemPage: All `cms()` fallbacks now use `t('arena.*')` keys. DISCIPLINES inside component with `t('arena.d1-d8')`
-- ✅ ContentPageTemplate: Uses `getLocalizedPage(page, lang)` to show IT/ES translations from seo-content.js
-- ✅ seo-content.js: Added `PAGE_TRANSLATIONS` with full IT/ES translations for all 5 SEO pages + `getLocalizedPage()` function
-- ✅ Blog multilingual: Backend `BlogPost` model has `translations: Optional[Dict]` field; AdminPage BlogManager has IT/ES language tabs; Frontend reads `post.translations[lang]` on render
-- ✅ Locale files: 525 keys perfectly synced across EN/IT/ES (added `arena` namespace, `home.d1-d8`, `footer.universalSystem`, sport names, etc.)
+- 543 i18n chiavi sincronizzate EN/IT/ES
+- SportSelector, SharedLayout, BlogPage, BlogArticlePage, LoginPage, SupportPage, GymPilotPage, GetTheAppPage tutti tradotti
+- ContentPageTemplate con IT/ES via seo-content.js
+- Blog DB: 5 post con traduzioni IT/ES via API
 
-## Key Files of Reference
-- `/app/frontend/src/LandingPage.jsx` — Homepage
-- `/app/frontend/src/pages/AdminPage.jsx` — CMS Admin (~2100 lines)
-- `/app/frontend/src/pages/AthletePage.jsx` — For Athletes page
-- `/app/frontend/src/pages/ArenaSystemPage.jsx` — Arena System
-- `/app/frontend/src/components/SportSelector.jsx` — Sport selector (fully translated)
-- `/app/frontend/src/components/SharedLayout.jsx` — Navbar + Footer
-- `/app/frontend/src/components/ContentPageTemplate.jsx` — SEO template
-- `/app/frontend/src/data/seo-content.js` — SEO page data + IT/ES translations
-- `/app/frontend/src/locales/{en,it,es}/translation.json` — 525 keys each
-- `/app/backend/server.py` — FastAPI backend
+### Phase 4 (April 20, 2026)
+**OFFLINE SAFE MODE — CMS FALLBACK SYSTEM**
 
-## DB Collections
-- `ak_users`: `{id, email, name, password_hash, ak_credits, rank}`
-- `cms_content`: `{slug, status, sections: [{key, value, lang}]}`
-- `cms_global`: `{key, translations: {en, it, es}}`
-- `cms_versions`: versioning
-- `blog_posts`: `{id, slug, title, excerpt, content, translations: {it: {title,excerpt,content}, es: {...}}, ...}`
-- `hero_slides`: `{id, image_url, sport_label, order, is_active}`
+#### Hooks aggiornati:
+- `usePageContent.js`: chain `CMS(lang) → CMS(EN) → localStorage → FALLBACK_PAGES[slug][key] → t() → ""`
+- `useGlobalContent.js`: chain `CMS(lang) → CMS(EN) → localStorage → FALLBACK_GLOBAL[key] → t() → ""`
+
+#### Fallback features:
+- **localStorage caching**: salva risposta CMS in localStorage al successo
+- **fallbackContent.js**: 163 chiavi EN per 4 pagine + 12 global keys
+- **OFFLINE MODE badge**: visibile quando backend non raggiungibile
+- **Auto-seeding**: GlobalContentEditor auto-seed quando DB vuoto
+- **Admin offline banner**: messaggio rosso "Backend offline" nel Dashboard admin
+
+#### Test risultati (backend DOWN):
+- ✅ Homepage: hero, navbar, CTAs, tutte le sezioni visibili
+- ✅ For Athletes: hero, CTA, sezioni completi
+- ✅ Arena System: hero, sezioni visibili
+- ✅ Gym Challenge Pilot: hero completo
+- ✅ Get The App: hero, download buttons visibili
+
+## Key Files
+- `/app/frontend/src/content/fallbackContent.js` — 163 CMS keys fallback
+- `/app/frontend/src/hooks/usePageContent.js` — Chain CMS→localStorage→fallback
+- `/app/frontend/src/hooks/useGlobalContent.js` — Chain CMS→localStorage→fallback
+- `/app/frontend/src/locales/{en,it,es}/translation.json` — 543 keys each
+- `/app/frontend/src/data/seo-content.js` — IT/ES translations + getLocalizedPage()
+- `/app/backend/server.py` — DEFAULT_PAGES (full content), GLOBAL_DEFAULTS
+
+## DB State
+- cms_content: 9 pages seeded | cms_global: 43 items | blog_posts: 5 (with IT/ES)
+- hero_slides: 6 | pilot_requests: 3
 
 ## Credentials
 - Admin: admin@arenakore.com / ArenaKore2026!
-- Preview URL: https://talent-card-refactor.preview.emergentagent.com
+- Preview: https://talent-card-refactor.preview.emergentagent.com
 
-## Backlog
-### P1
-- [ ] Blog post content IT/ES translations (5 existing posts need content in IT/ES)
-- [ ] CMS: populate IT/ES content for all pages (currently empty, falls back to i18n)
+## Backlog P1
+- [ ] Language switcher nella navbar desktop (ora solo footer)
+- [ ] Popolare CMS admin con contenuti IT/ES via "Force Reseed All + AI Translate"
+- [ ] Aggiungere gym-pilot alle pagine in fallbackContent.js
 
-### P2
-- [ ] Language fallbacks/AI auto-translation for Blog Posts (similar to cms_content)
-- [ ] Add language selector to desktop navbar (currently only footer)
-
-### P3
-- [ ] Real App Store / Play Store links
-- [ ] Admin: split AdminPage.jsx (~2100 lines) into separate modules
+## Backlog P2/P3
+- [ ] Link reali App Store / Play Store
+- [ ] Split AdminPage.jsx (~2100 righe) in moduli
+- [ ] AI auto-traduzione per nuovi blog post
