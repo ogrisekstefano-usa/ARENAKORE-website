@@ -680,7 +680,106 @@ DEFAULT_PAGES: Dict[str, List[Dict]] = {
         {"key": "final_h2",        "field_type": "heading", "translations": {"en": "TWO WEEKS.", "it": "DUE SETTIMANE.", "es": "DOS SEMANAS."}},
         {"key": "final_sub",       "field_type": "text",    "translations": {"en": "Then you decide.", "it": "Poi decidi tu.", "es": "Luego decides tú."}},
     ],
+    "arena-system": [
+        {"key": "hero_badge",      "field_type": "label",   "translations": {"en": "UNIVERSAL COMPETITION SYSTEM", "it": "SISTEMA DI COMPETIZIONE UNIVERSALE", "es": "SISTEMA DE COMPETICIÓN UNIVERSAL"}},
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "THE SYSTEM BEHIND THE COMPETITION.", "it": "IL SISTEMA DIETRO LA COMPETIZIONE.", "es": "EL SISTEMA DETRÁS DE LA COMPETICIÓN."}},
+        {"key": "hero_sub",        "field_type": "text",    "translations": {"en": "Track performance. Rank results. Compete every day.", "it": "Traccia le performance. Classifica i risultati. Compete ogni giorno.", "es": "Mide el rendimiento. Clasifica los resultados. Compite cada día."}},
+        {"key": "not_fitness_app", "field_type": "label",   "translations": {"en": "This is not a fitness app. This is a competition system.", "it": "Questo non è un'app fitness. È un sistema di competizione.", "es": "Esto no es una app de fitness. Es un sistema de competición."}},
+        {"key": "what_badge",      "field_type": "label",   "translations": {"en": "WHAT IT DOES", "it": "COSA FA", "es": "QUÉ HACE"}},
+        {"key": "what_h2",         "field_type": "heading", "translations": {"en": "THREE THINGS. NO COMPROMISE.", "it": "TRE COSE. SENZA COMPROMESSI.", "es": "TRES COSAS. SIN COMPROMISO."}},
+        {"key": "track_title",     "field_type": "heading", "translations": {"en": "Track performance.", "it": "Traccia le performance.", "es": "Mide el rendimiento."}},
+        {"key": "track_body",      "field_type": "richtext","translations": {"en": "Every rep, every result — captured and certified. Nothing is lost. Nothing is inflated.", "it": "Ogni rep, ogni risultato — catturati e certificati. Niente va perso. Niente viene gonfiato.", "es": "Cada rep, cada resultado — capturados y certificados. Nada se pierde. Nada se infla."}},
+        {"key": "rank_title",      "field_type": "heading", "translations": {"en": "Rank every result.", "it": "Classifica ogni risultato.", "es": "Clasifica cada resultado."}},
+        {"key": "rank_body",       "field_type": "richtext","translations": {"en": "K-Rating from 0 to 1000. Public. Permanent. Updated after every session.", "it": "K-Rating da 0 a 1000. Pubblico. Permanente. Aggiornato dopo ogni sessione.", "es": "K-Rating de 0 a 1000. Público. Permanente. Actualizado después de cada sesión."}},
+        {"key": "challenge_title", "field_type": "heading", "translations": {"en": "Create continuous competition.", "it": "Crea competizione continua.", "es": "Crea competición continua."}},
+        {"key": "challenge_body",  "field_type": "richtext","translations": {"en": "New challenges every day. Open or 1v1. Across disciplines. The Arena never closes.", "it": "Nuove sfide ogni giorno. Aperte o 1vs1. In tutte le discipline. L'Arena non chiude mai.", "es": "Nuevos desafíos cada día. Abiertos o 1vs1. En todas las disciplinas. La Arena nunca cierra."}},
+        {"key": "why_badge",       "field_type": "label",   "translations": {"en": "BEHAVIORAL SCIENCE", "it": "SCIENZA DEL COMPORTAMENTO", "es": "CIENCIA DEL COMPORTAMIENTO"}},
+        {"key": "why_h2",          "field_type": "heading", "translations": {"en": "COMPETITION CHANGES BEHAVIOR.", "it": "LA COMPETIZIONE CAMBIA IL COMPORTAMENTO.", "es": "LA COMPETICIÓN CAMBIA EL COMPORTAMIENTO."}},
+        {"key": "why_1",           "field_type": "heading", "translations": {"en": "Visibility creates pressure.", "it": "La visibilità crea pressione.", "es": "La visibilidad crea presión."}},
+        {"key": "why_2",           "field_type": "heading", "translations": {"en": "Ranking creates engagement.", "it": "Il ranking crea coinvolgimento.", "es": "El ranking crea participación."}},
+        {"key": "why_3",           "field_type": "heading", "translations": {"en": "Repetition creates consistency.", "it": "La ripetizione crea costanza.", "es": "La repetición crea consistencia."}},
+        {"key": "sport_badge",     "field_type": "label",   "translations": {"en": "ANY DISCIPLINE", "it": "QUALSIASI DISCIPLINA", "es": "CUALQUIER DISCIPLINA"}},
+        {"key": "sport_h2",        "field_type": "heading", "translations": {"en": "WORKS IN ANY DISCIPLINE.", "it": "FUNZIONA IN QUALSIASI DISCIPLINA.", "es": "FUNCIONA EN CUALQUIER DISCIPLINA."}},
+        {"key": "sport_body",      "field_type": "richtext","translations": {"en": "ArenaKore is not built for one sport. Any activity where performance can be measured.", "it": "ArenaKore non è costruita per uno sport. Qualsiasi attività in cui le performance possono essere misurate.", "es": "ArenaKore no está construida para un deporte. Cualquier actividad donde el rendimiento se pueda medir."}},
+        {"key": "final_h2",        "field_type": "heading", "translations": {"en": "ENTER THE SYSTEM.", "it": "ENTRA NEL SISTEMA.", "es": "ENTRA EN EL SISTEMA."}},
+        {"key": "final_body",      "field_type": "richtext","translations": {"en": "ArenaKore is a universal competition system for any performance-based activity.", "it": "ArenaKore è un sistema di competizione universale per qualsiasi attività basata sulle performance.", "es": "ArenaKore es un sistema de competición universal para cualquier actividad basada en el rendimiento."}},
+    ],
+    "competition": [
+        {"key": "hero_badge",      "field_type": "label",   "translations": {"en": "WORKOUT COMPETITION", "it": "COMPETIZIONE ALLENAMENTO", "es": "COMPETICIÓN ENTRENAMIENTO"}},
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "TRAIN TO WIN. COMPETE TO PROVE IT.", "it": "ALLENATI PER VINCERE. COMPETE PER DIMOSTRARLO.", "es": "ENTRENA PARA GANAR. COMPITE PARA DEMOSTRARLO."}},
+        {"key": "intro_h2",        "field_type": "heading", "translations": {"en": "Training without competition is just exercise.", "it": "L'allenamento senza competizione è solo esercizio.", "es": "Entrenar sin competición es solo ejercicio."}},
+        {"key": "intro_body",      "field_type": "richtext","translations": {"en": "ArenaKore converts every training session into a competitive event. Your performance is ranked against real athletes globally.", "it": "ArenaKore converte ogni sessione di allenamento in un evento competitivo. Le tue performance vengono classificate contro atleti reali globalmente.", "es": "ArenaKore convierte cada sesión de entrenamiento en un evento competitivo. Tu rendimiento se clasifica frente a atletas reales globalmente."}},
+        {"key": "problem_h2",      "field_type": "heading", "translations": {"en": "Why competitive athletes leave mainstream apps.", "it": "Perché gli atleti competitivi abbandonano le app tradizionali.", "es": "Por qué los atletas competitivos abandonan las apps convencionales."}},
+        {"key": "solution_h2",     "field_type": "heading", "translations": {"en": "The arena where performance is everything.", "it": "L'arena dove la performance è tutto.", "es": "La arena donde el rendimiento lo es todo."}},
+    ],
+    "amrap": [
+        {"key": "hero_badge",      "field_type": "label",   "translations": {"en": "AMRAP TRAINING", "it": "ALLENAMENTO AMRAP", "es": "ENTRENAMIENTO AMRAP"}},
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "AS MANY REPS AS POSSIBLE. WE'RE COUNTING.", "it": "IL MAGGIOR NUMERO DI REP POSSIBILE. LI CONTIAMO NOI.", "es": "LA MAYOR CANTIDAD DE REPS POSIBLE. NOSOTROS CONTAMOS."}},
+        {"key": "intro_h2",        "field_type": "heading", "translations": {"en": "AMRAP is simple. Executing it correctly is not.", "it": "AMRAP è semplice. Eseguirlo correttamente no.", "es": "AMRAP es simple. Ejecutarlo correctamente no."}},
+        {"key": "intro_body",      "field_type": "richtext","translations": {"en": "NEXUS tracks every rep in your AMRAP, validates form in real-time, and gives you a score you can compare against other athletes.", "it": "NEXUS traccia ogni rep del tuo AMRAP, valida la forma in tempo reale e ti dà un punteggio confrontabile con altri atleti.", "es": "NEXUS rastrea cada rep de tu AMRAP, valida la técnica en tiempo real y te da una puntuación comparable con otros atletas."}},
+        {"key": "problem_h2",      "field_type": "heading", "translations": {"en": "The AMRAP problem nobody talks about.", "it": "Il problema AMRAP di cui nessuno parla.", "es": "El problema AMRAP del que nadie habla."}},
+        {"key": "solution_h2",     "field_type": "heading", "translations": {"en": "AMRAP the way it was designed to be done.", "it": "AMRAP come è stato progettato per essere fatto.", "es": "AMRAP como fue diseñado para hacerse."}},
+    ],
+    "crossfit": [
+        {"key": "hero_badge",      "field_type": "label",   "translations": {"en": "CROSSFIT CHALLENGE", "it": "SFIDA CROSSFIT", "es": "DESAFÍO CROSSFIT"}},
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "BOX VS BOX. NO EXCUSES.", "it": "BOX VS BOX. ZERO SCUSE.", "es": "BOX VS BOX. SIN EXCUSAS."}},
+        {"key": "intro_h2",        "field_type": "heading", "translations": {"en": "Your box. Their box. One winner.", "it": "Il tuo box. Il loro box. Un solo vincitore.", "es": "Tu box. Su box. Un solo ganador."}},
+        {"key": "intro_body",      "field_type": "richtext","translations": {"en": "ArenaKore transforms CrossFit from individual effort to inter-box competition. NEXUS validates every rep.", "it": "ArenaKore trasforma il CrossFit dallo sforzo individuale alla competizione inter-box. NEXUS valida ogni rep.", "es": "ArenaKore transforma CrossFit de esfuerzo individual a competición inter-box. NEXUS valida cada rep."}},
+        {"key": "problem_h2",      "field_type": "heading", "translations": {"en": "CrossFit deserves better than spreadsheets.", "it": "Il CrossFit merita di meglio dei fogli di calcolo.", "es": "CrossFit merece algo mejor que hojas de cálculo."}},
+    ],
+    "gamification": [
+        {"key": "hero_badge",      "field_type": "label",   "translations": {"en": "FITNESS GAMIFICATION", "it": "GAMIFICATION FITNESS", "es": "GAMIFICACIÓN FITNESS"}},
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "GAMIFY FITNESS. DOMINATE RETENTION.", "it": "GAMIFICA IL FITNESS. DOMINA LA RETENTION.", "es": "GAMIFICA EL FITNESS. DOMINA LA RETENCIÓN."}},
+        {"key": "intro_h2",        "field_type": "heading", "translations": {"en": "Gamification is not a gimmick. It's behavioral science.", "it": "La gamification non è un trucco. È scienza comportamentale.", "es": "La gamificación no es un truco. Es ciencia conductual."}},
+        {"key": "stat_engagement", "field_type": "text",    "translations": {"en": "+30% engagement", "it": "+30% coinvolgimento", "es": "+30% participación"}},
+        {"key": "stat_retention",  "field_type": "text",    "translations": {"en": "+40% retention", "it": "+40% fidelizzazione", "es": "+40% retención"}},
+        {"key": "problem_h2",      "field_type": "heading", "translations": {"en": "Why 80% of gym members quit within 6 months.", "it": "Perché l'80% degli iscritti in palestra abbandona entro 6 mesi.", "es": "Por qué el 80% de los miembros del gimnasio abandona en 6 meses."}},
+        {"key": "solution_h2",     "field_type": "heading", "translations": {"en": "The gamification system that actually changes behavior.", "it": "Il sistema di gamification che cambia davvero il comportamento.", "es": "El sistema de gamificación que realmente cambia el comportamiento."}},
+    ],
 }
+
+# ─── SEED ALL CONTENT ─────────────────────────────────────────
+
+@api_router.post("/cms/seed-all")
+async def seed_all_content(force: bool = False, translate: bool = True, _=Depends(verify_admin)):
+    """Seed ALL pages with EN content + optional AI translation to IT/ES."""
+    import json as _json
+    results = {}
+    for slug, sections in DEFAULT_PAGES.items():
+        existing = await db.cms_content.find_one({"slug": slug})
+        if existing and not force:
+            results[slug] = {"status": "skipped", "reason": "already exists"}
+            continue
+        # Start with default sections
+        final_sections = [dict(s) for s in sections]
+
+        # AI translate if requested
+        if translate and openai_client.api_key:
+            for lang, lang_name in [("it", "Italian"), ("es", "Spanish")]:
+                to_tr = [{"key": s["key"], "en": s.get("translations", {}).get("en", "")} for s in final_sections if s.get("translations", {}).get("en")]
+                if not to_tr: continue
+                prompt = "\n".join([f"{i+1}. [{x['key']}]: {x['en']}" for i, x in enumerate(to_tr)])
+                try:
+                    resp = await asyncio.to_thread(lambda ln=lang_name: openai_client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "system", "content": f"Translate ArenaKore UI strings from English to {ln}. Keep bold, direct, competitive tone. Preserve ALL CAPS headings. Return JSON {{key: translation}}"}, {"role": "user", "content": prompt}],
+                        response_format={"type": "json_object"}, temperature=0.3, max_tokens=2000))
+                    translations = _json.loads(resp.choices[0].message.content)
+                    for s in final_sections:
+                        k = s["key"]
+                        if k in translations:
+                            s.setdefault("translations", {})[lang] = translations[k]
+                except Exception as e:
+                    logger.error(f"Translate {slug}→{lang}: {e}")
+
+        data = {"slug": slug, "sections": final_sections, "id": str(uuid.uuid4()), "updated_at": datetime.now(timezone.utc).isoformat(), "history": []}
+        if existing:
+            await db.cms_content.update_one({"slug": slug}, {"$set": data})
+        else:
+            await db.cms_content.insert_one(data)
+        results[slug] = {"status": "seeded", "sections": len(final_sections)}
+
+    return {"ok": True, "results": results, "total_seeded": sum(1 for v in results.values() if v.get("status") == "seeded")}
 
 
 # Required keys per page — must exist in ALL active languages before publishing
@@ -689,6 +788,11 @@ REQUIRED_KEYS: Dict[str, List[str]] = {
     "get-the-app":  ["hero_h1", "hero_tension", "hero_sub1", "final_line1"],
     "for-athletes": ["hero_h1", "identity_h2", "final_h2"],
     "gym-pilot":    ["hero_h1", "hero_sub", "offer_h2", "final_h2"],
+    "arena-system": ["hero_h1", "hero_sub", "what_h2", "final_h2"],
+    "competition":  ["hero_h1", "intro_h2"],
+    "amrap":        ["hero_h1", "intro_h2"],
+    "crossfit":     ["hero_h1", "intro_h2"],
+    "gamification": ["hero_h1", "intro_h2"],
 }
 ACTIVE_LANGUAGES = ["en", "it", "es"]
 

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { LOGO } from '../data/seo-content';
 import LangModal from './LangModal';
 import { trackGetAppClick, trackBusinessClick } from '../utils/tracking';
+import { useGlobalContent } from '../hooks/useGlobalContent';
 
 // Lazy import to avoid circular dep
 let _useAuth = null;
@@ -66,7 +67,12 @@ export function InnerNavbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const loc = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.slice(0, 2) || 'en';
+  const { global: g } = useGlobalContent(lang);
+
+  // Nav labels: CMS → i18n fallback
+  const navLabel = (cmsKey, i18nKey) => g(cmsKey, t(i18nKey));
 
   // Safe auth access
   let authUser = null;
@@ -84,14 +90,14 @@ export function InnerNavbar() {
   }, []);
 
   const NAV = [
-    { key: 'nav.home',        href: '/',                    highlight: false },
-    { key: 'nav.arenaSystem', href: '/arena-system',         highlight: false },
-    { key: 'nav.athletes',    href: '/for-athletes',         highlight: true  },
-    { key: 'nav.competition', href: '/workout-competition',  highlight: false },
-    { key: 'nav.amrap',       href: '/amrap-training',       highlight: false },
-    { key: 'nav.crossfit',    href: '/crossfit-challenge',   highlight: false },
-    { key: 'nav.business',    href: '/gym-challenge-pilot',  highlight: false },
-    { key: 'nav.blog',        href: '/blog',                 highlight: false },
+    { cmsKey: 'nav_home',        i18nKey: 'nav.home',        href: '/',                    highlight: false },
+    { cmsKey: 'nav_arena_system',i18nKey: 'nav.arenaSystem', href: '/arena-system',         highlight: false },
+    { cmsKey: 'nav_athletes',    i18nKey: 'nav.athletes',    href: '/for-athletes',         highlight: true  },
+    { cmsKey: 'nav_competition', i18nKey: 'nav.competition', href: '/workout-competition',  highlight: false },
+    { cmsKey: 'nav_amrap',       i18nKey: 'nav.amrap',       href: '/amrap-training',       highlight: false },
+    { cmsKey: 'nav_crossfit',    i18nKey: 'nav.crossfit',    href: '/crossfit-challenge',   highlight: false },
+    { cmsKey: 'nav_business',    i18nKey: 'nav.business',    href: '/gym-challenge-pilot',  highlight: false },
+    { cmsKey: 'nav_blog',        i18nKey: 'nav.blog',        href: '/blog',                 highlight: false },
   ];
 
   const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
@@ -121,7 +127,7 @@ export function InnerNavbar() {
               }`}
               style={l.highlight && !active(l.href) ? { textShadow: '0 0 12px rgba(255,255,255,0.2)' } : {}}
             >
-              {t(l.key)}
+              {navLabel(l.cmsKey, l.i18nKey)}
             </Link>
           ))}
         </div>
@@ -134,7 +140,7 @@ export function InnerNavbar() {
             className="hidden sm:inline-flex items-center gap-1.5 font-inter font-black text-[10px] uppercase tracking-wide px-3 rounded-[12px] bg-ak-gold text-black hover:scale-105 transition-transform whitespace-nowrap"
             style={{ height: '32px' }}
           >
-            <Zap size={11} fill="black" /> {t('nav.startChallenge')}
+            <Zap size={11} fill="black" /> {g('nav_cta', t('nav.startChallenge'))}
           </Link>
           <button onClick={() => setOpen(!open)} className="lg:hidden text-white p-1" data-testid="nav-mobile-toggle">
             {open ? <X size={22} /> : <Menu size={22} />}
@@ -151,7 +157,7 @@ export function InnerNavbar() {
                 active(l.href) ? 'text-ak-cyan' : l.highlight ? 'text-white' : 'text-white/70'
               }`}
             >
-              {t(l.key)} <ChevronRight size={14} className="text-white/30" />
+              {navLabel(l.cmsKey, l.i18nKey)} <ChevronRight size={14} className="text-white/30" />
             </Link>
           ))}
           <div className="pt-3 flex items-center justify-between">
@@ -170,6 +176,8 @@ export function InnerNavbar() {
 
 export function InnerFooter() {
   const { t, i18n } = useTranslation();
+  const lang = i18n.language?.slice(0, 2) || 'en';
+  const { global: g } = useGlobalContent(lang);
   const [langOpen, setLangOpen] = useState(false);
   const currentLang    = i18n.language?.slice(0, 2).toUpperCase() || 'EN';
   const currentCountry = localStorage.getItem('arena_country') || '';
@@ -187,14 +195,14 @@ export function InnerFooter() {
             <div>
               <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain mb-4" loading="lazy" />
               <p className="font-inter text-xs text-white leading-relaxed max-w-xs mb-3">
-                Global competition platform for athletes and gyms.
+                {g('footer_tagline', 'Global competition platform for athletes and gyms.')}
               </p>
               <p className="font-inter text-[10px] font-bold uppercase tracking-wider mb-4" style={{ color: 'rgba(0,255,255,0.6)' }}>
                 Universal Competition System
               </p>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
-                <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">{t('footer.nexusOnline')}</span>
+                <span className="font-inter text-[10px] font-bold uppercase tracking-widest text-white">{g('footer_nexus', t('footer.nexusOnline'))}</span>
               </div>
             </div>
             {/* Col 2: Pages */}
@@ -235,7 +243,7 @@ export function InnerFooter() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-white/8 gap-4">
-            <div className="font-inter text-xs text-white">{t('footer.copyright')}</div>
+            <div className="font-inter text-xs text-white">{g('footer_copyright', t('footer.copyright'))}</div>
             <div className="flex items-center gap-5">
               <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.privacy')}</a>
               <a href="#" className="font-inter text-xs text-white/50 hover:text-white transition-colors">{t('footer.terms')}</a>

@@ -6,6 +6,8 @@ import {
   CheckCircle, ChevronDown, Download
 } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
+import usePageContent from '../hooks/usePageContent';
+import { useScrollTracking } from '../hooks/useScrollTracking';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
@@ -57,7 +59,10 @@ const DISCIPLINES = [
 ];
 
 export default function ArenaSystemPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.slice(0, 2) || 'en';
+  const { content: cms } = usePageContent('arena-system', lang);
+  useScrollTracking('arena_system');
 
   useSEO({
     title: 'Arena System | ArenaKore — The Competition Platform',
@@ -88,7 +93,7 @@ export default function ArenaSystemPage() {
           <div className="ak-hero-badge flex items-center gap-3 mb-6">
             <span className="w-2 h-2 rounded-full bg-ak-cyan inline-block" style={{ boxShadow: '0 0 8px #00FFFF' }} />
             <span className="font-inter text-xs font-bold tracking-[0.35em] uppercase text-ak-cyan">
-              UNIVERSAL COMPETITION SYSTEM
+              {cms('hero_badge', 'UNIVERSAL COMPETITION SYSTEM')}
             </span>
           </div>
           <h1 className="ak-hero-title font-anton uppercase leading-[0.9] text-white mb-5"
@@ -129,7 +134,7 @@ export default function ArenaSystemPage() {
           <div className="text-center mb-16 ak-reveal">
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">WHAT IT DOES</div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase text-white leading-none">
-              THREE THINGS.<br /><span style={{ color: '#00FFFF' }}>NO COMPROMISE.</span>
+              THREE THINGS.<br /><span style={{ color: '#00FFFF' }}>{cms('what_h2_2', 'NO COMPROMISE.')}</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
