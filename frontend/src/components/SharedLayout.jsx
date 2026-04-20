@@ -4,6 +4,7 @@ import { Menu, X, ChevronRight, Zap, Globe, LogIn, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LOGO } from '../data/seo-content';
 import LangModal from './LangModal';
+import TranslationBanner from './TranslationBanner';
 import { trackGetAppClick, trackBusinessClick } from '../utils/tracking';
 import { useGlobalContent } from '../hooks/useGlobalContent';
 
@@ -103,12 +104,13 @@ export function InnerNavbar() {
   const active = (href) => href === '/' ? loc.pathname === '/' : loc.pathname.startsWith(href);
 
   return (
-    <nav
-      data-testid="inner-navbar"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/10' : 'bg-black/80 backdrop-blur-sm border-b border-white/5'
-      }`}
-    >
+    <>
+      <nav
+        data-testid="inner-navbar"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/10' : 'bg-black/80 backdrop-blur-sm border-b border-white/5'
+        }`}
+      >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
         <Link to="/" data-testid="nav-logo" className="flex-shrink-0">
           <img src={LOGO} alt="ArenaKore" className="h-8 w-auto object-contain" loading="lazy" />
@@ -171,6 +173,12 @@ export function InnerNavbar() {
         </div>
       )}
     </nav>
+    {/* Translation completeness banner — appears below nav for non-EN when incomplete */}
+    <TranslationBanner
+      slug={loc.pathname.replace('/', '').replace(/-/g, '-') || 'homepage'}
+      language={lang}
+    />
+  </>
   );
 }
 
