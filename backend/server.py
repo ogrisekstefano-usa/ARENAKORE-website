@@ -194,6 +194,8 @@ async def _seed_admin():
 # ─── ADMIN AUTH ───────────────────────────────────────────────
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'ArenaKore2026!')
 ADMIN_SECRET   = os.environ.get('ADMIN_SECRET', 'ak-cms-secret-2026')
+APP_ENV        = os.environ.get('APP_ENV', 'development')
+IS_PROD        = APP_ENV == 'production'
 
 # Resend email config
 resend.api_key     = os.environ.get('RESEND_API_KEY', '')
@@ -976,19 +978,51 @@ async def _get_or_default_page(slug: str) -> dict:
     return {"slug": slug, "sections": defaults}
 
 @api_router.get("/cms/content/{slug}")
-async def get_page_content(slug: str, lang: str = "en"):
-    """Public endpoint — returns ONLY published version, falls back to latest draft."""
-    # Try published version first
-    pub = await db.cms_versions.find_one(
-        {"slug": slug, "status": "published", "is_global": False},
-        {"_id": 0}, sort=[("published_at", -1)]
-    )
-    if pub:
-        sections = pub.get("sections", [])
-    else:
-        # Fallback to current draft (cms_content)
+async def get_page_content(slug: str, lang: str = "en",
+                            preview: bool = False,
+                            request: Request = None):
+    """
+    Public: returns ONLY published version.
+    Dev mode: falls back to latest draft if no published version.
+    Admin preview (?preview=true + admin token): always shows latest draft.
+    """
+    # Check if admin preview requested
+    is_admin_preview = False
+    if preview:
+        try:
+            token = None
+            if request:
+                token = request.cookies.get("access_token")
+                if not token:
+                    auth = request.headers.get("Authorization", "")
+                    if auth.startswith("Bearer "): token = auth[7:]
+            if token and hmac.compare_digest(token, ADMIN_TOKEN):
+                is_admin_preview = True
+        except Exception:
+            pass
+
+    # Admin preview → return latest draft (from cms_content)
+    if is_admin_preview:
         doc = await _get_or_default_page(slug)
         sections = doc.get("sections", [])
+    else:
+        # Try published version first
+        pub = await db.cms_versions.find_one(
+            {"slug": slug, "status": "published", "is_global": False},
+            {"_id": 0}, sort=[("published_at", -1)]
+        )
+        if pub:
+            sections = pub.get("sections", [])
+        elif IS_PROD:
+            # PRODUCTION: no published version → return empty + log error
+            logger.error(f"CMS PRODUCTION ERROR: No published version for /{slug} [{lang}]")
+            return {}
+        else:
+            # DEV: allow draft preview
+            logger.warning(f"CMS DEV: No published version for /{slug} — serving draft")
+            doc = await _get_or_default_page(slug)
+            sections = doc.get("sections", [])
+
     result = {}
     for section in sections:
         t = section.get("translations", {}) if isinstance(section, dict) else section.translations
