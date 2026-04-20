@@ -1692,160 +1692,174 @@ const ALL_PAGES = [
 ];
 
 function NavManager({ call }) {
-  const [topNav, setTopNav]     = useState([]);
+  const [topNav, setTopNav]       = useState([]);
   const [bottomNav, setBottomNav] = useState([]);
-  const [saving, setSaving]     = useState(false);
-  const [msg, setMsg]           = useState('');
-  const [editItem, setEditItem] = useState(null); // {zone, index} being label-edited
-  const [dragSrc, setDragSrc]   = useState(null); // {zone, index}
+  const [saving, setSaving]       = useState(false);
+  const [msg, setMsg]             = useState('');
+  const [editItem, setEditItem]   = useState(null);
+  const [dragOver, setDragOver]   = useState(null); // {zone, index} hovered drop target
+  // useRef for drag source — avoids stale closure in onDrop
+  const dragSrc = React.useRef(null);
 
   const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-2.5 py-1.5 rounded-[8px] outline-none focus:border-ak-cyan transition-colors";
-  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
+  const inpStyle = { background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.12)' };
 
   const load = useCallback(async () => {
     try {
       const r = await call('get', '/nav/config/full');
       setTopNav((r.top_nav || []).sort((a, b) => a.order - b.order));
       setBottomNav((r.bottom_nav || []).sort((a, b) => a.order - b.order));
-    } catch { }
+    } catch {}
   }, [call]);
   useEffect(() => { load(); }, [load]);
 
   const save = async () => {
     setSaving(true); setMsg('');
     try {
-      const payload = {
+      await call('put', '/nav/config', {
         top_nav:    topNav.map((item, i) => ({ ...item, order: i })),
         bottom_nav: bottomNav.map((item, i) => ({ ...item, order: i })),
-      };
-      await call('put', '/nav/config', payload);
-      setMsg('✓ Salvato! Il menù si aggiornerà al prossimo refresh.');
+      });
+      setMsg('✓ Salvato! Reload del sito per vedere le modifiche.');
     } catch (e) { setMsg(e?.response?.data?.detail || 'Errore'); }
     finally { setSaving(false); }
   };
 
-  // Keys already in a menu (to show as unavailable in pool)
-  const usedKeys = new Set([...topNav.map(i => i.key), ...bottomNav.map(i => i.key)]);
-  const pool = ALL_PAGES.filter(p => !usedKeys.has(p.key));
-
-  const addToZone = (page, zone) => {
-    const item = { ...page, active: true, order: 0 };
-    if (zone === 'top') setTopNav(prev => [...prev, item]);
-    else setBottomNav(prev => [...prev, item]);
+  /* ── Drag & Drop (HTML5 dataTransfer — works across React renders) ── */
+  const handleDragStart = (e, zone, index) => {
+    dragSrc.current = { zone, index };
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', JSON.stringify({ zone, index }));
   };
 
-  const removeFromZone = (zone, index) => {
-    if (zone === 'top') setTopNav(prev => prev.filter((_, i) => i !== index));
-    else setBottomNav(prev => prev.filter((_, i) => i !== index));
+  const handleDragOver = (e, zone, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOver({ zone, index: index ?? -1 });
   };
 
+  const handleDrop = (e, zone, dropIndex) => {
+    e.preventDefault();
+    setDragOver(null);
+    let src;
+    try { src = JSON.parse(e.dataTransfer.getData('text/plain')); } catch { src = dragSrc.current; }
+    if (!src) return;
+
+    const topCopy    = [...topNav];
+    const bottomCopy = [...bottomNav];
+    const srcList    = src.zone === 'top' ? topCopy : bottomCopy;
+    const dstList    = zone    === 'top' ? topCopy : bottomCopy;
+
+    const [item] = srcList.splice(src.index, 1);
+
+    if (src.zone === zone) {
+      // Reorder in same column
+      const insertAt = dropIndex >= src.index ? Math.max(0, dropIndex - 1) : dropIndex;
+      srcList.splice(insertAt < 0 ? srcList.length : insertAt, 0, item);
+    } else {
+      // Move to other column
+      dstList.splice(dropIndex < 0 ? dstList.length : dropIndex, 0, item);
+    }
+
+    setTopNav(topCopy.map((it, i) => ({ ...it, order: i })));
+    setBottomNav(bottomCopy.map((it, i) => ({ ...it, order: i })));
+    dragSrc.current = null;
+  };
+
+  const handleDragEnd = () => { dragSrc.current = null; setDragOver(null); };
+
+  /* ── Helpers ── */
   const toggleActive = (zone, index) => {
     const setter = zone === 'top' ? setTopNav : setBottomNav;
     setter(prev => prev.map((item, i) => i === index ? { ...item, active: !item.active } : item));
   };
-
+  const removeItem = (zone, index) => {
+    if (zone === 'top') setTopNav(prev => prev.filter((_, i) => i !== index));
+    else setBottomNav(prev => prev.filter((_, i) => i !== index));
+  };
   const updateLabel = (zone, index, lang, value) => {
     const setter = zone === 'top' ? setTopNav : setBottomNav;
-    setter(prev => prev.map((item, i) =>
-      i === index ? { ...item, labels: { ...item.labels, [lang]: value } } : item
-    ));
+    setter(prev => prev.map((item, i) => i === index ? { ...item, labels: { ...item.labels, [lang]: value } } : item));
+  };
+  const addPage = (page, zone) => {
+    const item = { ...page, active: true, order: 9999 };
+    if (zone === 'top') setTopNav(prev => [...prev, item]);
+    else setBottomNav(prev => [...prev, item]);
   };
 
-  // Drag and drop
-  const onDragStart = (zone, index) => setDragSrc({ zone, index });
-
-  const onDrop = (zone, dropIndex) => {
-    if (!dragSrc) return;
-    const getList = z => z === 'top' ? [...topNav] : [...bottomNav];
-    const setList = z => z === 'top' ? setTopNav : setBottomNav;
-
-    if (dragSrc.zone === zone) {
-      // Reorder within same zone
-      const list = getList(zone);
-      const [item] = list.splice(dragSrc.index, 1);
-      list.splice(dropIndex, 0, item);
-      setList(zone)(list.map((it, i) => ({ ...it, order: i })));
-    } else {
-      // Move between zones
-      const srcList = getList(dragSrc.zone);
-      const dstList = getList(zone);
-      const [item] = srcList.splice(dragSrc.index, 1);
-      dstList.splice(dropIndex, 0, item);
-      setList(dragSrc.zone)(srcList.map((it, i) => ({ ...it, order: i })));
-      setList(zone)(dstList.map((it, i) => ({ ...it, order: i })));
-    }
-    setDragSrc(null);
-  };
-
-  const onDropZone = (zone) => {
-    if (!dragSrc || dragSrc.zone === zone) return;
-    const srcList = dragSrc.zone === 'top' ? [...topNav] : [...bottomNav];
-    const dstList = zone === 'top' ? [...topNav] : [...bottomNav];
-    const [item] = srcList.splice(dragSrc.index, 1);
-    dstList.push(item);
-    if (dragSrc.zone === 'top') { setTopNav(srcList.map((it,i)=>({...it,order:i}))); setBottomNav(dstList.map((it,i)=>({...it,order:i}))); }
-    else { setBottomNav(srcList.map((it,i)=>({...it,order:i}))); setTopNav(dstList.map((it,i)=>({...it,order:i}))); }
-    setDragSrc(null);
-  };
-
+  /* ── Render one draggable nav item ── */
   const renderItem = (item, zone, index) => {
     const isEditing = editItem?.zone === zone && editItem?.index === index;
+    const isDragging = dragSrc.current?.zone === zone && dragSrc.current?.index === index;
+    const isOver = dragOver?.zone === zone && dragOver?.index === index;
     return (
-      <div key={item.key}
+      <div key={`${zone}-${item.key}-${index}`}
         draggable
-        onDragStart={() => onDragStart(zone, index)}
-        onDragOver={e => e.preventDefault()}
-        onDrop={() => onDrop(zone, index)}
-        className={`flex items-start gap-2 p-3 rounded-[10px] select-none transition-all ${
+        onDragStart={e => handleDragStart(e, zone, index)}
+        onDragOver={e => handleDragOver(e, zone, index)}
+        onDrop={e => handleDrop(e, zone, index)}
+        onDragEnd={handleDragEnd}
+        className={`flex items-start gap-2 p-3 rounded-[10px] transition-all ${
           item.active === false ? 'opacity-40' : ''
         }`}
-        style={{ background: '#0a0a0a', border: `1px solid ${dragSrc?.zone === zone && dragSrc?.index === index ? 'rgba(0,255,255,0.4)' : 'rgba(255,255,255,0.07)'}`, cursor: 'grab' }}>
-
+        style={{
+          background: isOver ? 'rgba(0,255,255,0.06)' : '#0a0a0a',
+          border: `1px solid ${isOver ? 'rgba(0,255,255,0.4)' : isDragging ? 'rgba(255,215,0,0.3)' : 'rgba(255,255,255,0.08)'}`,
+          cursor: 'grab',
+          opacity: isDragging ? 0.5 : 1,
+          transform: isOver ? 'translateY(-2px)' : 'none',
+        }}>
         {/* Drag handle */}
-        <div className="font-inter text-white/20 text-base mt-0.5 flex-shrink-0" title="Trascina per riordinare">⠿</div>
-
+        <div className="text-white/30 text-base mt-0.5 flex-shrink-0 hover:text-white/60 transition-colors"
+          title="Trascina per riordinare" style={{ userSelect: 'none', fontSize: 16 }}>⠿</div>
         {/* Content */}
         <div className="flex-1 min-w-0">
           {isEditing ? (
             <div className="space-y-1.5">
               {['en','it','es'].map(l => (
-                <div key={l} className="flex items-center gap-1.5">
-                  <span className="font-inter text-[9px] font-bold uppercase w-5 text-white/40">{l}</span>
-                  <input className={`${inp} flex-1`} style={inpStyle}
+                <div key={l} className="flex items-center gap-2">
+                  <span className="font-inter text-[9px] font-black uppercase w-4 text-white/40 flex-shrink-0">{l}</span>
+                  <input className={`${inp} flex-1 text-xs`} style={inpStyle}
                     value={item.labels?.[l] || ''}
-                    onChange={e => updateLabel(zone, index, l, e.target.value)} />
+                    onChange={e => updateLabel(zone, index, l, e.target.value)}
+                    placeholder={`Label ${l.toUpperCase()}...`} />
                 </div>
               ))}
-              <button onClick={() => setEditItem(null)} className="font-inter text-[10px] text-ak-cyan mt-1">✓ Fine</button>
+              <button onClick={() => setEditItem(null)}
+                className="font-inter text-[10px] font-bold text-ak-cyan mt-1 hover:underline">
+                ✓ Conferma
+              </button>
             </div>
           ) : (
             <div>
               <div className="font-inter text-sm font-semibold text-white truncate">
                 {item.labels?.en || item.key}
               </div>
-              <div className="font-inter text-[10px] text-white/30 mt-0.5">{item.href}</div>
-              {(item.labels?.it || item.labels?.es) && (
-                <div className="font-inter text-[9px] text-white/25 mt-0.5">
-                  {item.labels?.it && <span className="mr-2">IT: {item.labels.it}</span>}
-                  {item.labels?.es && <span>ES: {item.labels.es}</span>}
-                </div>
-              )}
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                <span className="font-inter text-[10px] text-white/30">{item.href}</span>
+                {item.labels?.it && <span className="font-inter text-[9px] text-white/25">IT: {item.labels.it}</span>}
+                {item.labels?.es && <span className="font-inter text-[9px] text-white/25">ES: {item.labels.es}</span>}
+              </div>
             </div>
           )}
         </div>
-
-        {/* Actions */}
+        {/* Action buttons */}
         {!isEditing && (
-          <div className="flex items-center gap-1 flex-shrink-0">
-            <button onClick={() => toggleActive(zone, index)} title={item.active === false ? 'Attiva' : 'Disattiva'}
-              className={`font-inter text-[10px] font-bold px-1.5 py-0.5 rounded transition-all ${item.active === false ? 'text-white/30 hover:text-white' : 'text-ak-cyan'}`}>
+          <div className="flex items-center gap-1 flex-shrink-0 ml-1">
+            <button onClick={() => toggleActive(zone, index)}
+              title={item.active === false ? 'Rendi visibile' : 'Nascondi'}
+              className={`font-inter text-[11px] w-5 h-5 flex items-center justify-center rounded transition-all ${
+                item.active === false ? 'text-white/20 hover:text-white' : 'text-ak-cyan hover:text-ak-cyan/70'
+              }`}>
               {item.active === false ? '○' : '●'}
             </button>
-            <button onClick={() => setEditItem({ zone, index })} title="Modifica etichette" className="p-1 text-white/30 hover:text-ak-cyan transition-colors">
-              <Pencil size={12} />
+            <button onClick={() => setEditItem({ zone, index })} title="Modifica etichette"
+              className="p-1 text-white/30 hover:text-ak-gold transition-colors rounded">
+              <Pencil size={11} />
             </button>
-            <button onClick={() => removeFromZone(zone, index)} title="Rimuovi dal menù" className="p-1 text-white/30 hover:text-red-400 transition-colors">
-              <X size={12} />
+            <button onClick={() => removeItem(zone, index)} title="Rimuovi dal menù"
+              className="p-1 text-white/30 hover:text-red-400 transition-colors rounded">
+              <X size={11} />
             </button>
           </div>
         )}
@@ -1853,34 +1867,47 @@ function NavManager({ call }) {
     );
   };
 
-  const ZonePanel = ({ zone, items, title, color }) => (
-    <div className="flex flex-col" style={{ minHeight: '300px' }}>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-2 h-2 rounded-full" style={{ background: color }} />
-        <span className="font-inter text-xs font-bold uppercase tracking-wider text-white">{title}</span>
-        <span className="font-inter text-[10px] text-white/30">{items.filter(i => i.active !== false).length} attivi</span>
+  /* ── Zone panel ── */
+  const ZonePanel = ({ zone, items, title, color, hint }) => {
+    const activeCount = items.filter(i => i.active !== false).length;
+    return (
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+          <span className="font-inter text-sm font-bold uppercase tracking-wider text-white">{title}</span>
+          <span className="font-inter text-[10px] text-white/30">{activeCount}/{items.length} visibili</span>
+          <span className="font-inter text-[9px] text-white/20 ml-1">{hint}</span>
+        </div>
+        <div className="space-y-1.5 rounded-[14px] p-2 min-h-[120px]"
+          style={{ background: 'rgba(255,255,255,0.015)', border: '1px dashed rgba(255,255,255,0.08)' }}
+          onDragOver={e => handleDragOver(e, zone, -1)}
+          onDrop={e => handleDrop(e, zone, items.length)}>
+          {items.length === 0 && (
+            <div className="flex items-center justify-center h-16 font-inter text-xs text-white/20 italic">
+              Trascina voci qui o usa + dal pannello sotto
+            </div>
+          )}
+          {items.map((item, i) => renderItem(item, zone, i))}
+        </div>
       </div>
-      <div className="flex-1 space-y-1.5 min-h-[80px] rounded-[12px] p-2"
-        style={{ background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)' }}
-        onDragOver={e => e.preventDefault()}
-        onDrop={() => onDropZone(zone)}>
-        {items.length === 0 && (
-          <div className="flex items-center justify-center h-16 font-inter text-xs text-white/20">
-            Trascina voci qui
-          </div>
-        )}
-        {items.map((item, i) => renderItem(item, zone, i))}
-      </div>
-    </div>
-  );
+    );
+  };
+
+  /* ── Pool: ALL pages with add buttons ── */
+  const topKeys    = new Set(topNav.map(i => i.key));
+  const bottomKeys = new Set(bottomNav.map(i => i.key));
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
         <div>
           <h2 className="font-anton text-2xl uppercase text-white">NAVIGATION MANAGER</h2>
           <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
-            Drag & drop per riordinare · Trascina tra colonne per spostare · ● = visibile · ○ = nascosto
+            <strong className="text-white/60">Come usarlo:</strong>{'  '}
+            Trascina le voci (⠿) per riordinare o spostarle tra i menù.
+            Usa ● per nascondere una voce, ✏ per cambiare l'etichetta, × per rimuoverla.
+            Aggiungi pagine con i pulsanti qui sotto.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -1893,34 +1920,60 @@ function NavManager({ call }) {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-6">
-        <ZonePanel zone="top"    items={topNav}    title="Menù Top (Navbar)"   color="#00FFFF" />
-        <ZonePanel zone="bottom" items={bottomNav} title="Menù Bottom (Footer)" color="#FFD700" />
+      {/* Two columns */}
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <ZonePanel zone="top"    items={topNav}    title="Menù Top (Navbar)"    color="#00FFFF" hint="— mostrato nella barra di navigazione" />
+        <ZonePanel zone="bottom" items={bottomNav} title="Menù Bottom (Footer)"  color="#FFD700" hint="— mostrato nel footer del sito" />
       </div>
 
-      {/* Available pages pool */}
-      {pool.length > 0 && (
-        <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/30 mb-3">
-            Pagine disponibili — aggiungi a un menù
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {pool.map(page => (
-              <div key={page.key} className="flex items-center gap-1 rounded-[8px] overflow-hidden"
-                style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-                <span className="font-inter text-xs text-white/60 px-3 py-2">{page.labels.en}</span>
-                <span className="font-inter text-[9px] text-white/25 pr-1">{page.href}</span>
-                <button onClick={() => addToZone(page, 'top')}
-                  className="px-2 py-2 font-inter text-[9px] font-bold uppercase text-ak-cyan hover:bg-ak-cyan/10 transition-colors border-l border-white/8"
-                  title="Aggiungi a menù top">+ TOP</button>
-                <button onClick={() => addToZone(page, 'bottom')}
-                  className="px-2 py-2 font-inter text-[9px] font-bold uppercase text-ak-gold hover:bg-ak-gold/10 transition-colors border-l border-white/8"
-                  title="Aggiungi a menù bottom">+ BOTTOM</button>
-              </div>
-            ))}
-          </div>
+      {/* ── Add pages pool ── */}
+      <div className="rounded-[14px] overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="px-5 py-3 flex items-center gap-2" style={{ background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <Plus size={14} className="text-ak-cyan" />
+          <span className="font-inter text-xs font-bold uppercase tracking-wider text-white">Aggiungi voce al menù</span>
+          <span className="font-inter text-[10px] text-white/30 ml-1">— clicca TOP o BOTTOM per aggiungere la pagina al menù corrispondente</span>
         </div>
-      )}
+        <div className="p-4">
+          <div className="space-y-1.5">
+            {ALL_PAGES.map(page => {
+              const inTop    = topKeys.has(page.key);
+              const inBottom = bottomKeys.has(page.key);
+              return (
+                <div key={page.key} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-[10px]"
+                  style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="min-w-0">
+                      <span className="font-inter text-sm font-semibold text-white">{page.labels.en}</span>
+                      <span className="font-inter text-[10px] text-white/30 ml-2">{page.href}</span>
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      {inTop    && <span className="font-inter text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(0,255,255,0.1)', color: '#00FFFF', border: '1px solid rgba(0,255,255,0.2)' }}>TOP</span>}
+                      {inBottom && <span className="font-inter text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,215,0,0.1)', color: '#FFD700', border: '1px solid rgba(255,215,0,0.2)' }}>BOTTOM</span>}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button onClick={() => !inTop && addPage(page, 'top')}
+                      disabled={inTop}
+                      className="font-inter text-[10px] font-black uppercase px-3 py-1.5 rounded-[8px] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      style={{ background: inTop ? 'rgba(0,255,255,0.05)' : 'rgba(0,255,255,0.1)', color: '#00FFFF', border: '1px solid rgba(0,255,255,0.25)' }}>
+                      {inTop ? '✓ TOP' : '+ TOP'}
+                    </button>
+                    <button onClick={() => !inBottom && addPage(page, 'bottom')}
+                      disabled={inBottom}
+                      className="font-inter text-[10px] font-black uppercase px-3 py-1.5 rounded-[8px] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      style={{ background: inBottom ? 'rgba(255,215,0,0.05)' : 'rgba(255,215,0,0.1)', color: '#FFD700', border: '1px solid rgba(255,215,0,0.25)' }}>
+                      {inBottom ? '✓ BOTTOM' : '+ BOTTOM'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="font-inter text-[10px] text-white/25 mt-4 italic">
+            ✏ Vuoi aggiungere una pagina che non è in lista? Scrivimi e la creo insieme a te.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
