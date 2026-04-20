@@ -541,6 +541,75 @@ async def delete_blog_post(post_id: str, _=Depends(verify_admin)):
     await db.blog_posts.delete_one({"id": post_id})
     return {"ok": True}
 
+class BlogTranslateRequest(BaseModel):
+    target_lang: str
+    target_lang_name: str = ''
+
+@api_router.post("/blog/{post_id}/translate")
+async def translate_blog_post(post_id: str, req: BlogTranslateRequest, _=Depends(verify_admin)):
+    """Translate all blog post fields from EN to target language using AI."""
+    doc = await db.blog_posts.find_one({"id": post_id}, {"_id": 0})
+    if not doc: raise HTTPException(404, "Post not found")
+
+    lang = req.target_lang.lower()
+    lang_name = req.target_lang_name or lang
+
+    # Fields to translate (EN source values)
+    fields = {
+        "title":            doc.get("title", ""),
+        "seo_title":        doc.get("seo_title", ""),
+        "meta_description": doc.get("meta_description", ""),
+        "excerpt":          doc.get("excerpt", ""),
+        "content":          doc.get("content", ""),
+    }
+    to_translate = {k: v for k, v in fields.items() if v}
+    if not to_translate:
+        raise HTTPException(400, "No English content to translate")
+
+    prompt_items = "\n".join([f"[{k}]: {v[:800]}" for k, v in to_translate.items()])
+    system_msg = f"""You are a professional translator for ArenaKore, a competitive sports/fitness platform.
+Translate the following blog post fields from English to {lang_name}.
+Tone: bold, direct, competitive — matching a fitness brand.
+Preserve markdown, ALL CAPS headings, brand names (ArenaKore, NEXUS, K-Rating, K-Flux, KORE ID, DNA).
+Return a JSON object with ONLY the translated fields.
+For slug: generate a URL-friendly slug in {lang_name} (lowercase, hyphens, no accents)."""
+
+    try:
+        import json as _json
+        resp = await asyncio.to_thread(
+            lambda: openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": f"Translate to {lang_name}:\n{prompt_items}"},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.3,
+            )
+        )
+        translated = _json.loads(resp.choices[0].message.content)
+    except Exception as e:
+        logger.error(f"Blog translation error: {e}")
+        raise HTTPException(500, f"Translation failed: {str(e)}")
+
+    # Auto-generate slug from title if not provided
+    if "slug" not in translated and "title" in translated:
+        import unicodedata, re
+        t = translated["title"].lower()
+        t = unicodedata.normalize('NFKD', t).encode('ascii', 'ignore').decode()
+        translated["slug"] = re.sub(r'[^a-z0-9]+', '-', t).strip('-')[:80]
+
+    # Merge into existing translations
+    existing = doc.get("translations") or {}
+    existing[lang] = {**(existing.get(lang) or {}), **translated}
+
+    await db.blog_posts.update_one(
+        {"id": post_id},
+        {"$set": {"translations": existing, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    logger.info(f"Blog post {post_id} translated {len(translated)} fields → {lang}")
+    return {"ok": True, "translated": len(translated), "lang": lang, "fields": translated}
+
 @api_router.post("/blog/seed/demo")
 async def seed_demo_blog(_=Depends(verify_admin)):
     count = await db.blog_posts.count_documents({})

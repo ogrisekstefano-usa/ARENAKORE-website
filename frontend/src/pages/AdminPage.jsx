@@ -1307,34 +1307,86 @@ function AnalyticsDashboard({ call }) {
   );
 }
 
-/* ─── BLOG MANAGER ─── */
+/* ─── BLOG MANAGER (Multilingual) ─── */
+const BLOG_LANGS = [
+  { code: 'en', label: 'EN', flag: '🌍', name: 'English' },
+  { code: 'it', label: 'IT', flag: '🇮🇹', name: 'Italian' },
+  { code: 'es', label: 'ES', flag: '🇪🇸', name: 'Spanish' },
+];
+const EMPTY_TRANS = { slug: '', title: '', seo_title: '', meta_description: '', excerpt: '', content: '' };
+
 function BlogManager({ call }) {
-  const [posts, setPosts] = useState([]);
-  const [editing, setEditing] = useState(null); // null=list, 'new'=create, post=edit
-  const [form, setForm] = useState({});
-  const [saving, setSaving] = useState(false);
-  const [msg, setMsg] = useState('');
-  const [transLang, setTransLang] = useState('it'); // active translation lang tab
+  const [posts, setPosts]           = useState([]);
+  const [editing, setEditing]       = useState(null);
+  const [form, setForm]             = useState({});
+  const [activeLang, setActiveLang] = useState('en');
+  const [saving, setSaving]         = useState(false);
+  const [translating, setTranslating] = useState('');
+  const [msg, setMsg]               = useState('');
 
   const load = useCallback(() => call('get', '/blog').then(setPosts).catch(() => {}), [call]);
   useEffect(() => { load(); }, [load]);
 
-  const newForm = { slug: '', title: '', seo_title: '', meta_description: '', category: 'General', read_time: '5 min read', date: new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }), excerpt: '', content: '', featured_image: '', published: true, translations: { it: { title:'', excerpt:'', content:'' }, es: { title:'', excerpt:'', content:'' } } };
+  const newForm = {
+    slug: '', title: '', seo_title: '', meta_description: '',
+    category: 'General', read_time: '5 min read',
+    date: new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }),
+    excerpt: '', content: '', featured_image: '', published: true,
+    translations: { it: { ...EMPTY_TRANS }, es: { ...EMPTY_TRANS } },
+  };
 
   const startEdit = (post) => {
-    const merged = {
+    setEditing(post);
+    setForm({
       ...post,
-      translations: post.translations || { it: { title:'', excerpt:'', content:'' }, es: { title:'', excerpt:'', content:'' } }
-    };
-    setEditing(post); setForm(merged); setMsg('');
+      translations: {
+        it: { ...EMPTY_TRANS, ...(post.translations?.it || {}) },
+        es: { ...EMPTY_TRANS, ...(post.translations?.es || {}) },
+      },
+    });
+    setActiveLang('en'); setMsg('');
   };
-  const startNew = () => { setEditing('new'); setForm({ ...newForm }); setMsg(''); };
+  const startNew = () => { setEditing('new'); setForm({ ...newForm }); setActiveLang('en'); setMsg(''); };
 
-  const setTransField = (lang, field, val) => {
-    setForm(prev => ({
-      ...prev,
-      translations: { ...prev.translations, [lang]: { ...prev.translations?.[lang], [field]: val } }
-    }));
+  const getField = (field) => {
+    if (activeLang === 'en') return form[field] || '';
+    return form.translations?.[activeLang]?.[field] || '';
+  };
+  const setField = (field, val) => {
+    if (activeLang === 'en') {
+      setForm(prev => ({ ...prev, [field]: val }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        translations: { ...prev.translations, [activeLang]: { ...prev.translations?.[activeLang], [field]: val } },
+      }));
+    }
+  };
+
+  const langComplete = (lang) => {
+    const fields = ['title', 'seo_title', 'meta_description', 'excerpt', 'content'];
+    const src = lang === 'en' ? form : (form.translations?.[lang] || {});
+    return fields.filter(f => (src[f] || '').trim()).length;
+  };
+
+  const aiTranslate = async (langCode, langName) => {
+    if (!editing || editing === 'new') { setMsg('Salva prima l\'articolo per usare AI Translate'); return; }
+    setTranslating(langCode); setMsg('');
+    try {
+      const r = await call('post', `/blog/${editing.id}/translate`, { target_lang: langCode, target_lang_name: langName });
+      setMsg(`✓ ${r.translated} campi tradotti in ${langCode.toUpperCase()} con AI`);
+      const updated = await call('get', `/blog/${editing.slug}`).catch(() => null);
+      if (updated?.translations) {
+        setForm(prev => ({
+          ...prev,
+          translations: {
+            it: { ...EMPTY_TRANS, ...(updated.translations.it || {}) },
+            es: { ...EMPTY_TRANS, ...(updated.translations.es || {}) },
+          },
+        }));
+      }
+    } catch (e) { setMsg(e?.response?.data?.detail || 'Errore traduzione AI'); }
+    finally { setTranslating(''); }
   };
 
   const save = async () => {
@@ -1342,13 +1394,13 @@ function BlogManager({ call }) {
     try {
       if (editing === 'new') { await call('post', '/blog', form); }
       else { await call('put', `/blog/${editing.id}`, form); }
-      setMsg('Saved!'); load(); setTimeout(() => setEditing(null), 800);
+      setMsg('Salvato!'); load(); setTimeout(() => setEditing(null), 800);
     } catch (e) { setMsg(e?.response?.data?.detail || 'Errore'); }
     finally { setSaving(false); }
   };
 
   const del = async (post) => {
-    if (!window.confirm(`Delete "${post.title}"?`)) return;
+    if (!window.confirm(`Eliminare "${post.title}"?`)) return;
     await call('delete', `/blog/${post.id}`); load();
   };
 
@@ -1361,9 +1413,9 @@ function BlogManager({ call }) {
           meta_description: p.meta_description, category: p.category,
           read_time: p.readTime, date: p.date, excerpt: p.excerpt,
           content: p.content, featured_image: p.coverImage, published: true,
-        }).catch(() => {}); // skip if slug exists
+        }).catch(() => {});
       }
-      load(); setMsg('Demo articles seeded!');
+      load(); setMsg('Articoli demo importati!');
     } finally { setSaving(false); }
   };
 
@@ -1371,97 +1423,182 @@ function BlogManager({ call }) {
   const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
 
   if (editing !== null) {
-    const transLangData = form.translations?.[transLang] || {};
+    const isNew = editing === 'new';
+    const langName = BLOG_LANGS.find(l => l.code === activeLang)?.name || activeLang;
     return (
       <div>
-        <button onClick={() => setEditing(null)} className="flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white mb-6 transition-colors">
-          <ArrowLeft size={14} /> Back to list
+        <button onClick={() => setEditing(null)} className="flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white mb-5 transition-colors">
+          <ArrowLeft size={14} /> Torna alla lista
         </button>
-        <h2 className="font-anton text-2xl uppercase text-white mb-6">{editing === 'new' ? 'NUOVO ARTICOLO' : 'MODIFICA ARTICOLO'}</h2>
-        <div className="space-y-4 max-w-3xl">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Titolo EN *</label>
-              <input className={inp} style={inpStyle} value={form.title||''} onChange={e => setForm({...form,title:e.target.value})} placeholder="Article title (EN)" />
-            </div>
-            <div>
-              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Slug *</label>
-              <input className={inp} style={inpStyle} value={form.slug||''} onChange={e => setForm({...form,slug:e.target.value})} placeholder="url-del-articolo" />
-            </div>
-          </div>
-          <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">SEO Title</label>
-            <input className={inp} style={inpStyle} value={form.seo_title||''} onChange={e => setForm({...form,seo_title:e.target.value})} placeholder="Titolo SEO (max 60 char)" />
-          </div>
-          <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Meta Description</label>
-            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.meta_description||''} onChange={e => setForm({...form,meta_description:e.target.value})} placeholder="Descrizione SEO (max 155 char)" />
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Categoria</label>
-              <input className={inp} style={inpStyle} value={form.category||''} onChange={e => setForm({...form,category:e.target.value})} />
-            </div>
-            <div>
-              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Read Time</label>
-              <input className={inp} style={inpStyle} value={form.read_time||''} onChange={e => setForm({...form,read_time:e.target.value})} placeholder="5 min read" />
-            </div>
-            <div>
-              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Data</label>
-              <input className={inp} style={inpStyle} value={form.date||''} onChange={e => setForm({...form,date:e.target.value})} placeholder="Aprile 2026" />
-            </div>
-          </div>
-          <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Immagine (URL)</label>
-            <input className={inp} style={inpStyle} value={form.featured_image||''} onChange={e => setForm({...form,featured_image:e.target.value})} placeholder="https://..." />
-          </div>
-          <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt EN</label>
-            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.excerpt||''} onChange={e => setForm({...form,excerpt:e.target.value})} placeholder="Short article preview (EN)" />
-          </div>
-          <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Contenuto EN (Markdown)</label>
-            <textarea className={`${inp} resize-y font-mono text-xs`} style={{ ...inpStyle, minHeight: '200px' }} value={form.content||''} onChange={e => setForm({...form,content:e.target.value})} placeholder="## Titolo&#10;&#10;Contenuto in markdown..." />
-          </div>
-
-          {/* Translations Section */}
-          <div className="border border-white/10 rounded-[12px] overflow-hidden">
-            <div className="flex border-b border-white/10">
-              <div className="flex-1 px-4 py-3 font-inter text-xs font-bold uppercase tracking-wider text-white/40">Traduzioni</div>
-              {['it', 'es'].map(l => (
-                <button key={l} onClick={() => setTransLang(l)}
-                  className={`px-5 py-3 font-inter text-xs font-bold uppercase tracking-wider transition-colors ${transLang === l ? 'text-ak-cyan border-b-2 border-ak-cyan' : 'text-white/40 hover:text-white'}`}>
-                  {l.toUpperCase()}
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <h2 className="font-anton text-2xl uppercase text-white">{isNew ? 'NUOVO ARTICOLO' : 'MODIFICA ARTICOLO'}</h2>
+          {!isNew && (
+            <div className="flex items-center gap-2">
+              {BLOG_LANGS.filter(l => l.code !== 'en').map(l => (
+                <button key={l.code} onClick={() => aiTranslate(l.code, l.name)} disabled={!!translating}
+                  className="inline-flex items-center gap-1.5 font-inter text-[10px] font-bold uppercase tracking-wider px-3 py-2 rounded-[8px] border transition-all disabled:opacity-40"
+                  style={{
+                    borderColor: translating === l.code ? '#FFD700' : 'rgba(255,215,0,0.3)',
+                    color: translating === l.code ? '#FFD700' : 'rgba(255,215,0,0.7)',
+                    background: translating === l.code ? 'rgba(255,215,0,0.08)' : 'transparent',
+                  }}>
+                  <Sparkles size={10} />
+                  {translating === l.code ? `AI ${l.label}...` : `AI → ${l.label}`}
                 </button>
               ))}
             </div>
-            <div className="p-4 space-y-3">
+          )}
+        </div>
+
+        <div className="max-w-3xl space-y-5">
+          {/* ── LANGUAGE TABS ── */}
+          <div className="rounded-[12px] overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="flex" style={{ background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              {BLOG_LANGS.map(l => {
+                const filled = langComplete(l.code);
+                const pct = Math.round((filled / 5) * 100);
+                const isAct = activeLang === l.code;
+                return (
+                  <button key={l.code} onClick={() => setActiveLang(l.code)}
+                    className="flex-1 flex flex-col items-center gap-1 px-4 py-3 transition-all"
+                    style={{
+                      borderBottom: isAct ? '2px solid #00FFFF' : '2px solid transparent',
+                      color: isAct ? '#00FFFF' : 'rgba(255,255,255,0.4)',
+                      background: isAct ? 'rgba(0,255,255,0.05)' : 'transparent',
+                    }}>
+                    <div className="flex items-center gap-1.5">
+                      <span style={{ fontSize: 13 }}>{l.flag}</span>
+                      <span className="font-inter text-xs font-bold uppercase tracking-wider">{l.label}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="rounded-full overflow-hidden" style={{ width: 36, height: 3, background: 'rgba(255,255,255,0.1)' }}>
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: pct === 100 ? '#34d399' : pct > 0 ? '#FFD700' : 'transparent', transition: 'width .3s' }} />
+                      </div>
+                      <span className="font-inter text-[9px]" style={{ color: pct === 100 ? '#34d399' : 'rgba(255,255,255,0.25)' }}>{filled}/5</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="p-5 space-y-4">
+              {activeLang !== 'en' && (
+                <div className="flex items-center gap-3 p-3 rounded-[8px]" style={{ background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.12)' }}>
+                  <Sparkles size={12} style={{ color: '#FFD700', flexShrink: 0 }} />
+                  <span className="font-inter text-xs text-white/50">
+                    Versione <strong className="text-ak-gold">{activeLang.toUpperCase()}</strong>.
+                    {!isNew && <> Usa <strong className="text-ak-gold">AI → {activeLang.toUpperCase()}</strong> per tradurre automaticamente dall&apos;EN.</>}
+                  </span>
+                </div>
+              )}
+
+              {/* Slug */}
               <div>
-                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Titolo {transLang.toUpperCase()}</label>
-                <input className={inp} style={inpStyle} value={transLangData.title||''} onChange={e => setTransField(transLang,'title',e.target.value)} placeholder={`Titolo in ${transLang.toUpperCase()}...`} />
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
+                  Slug {activeLang.toUpperCase()} {activeLang === 'en' ? '* (URL base)' : '(per SEO hreflang)'}
+                </label>
+                <input className={inp} style={inpStyle}
+                  value={activeLang === 'en' ? (form.slug || '') : getField('slug')}
+                  onChange={e => activeLang === 'en' ? setForm({...form, slug: e.target.value}) : setField('slug', e.target.value)}
+                  placeholder={activeLang === 'en' ? 'url-articolo-en' : `url-articolo-${activeLang}`} />
               </div>
+
+              {/* Title */}
               <div>
-                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt {transLang.toUpperCase()}</label>
-                <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={transLangData.excerpt||''} onChange={e => setTransField(transLang,'excerpt',e.target.value)} placeholder={`Excerpt in ${transLang.toUpperCase()}...`} />
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Titolo {activeLang.toUpperCase()} *</label>
+                <input className={inp} style={inpStyle}
+                  value={getField('title')} onChange={e => setField('title', e.target.value)}
+                  placeholder={`Titolo articolo in ${langName}...`} />
               </div>
+
+              {/* SEO Title */}
               <div>
-                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Contenuto {transLang.toUpperCase()} (Markdown)</label>
-                <textarea className={`${inp} resize-y font-mono text-xs`} style={{ ...inpStyle, minHeight: '200px' }} value={transLangData.content||''} onChange={e => setTransField(transLang,'content',e.target.value)} placeholder={`Contenuto in ${transLang.toUpperCase()}...`} />
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
+                  SEO Title {activeLang.toUpperCase()}
+                  {getField('seo_title') && (
+                    <span className={`ml-2 font-normal ${getField('seo_title').length > 60 ? 'text-red-400' : 'text-white/25'}`}>
+                      {getField('seo_title').length}/60
+                    </span>
+                  )}
+                </label>
+                <input className={inp} style={inpStyle}
+                  value={getField('seo_title')} onChange={e => setField('seo_title', e.target.value)}
+                  placeholder={`SEO Title in ${langName} (max 60 char)...`} />
+              </div>
+
+              {/* Meta Description */}
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
+                  Meta Description {activeLang.toUpperCase()}
+                  {getField('meta_description') && (
+                    <span className={`ml-2 font-normal ${getField('meta_description').length > 155 ? 'text-red-400' : 'text-white/25'}`}>
+                      {getField('meta_description').length}/155
+                    </span>
+                  )}
+                </label>
+                <textarea className={`${inp} resize-none`} style={inpStyle} rows={2}
+                  value={getField('meta_description')} onChange={e => setField('meta_description', e.target.value)}
+                  placeholder={`Meta description in ${langName} (max 155 char)...`} />
+              </div>
+
+              {/* Excerpt */}
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt {activeLang.toUpperCase()}</label>
+                <textarea className={`${inp} resize-none`} style={inpStyle} rows={2}
+                  value={getField('excerpt')} onChange={e => setField('excerpt', e.target.value)}
+                  placeholder={`Anteprima breve in ${langName}...`} />
+              </div>
+
+              {/* Content */}
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
+                  Contenuto {activeLang.toUpperCase()} <span className="text-white/20 normal-case ml-1">(Markdown)</span>
+                </label>
+                <textarea className={`${inp} resize-y font-mono text-xs`}
+                  style={{ ...inpStyle, minHeight: '280px' }}
+                  value={getField('content')} onChange={e => setField('content', e.target.value)}
+                  placeholder={`## Titolo\n\nContenuto in ${langName}...`} />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <input type="checkbox" id="pub" checked={form.published||false} onChange={e => setForm({...form,published:e.target.checked})} className="w-4 h-4" />
-            <label htmlFor="pub" className="font-inter text-sm text-white">Pubblicato</label>
+          {/* ── CAMPI COMUNI ── */}
+          <div className="p-5 rounded-[12px] space-y-4" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/30">Campi comuni (tutte le lingue)</div>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Categoria</label>
+                <input className={inp} style={inpStyle} value={form.category||''} onChange={e => setForm({...form,category:e.target.value})} />
+              </div>
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Read Time</label>
+                <input className={inp} style={inpStyle} value={form.read_time||''} onChange={e => setForm({...form,read_time:e.target.value})} placeholder="5 min read" />
+              </div>
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Data</label>
+                <input className={inp} style={inpStyle} value={form.date||''} onChange={e => setForm({...form,date:e.target.value})} placeholder="Aprile 2026" />
+              </div>
+            </div>
+            <div>
+              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Immagine di copertina (URL)</label>
+              <input className={inp} style={inpStyle} value={form.featured_image||''} onChange={e => setForm({...form,featured_image:e.target.value})} placeholder="https://..." />
+            </div>
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="pub" checked={form.published||false} onChange={e => setForm({...form,published:e.target.checked})} className="w-4 h-4 accent-yellow-400" />
+              <label htmlFor="pub" className="font-inter text-sm text-white">Pubblicato</label>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* ── SAVE ── */}
+          <div className="flex items-center gap-4 pt-1">
             <button onClick={save} disabled={saving}
-              className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-6 rounded-[12px] bg-ak-gold text-black disabled:opacity-60"
-              style={{ height: '44px' }}>
-              <Save size={16} /> {saving ? 'Saving...' : 'Salva'}
+              className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-8 rounded-[12px] bg-ak-gold text-black disabled:opacity-60 hover:scale-[1.02] transition-transform"
+              style={{ height: '46px' }}>
+              <Save size={16} /> {saving ? 'Salvataggio...' : 'Salva Articolo'}
             </button>
-            {msg && <span className={`font-inter text-xs ${msg.includes('Errore') ? 'text-red-400' : 'text-ak-cyan'}`}>{msg}</span>}
+            {msg && (
+              <span className={`font-inter text-xs font-semibold ${msg.startsWith('✓') || msg === 'Salvato!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>
+            )}
           </div>
         </div>
       </div>
@@ -1477,20 +1614,20 @@ function BlogManager({ call }) {
             <button onClick={seedDemo} disabled={saving}
               className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] border border-ak-cyan text-ak-cyan hover:bg-ak-cyan hover:text-black transition-all"
               style={{ height: '36px' }}>
-              Seed Demo Articles
+              Importa Demo
             </button>
           )}
           <button onClick={startNew} data-testid="blog-new-btn"
             className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] bg-ak-gold text-black hover:scale-105 transition-transform"
             style={{ height: '36px' }}>
-            <Plus size={14} /> New Article
+            <Plus size={14} /> Nuovo Articolo
           </button>
         </div>
       </div>
       {posts.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-white/15 rounded-[14px]">
           <BookOpen size={32} className="text-white/20 mx-auto mb-3" />
-          <p className="font-inter text-sm text-white/40">No articles yet. Create the first or import demos.</p>
+          <p className="font-inter text-sm text-white/40">Nessun articolo. Crea il primo o importa i demo.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -1500,10 +1637,23 @@ function BlogManager({ call }) {
                 {post.featured_image && <img src={post.featured_image} alt="" className="w-12 h-12 object-cover rounded-[8px] flex-shrink-0" loading="lazy" />}
                 <div className="min-w-0">
                   <div className="font-inter text-sm font-semibold text-white truncate">{post.title}</div>
-                  <div className="flex items-center gap-3 mt-0.5">
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                     <span className="font-inter text-[10px] text-ak-cyan">{post.category}</span>
                     <span className="font-inter text-[10px] text-white/40">/{post.slug}</span>
                     {!post.published && <span className="font-inter text-[10px] text-yellow-500">Bozza</span>}
+                    {BLOG_LANGS.filter(l => l.code !== 'en').map(l => {
+                      const has = post.translations?.[l.code]?.title;
+                      return (
+                        <span key={l.code} className="font-inter text-[9px] font-bold px-1.5 py-0.5 rounded"
+                          style={{
+                            background: has ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
+                            color: has ? '#34d399' : 'rgba(255,255,255,0.2)',
+                            border: `1px solid ${has ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.06)'}`,
+                          }}>
+                          {l.flag} {l.label}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -1519,6 +1669,7 @@ function BlogManager({ call }) {
     </div>
   );
 }
+
 
 /* ─── PAGES MANAGER ─── */
 /* ─── PAGES MANAGER (Auto-sync) ─── */
