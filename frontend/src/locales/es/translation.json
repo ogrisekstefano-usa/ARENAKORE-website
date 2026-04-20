@@ -154,7 +154,8 @@
     "gyms_stat_3_desc": "cero compromiso",
     "gyms_stat_4_unit": "setup",
     "gyms_stat_4_desc": "primer desafío en vivo",
-    "for_athletes_link": "Para Atletas"
+    "for_athletes_link": "Para Atletas",
+    "disciplines_sub": "Un sistema de ranking. Una identidad. Cualquier deporte."
   },
   "athlete": {
     "badge": "PARA ATLETAS",
@@ -363,7 +364,11 @@
     "faq_a5": "Sí. Cada miembro crea un KORE ID gratuito en ArenaKore. El onboarding lleva unos 5 minutos. Nuestro equipo apoya a tus miembros durante la primera configuración.",
     "bottomCta_h2": "DOS SEMANAS.",
     "bottomCta_sub": "Luego decides tú.",
-    "bottomCta_cta": "Iniciar el Piloto"
+    "bottomCta_cta": "Iniciar el Piloto",
+    "location_a": "Sede A",
+    "location_b": "Sede B",
+    "rival_gym": "Gimnasio Rival",
+    "krating_avg": "K-Rating promedio"
   },
   "support": {
     "h1": "SOPORTE ARENAKORE",
@@ -453,7 +458,8 @@
     "final_h2_line3": "COMPITE.",
     "final_body": "La Arena está abierta. Tu ranking te espera. Cada día que esperas es un día que alguien más avanza.",
     "final_free": "Gratis · Disponible en todo el mundo",
-    "final_learn": "Conocer el Sistema Arena"
+    "final_learn": "Conocer el Sistema Arena",
+    "any_activity": "+ Cualquier actividad basada en el rendimiento"
   },
   "ui": {
     "section_how_it_works": "CÓMO FUNCIONA",
@@ -531,7 +537,19 @@
     "sport_triathlon": "Triatlón",
     "sport_volleyball": "Voleibol",
     "sport_weightlifting": "Halterofilia",
-    "sport_yoga": "Yoga"
+    "sport_yoga": "Yoga",
+    "login_enter": "ENTRA AL ARENA",
+    "login_join": "ÚNETE AL ARENA",
+    "login_signin_btn": "Iniciar sesión",
+    "login_register_btn": "Crear cuenta",
+    "login_signin_sub": "Inicia sesión en tu cuenta KORE",
+    "login_register_sub": "Crea tu identidad KORE",
+    "login_name_placeholder": "Tu nombre",
+    "login_name_required": "El nombre es obligatorio",
+    "login_no_account": "¿No tienes cuenta?",
+    "login_have_account": "¿Ya tienes cuenta?",
+    "login_join_now": "Únete ahora",
+    "login_error_default": "Algo salió mal. Inténtalo de nuevo."
   },
   "arena": {
     "hero_badge": "SISTEMA UNIVERSAL DE COMPETICIÓN",

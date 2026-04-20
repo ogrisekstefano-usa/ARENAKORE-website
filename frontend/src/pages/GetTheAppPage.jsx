@@ -222,17 +222,24 @@ export default function GetTheAppPage() {
             </Link>
           </div>
           <div className="ak-reveal ak-delay-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {['Basketball','Running','Swimming','CrossFit','Golf','Surf'].map((sport, i) => (
+            {[
+              { key: t('ui.sport_basketball'), hi: false },
+              { key: t('ui.sport_running'),    hi: true  },
+              { key: t('ui.sport_swimming'),   hi: true  },
+              { key: t('ui.sport_crossfit'),   hi: true  },
+              { key: t('ui.sport_golf'),       hi: false },
+              { key: t('ui.sport_surf'),       hi: false },
+            ].map((s, i) => (
               <div key={i} className="flex items-center gap-2.5 p-4 rounded-[12px]"
-                style={{ background: '#0a0a0a', border: `1px solid ${['CrossFit','Running','Swimming'].includes(sport) ? 'rgba(0,255,255,0.15)' : 'rgba(255,215,0,0.12)'}` }}>
+                style={{ background: '#0a0a0a', border: `1px solid ${s.hi ? 'rgba(0,255,255,0.15)' : 'rgba(255,215,0,0.12)'}` }}>
                 <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                  style={{ background: ['CrossFit','Running','Swimming'].includes(sport) ? '#00FFFF' : '#FFD700' }} />
-                <span className="font-inter text-sm font-semibold text-white">{sport}</span>
+                  style={{ background: s.hi ? '#00FFFF' : '#FFD700' }} />
+                <span className="font-inter text-sm font-semibold text-white">{s.key}</span>
               </div>
             ))}
             <div className="flex items-center gap-2 p-4 rounded-[12px] col-span-2 sm:col-span-3"
               style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <span className="font-inter text-xs text-white/35 uppercase tracking-wider">+ Any performance-based activity</span>
+              <span className="font-inter text-xs text-white/35 uppercase tracking-wider">{t('getApp.any_activity')}</span>
             </div>
           </div>
         </div>

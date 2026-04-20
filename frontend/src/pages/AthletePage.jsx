@@ -44,7 +44,7 @@ export default function AthletePage() {
         <div className="absolute top-20 left-0 right-0 z-10">
           <div className="max-w-4xl mx-auto px-6 sm:px-10">
             <div className="flex flex-wrap gap-2">
-              {[t('ui.sport_fitness'),'CROSSFIT',t('ui.sport_running'),t('ui.sport_basketball'),t('ui.sport_swimming')].map((s, i) => (
+              {[t('ui.sport_fitness'), t('ui.sport_crossfit'), t('ui.sport_running'), t('ui.sport_basketball'), t('ui.sport_swimming')].map((s, i) => (
                 <span key={i} className="font-inter text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded"
                   style={{ background: i < 2 ? 'rgba(0,255,255,0.15)' : 'rgba(255,255,255,0.05)', color: i < 2 ? '#00FFFF' : 'rgba(255,255,255,0.35)', border: `1px solid ${i < 2 ? 'rgba(0,255,255,0.3)' : 'rgba(255,255,255,0.1)'}` }}>
                   {s}
@@ -80,7 +80,7 @@ export default function AthletePage() {
             <Link to="/arena-system" data-testid="athlete-enter-arena-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/25 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
               style={{ height: '60px' }}>
-              {cms('final_cta', 'Enter the Arena')} <ArrowRight size={16} />
+              {cms('final_cta', t('cta.enterArena'))} <ArrowRight size={16} />
             </Link>
           </div>
 
@@ -360,7 +360,7 @@ export default function AthletePage() {
             <Link to="/arena-system" data-testid="athlete-final-arena"
               className="inline-flex items-center justify-center gap-2 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
               style={{ height: '64px' }}>
-              {cms('final_cta', 'Enter the Arena')} <ArrowRight size={16} />
+              {cms('final_cta', t('cta.enterArena'))} <ArrowRight size={16} />
             </Link>
           </div>
           <div className="flex items-center justify-center gap-8 mt-12">

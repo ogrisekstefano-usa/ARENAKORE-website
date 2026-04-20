@@ -154,7 +154,8 @@
     "gyms_stat_3_desc": "zero commitment",
     "gyms_stat_4_unit": "setup",
     "gyms_stat_4_desc": "first challenge live",
-    "for_athletes_link": "For Athletes"
+    "for_athletes_link": "For Athletes",
+    "disciplines_sub": "One ranking system. One identity. Any sport."
   },
   "athlete": {
     "badge": "FOR ATHLETES",
@@ -363,7 +364,11 @@
     "faq_a5": "Yes. Each member creates a free KORE ID on ArenaKore. Onboarding takes about 5 minutes. Our team supports your members during the first setup.",
     "bottomCta_h2": "TWO WEEKS.",
     "bottomCta_sub": "Then you decide.",
-    "bottomCta_cta": "Start the Pilot"
+    "bottomCta_cta": "Start the Pilot",
+    "location_a": "Location A",
+    "location_b": "Location B",
+    "rival_gym": "Rival Gym",
+    "krating_avg": "K-Rating average"
   },
   "support": {
     "h1": "ARENAKORE SUPPORT",
@@ -453,7 +458,8 @@
     "final_h2_line3": "COMPETE.",
     "final_body": "The Arena is open. Your rank is waiting. Every day you delay is a day someone else moves ahead.",
     "final_free": "Free to download · Available worldwide",
-    "final_learn": "Learn about the Arena System"
+    "final_learn": "Learn about the Arena System",
+    "any_activity": "+ Any performance-based activity"
   },
   "ui": {
     "section_how_it_works": "HOW IT WORKS",
@@ -531,7 +537,19 @@
     "sport_triathlon": "Triathlon",
     "sport_volleyball": "Volleyball",
     "sport_weightlifting": "Weightlifting",
-    "sport_yoga": "Yoga"
+    "sport_yoga": "Yoga",
+    "login_enter": "ENTER THE ARENA",
+    "login_join": "JOIN THE ARENA",
+    "login_signin_btn": "Sign In",
+    "login_register_btn": "Create Account",
+    "login_signin_sub": "Sign in to your KORE account",
+    "login_register_sub": "Create your KORE identity",
+    "login_name_placeholder": "Your name",
+    "login_name_required": "Name is required",
+    "login_no_account": "Don't have an account?",
+    "login_have_account": "Already have an account?",
+    "login_join_now": "Join now",
+    "login_error_default": "Something went wrong. Please try again."
   },
   "arena": {
     "hero_badge": "UNIVERSAL COMPETITION SYSTEM",

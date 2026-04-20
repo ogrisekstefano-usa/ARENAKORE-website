@@ -3,15 +3,15 @@ import { Mail, MessageCircle, Zap, Shield, Activity, Bug, ArrowRight } from 'luc
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import { useTranslation } from 'react-i18next';
 
-const TOPICS = [
-  { icon: <Shield size={20} />, title: 'Account & KORE ID', desc: 'Login, password, account creation, KORE ID recovery.' },
-  { icon: <Zap size={20} />, title: 'Challenge Issues', desc: 'Problems with creating, joining or completing challenges.' },
-  { icon: <Activity size={20} />, title: 'Performance Tracking', desc: 'NEXUS validation issues, rep counts, K-Rating questions.' },
-  { icon: <Bug size={20} />, title: 'Technical Bugs', desc: 'App crashes, loading issues, unexpected behavior.' },
-];
-
 export default function SupportPage() {
   const { t } = useTranslation();
+
+  const TOPICS = [
+    { icon: <Shield size={20} />, title: t('support.t1_title'), desc: t('support.t1_desc') },
+    { icon: <Zap size={20} />,    title: t('support.t2_title'), desc: t('support.t2_desc') },
+    { icon: <Activity size={20} />, title: t('support.t3_title'), desc: t('support.t3_desc') },
+    { icon: <Bug size={20} />,    title: t('support.t4_title'), desc: t('support.t4_desc') },
+  ];
   useSEO({
     title: 'Support | ArenaKore',
     description: 'Get help with ArenaKore. Account issues, challenge problems, technical support. We respond within 24–48 hours.',
@@ -60,8 +60,8 @@ export default function SupportPage() {
           <div className="w-10 h-1 bg-ak-gold mx-auto mb-6 rounded" />
           <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-4">{t('ui.support_contact')}</h2>
           <p className="font-inter text-sm text-white mb-8">
-            We typically respond within <strong className="text-white">24–48 hours</strong>.
-            For urgent issues, include your KORE ID in the subject line.
+            {t('support.contact_response')} <strong className="text-white">{t('support.contact_time')}</strong>.
+            {' '}{t('support.contact_tip')}
           </p>
 
           <a
@@ -87,11 +87,11 @@ export default function SupportPage() {
           <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-8 text-center">{t('ui.support_faq')}</h2>
           <div className="space-y-3">
             {[
-              { q: 'How do I reset my password?', a: 'Go to the login screen and tap "Forgot password". Enter your email and follow the reset link sent to your inbox.' },
-              { q: 'Why did NEXUS not count my rep?', a: 'NEXUS rejects reps that do not meet the required range of motion or movement standard. Review the movement demo in the challenge details and ensure full depth or extension.' },
-              { q: 'How do I delete my account?', a: 'Navigate to Settings → Account → Delete Account. Note that this will permanently remove your KORE ID, K-Rating and challenge history.' },
-              { q: 'My K-Rating did not update after a challenge. Why?', a: 'K-Rating updates process within 5 minutes of challenge completion. If your rating has not updated after 30 minutes, contact support with your KORE ID.' },
-              { q: 'How do I register my gym on ArenaKore?', a: 'Visit arenakore.com/for-gyms and start your 14-day free pilot. You will receive an admin dashboard for creating and managing challenges.' },
+              { q: t('support.faq_q1'), a: t('support.faq_a1') },
+              { q: t('support.faq_q2'), a: t('support.faq_a2') },
+              { q: t('support.faq_q3'), a: t('support.faq_a3') },
+              { q: t('support.faq_q4'), a: t('support.faq_a4') },
+              { q: t('support.faq_q5'), a: t('support.faq_a5') },
             ].map((f, i) => (
               <details key={i} className="group border border-white/10 rounded-[14px] overflow-hidden" style={{ background: '#0a0a0a' }}>
                 <summary className="flex items-center justify-between p-5 cursor-pointer list-none">

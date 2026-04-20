@@ -364,16 +364,16 @@ export default function GymPilotPage() {
           </div>
           <div className="ak-reveal ak-delay-2 space-y-3">
             {[
-              { label: 'Location A', score: '847', rank: '#1', color: '#FFD700' },
-              { label: 'Location B', score: '783', rank: '#2', color: '#00FFFF' },
-              { label: 'Rival Gym',  score: '720', rank: '#3', color: 'rgba(255,255,255,0.4)' },
+              { label: t('pilot.location_a'), score: '847', rank: '#1', color: '#FFD700' },
+              { label: t('pilot.location_b'), score: '783', rank: '#2', color: '#00FFFF' },
+              { label: t('pilot.rival_gym'),  score: '720', rank: '#3', color: 'rgba(255,255,255,0.4)' },
             ].map((team, i) => (
               <div key={i} className="flex items-center justify-between p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: `1px solid ${team.color}30` }}>
                 <div className="flex items-center gap-4">
                   <div className="font-anton text-2xl" style={{ color: team.color }}>{team.rank}</div>
                   <div>
                     <div className="font-anton text-lg uppercase text-white">{team.label}</div>
-                    <div className="font-inter text-xs text-white/50">K-Rating average</div>
+                    <div className="font-inter text-xs text-white/50">{t('pilot.krating_avg')}</div>
                   </div>
                 </div>
                 <div className="font-anton text-3xl" style={{ color: team.color }}>{team.score}</div>

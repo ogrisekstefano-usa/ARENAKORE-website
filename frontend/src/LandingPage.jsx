@@ -427,7 +427,7 @@ export default function LandingPage() {
           <div className="text-center mb-14 ak-reveal">
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">{cms('disciplines_badge', t('home.disciplines_badge'))}</div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">{cms('disciplines_h2', t('home.useCases.h2'))}</h2>
-            <p className="font-inter text-sm text-white mt-4 max-w-xl mx-auto">{cms('disciplines_sub', 'One ranking system. One identity. Any sport.')}</p>
+            <p className="font-inter text-sm text-white mt-4 max-w-xl mx-auto">{cms('disciplines_sub', t('home.disciplines_sub'))}</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {DISCIPLINES.map((d, i) => (

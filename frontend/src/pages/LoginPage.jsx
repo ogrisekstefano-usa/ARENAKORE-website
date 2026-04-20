@@ -35,7 +35,7 @@ export default function LoginPage() {
       if (mode === 'login') {
         await login(email, password);
       } else {
-        if (!name.trim()) { setError('Name is required'); setLoading(false); return; }
+        if (!name.trim()) { setError(t('ui.login_name_required')); setLoading(false); return; }
         await register(email, password, name);
       }
       navigate(from, { replace: true });
@@ -62,10 +62,10 @@ export default function LoginPage() {
             <img src={LOGO} alt="ArenaKore" className="h-10 w-auto object-contain mx-auto mb-4" />
           </Link>
           <h1 className="font-anton text-3xl uppercase text-white mb-1">
-            {mode === 'login' ? 'ENTER THE ARENA' : 'JOIN THE ARENA'}
+            {mode === 'login' ? t('ui.login_enter') : t('ui.login_join')}
           </h1>
           <p className="font-inter text-xs text-white/40 uppercase tracking-widest">
-            {mode === 'login' ? t('ui.sign_in') + ' to your KORE account' : 'Create your KORE identity'}
+            {mode === 'login' ? t('ui.login_signin_sub') : t('ui.login_register_sub')}
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export default function LoginPage() {
             {mode === 'register' && (
               <div className="relative">
                 <User size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
-                <input data-testid="auth-name" type="text" placeholder="Your name" value={name}
+                <input data-testid="auth-name" type="text" placeholder={t('ui.login_name_placeholder')} value={name}
                   onChange={e => setName(e.target.value)} className={inp} style={inpStyle} />
               </div>
             )}
@@ -114,7 +114,7 @@ export default function LoginPage() {
               {loading ? (
                 <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
               ) : (
-                <><Zap size={16} fill="black" />{mode === 'login' ? 'Sign In' : 'Create Account'}</>
+                <><Zap size={16} fill="black" />{mode === 'login' ? t('ui.login_signin_btn') : t('ui.login_register_btn')}</>
               )}
             </button>
           </form>
@@ -122,10 +122,10 @@ export default function LoginPage() {
           {/* Toggle mode */}
           <div className="mt-5 text-center border-t border-white/8 pt-5">
             <p className="font-inter text-xs text-white/40">
-              {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+              {mode === 'login' ? t('ui.login_no_account') + ' ' : t('ui.login_have_account') + ' '}
               <button onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}
                 className="text-ak-cyan hover:underline font-semibold">
-                {mode === 'login' ? 'Join now' : t('ui.sign_in')}
+                {mode === 'login' ? t('ui.login_join_now') : t('ui.sign_in')}
               </button>
             </p>
           </div>
