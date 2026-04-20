@@ -538,9 +538,18 @@ function ContentEditor({ call }) {
   };
 
   const updateSection = (key, lang, value) => {
-    setSections(prev => prev.map(s =>
-      s.key === key ? { ...s, translations: { ...s.translations, [lang]: value } } : s
-    ));
+    setSections(prev => {
+      const exists = prev.some(s => typeof s === 'object' && s.key === key);
+      if (exists) {
+        return prev.map(s =>
+          (typeof s === 'object' && s.key === key)
+            ? { ...s, translations: { ...(s.translations || {}), [lang]: value } }
+            : s
+        );
+      }
+      // Key not in sections yet (e.g. new pos keys) — add it
+      return [...prev, { key, field_type: 'position', translations: { [lang]: value } }];
+    });
   };
 
   const save = async () => {
