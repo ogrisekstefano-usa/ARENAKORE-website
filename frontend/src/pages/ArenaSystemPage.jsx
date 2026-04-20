@@ -152,21 +152,25 @@ export default function ArenaSystemPage() {
         <div className="max-w-5xl mx-auto ak-reveal">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">ANY DISCIPLINE</div>
+              <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">
+                {cms('sport_badge', t('ui.arena_everywhere_badge'))}
+              </div>
               <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-                WORKS IN<br />ANY<br /><span style={{ color: '#00FFFF' }}>DISCIPLINE.</span>
+                {cms('sport_h2', t('ui.arena_everywhere_body'))}
               </h2>
               <p className="font-inter text-base text-white leading-relaxed mb-8">
-                ArenaKore is not built for one sport. It's built for any activity where performance can be measured, validated and compared.
+                {cms('sport_body', 'ArenaKore is not built for one sport. It\'s built for any activity where performance can be measured, validated and compared.')}
               </p>
-              <Link to="/gym-challenge-pilot" data-testid="multisport-gyms-link"
-                className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-gold hover:underline">
-                t('ui.for_gyms_coaches') + ' →' <ArrowRight size={14} />
-              </Link>
-              <Link to="/for-athletes" data-testid="multisport-athletes-link"
-                className="inline-flex items-center gap-2 font-inter text-sm font-semibold text-ak-cyan hover:underline mt-2">
-                t('cta.enter_arena') <ArrowRight size={14} />
-              </Link>
+              <div className="flex flex-col gap-2">
+                <Link to="/gym-challenge-pilot" data-testid="multisport-gyms-link"
+                  className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-gold hover:underline">
+                  {t('ui.for_gyms_coaches')} <ArrowRight size={14} />
+                </Link>
+                <Link to="/for-athletes" data-testid="multisport-athletes-link"
+                  className="inline-flex items-center gap-2 font-inter text-sm font-semibold text-ak-cyan hover:underline">
+                  {t('cta.enter_arena')} <ArrowRight size={14} />
+                </Link>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {DISCIPLINES.map((d, i) => (
