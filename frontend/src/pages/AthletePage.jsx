@@ -44,7 +44,7 @@ export default function AthletePage() {
         <div className="absolute top-20 left-0 right-0 z-10">
           <div className="max-w-4xl mx-auto px-6 sm:px-10">
             <div className="flex flex-wrap gap-2">
-              {['FITNESS','CROSSFIT','RUNNING','BASKETBALL','SWIMMING'].map((s, i) => (
+              {[t('ui.sport_fitness'),'CROSSFIT',t('ui.sport_running'),t('ui.sport_basketball'),t('ui.sport_swimming')].map((s, i) => (
                 <span key={i} className="font-inter text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded"
                   style={{ background: i < 2 ? 'rgba(0,255,255,0.15)' : 'rgba(255,255,255,0.05)', color: i < 2 ? '#00FFFF' : 'rgba(255,255,255,0.35)', border: `1px solid ${i < 2 ? 'rgba(0,255,255,0.3)' : 'rgba(255,255,255,0.1)'}` }}>
                   {s}
@@ -267,18 +267,25 @@ export default function AthletePage() {
         <div className="max-w-5xl mx-auto ak-reveal">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
             <div className="flex-shrink-0">
-              <div className="font-inter text-xs font-bold tracking-[0.3em] uppercase mb-2 text-ak-cyan">THE ARENA IS EVERYWHERE</div>
+              <div className="font-inter text-xs font-bold tracking-[0.3em] uppercase mb-2 text-ak-cyan">
+                {t('ui.arena_everywhere_badge')}
+              </div>
               <h3 className="font-anton text-2xl md:text-3xl uppercase text-white leading-tight">
-                You compete in<br /><span style={{ color: '#00FFFF' }}>your arena.</span><br />ArenaKore tracks it.
+                {t('ui.arena_everywhere_h3_line1')}<br />
+                <span style={{ color: '#00FFFF' }}>{t('ui.arena_everywhere_h3_line2')}</span><br />
+                {t('ui.arena_everywhere_h3_line3')}
               </h3>
             </div>
             <div className="w-px h-16 bg-white/10 hidden md:block flex-shrink-0" />
             <div>
               <p className="font-inter text-sm text-white leading-relaxed mb-4">
-                ArenaKore works across any discipline. One identity. One ranking. Any sport.
+                {t('ui.arena_everywhere_body')}
               </p>
               <div className="flex flex-wrap gap-2">
-                {['Fitness','Running','Basketball','Swimming','Golf','Team Sports','Any Sport'].map((s, i) => (
+                {[
+                  t('ui.sport_fitness'), t('ui.sport_running'), t('ui.sport_basketball'),
+                  t('ui.sport_swimming'), t('ui.sport_golf'), t('ui.sport_team'), t('ui.sport_any')
+                ].map((s, i) => (
                   <span key={i} className="font-inter text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
                     style={{ border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.5)' }}>{s}</span>
                 ))}

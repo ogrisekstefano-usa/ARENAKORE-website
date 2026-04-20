@@ -432,6 +432,20 @@
     "inside_app": "DENTRO DE LA APP",
     "ready_compete": "¿LISTO PARA COMPETIR?",
     "your_sport_arena": "Tu deporte. Tu arena.",
-    "see_how": "Ver cómo funciona"
+    "see_how": "Ver cómo funciona",
+    "sport_selector_title": "¿Cuál es tu arena?",
+    "sport_selector_sub": "Elige tu disciplina principal",
+    "arena_everywhere_badge": "LA ARENA ESTÁ EN TODAS PARTES",
+    "arena_everywhere_h3_line1": "Compites en",
+    "arena_everywhere_h3_line2": "tu arena.",
+    "arena_everywhere_h3_line3": "ArenaKore lo rastrea.",
+    "arena_everywhere_body": "ArenaKore funciona en cualquier disciplina. Una identidad. Un ranking. Cualquier deporte.",
+    "sport_any": "Cualquier Deporte",
+    "sport_fitness": "Fitness",
+    "sport_running": "Running",
+    "sport_basketball": "Baloncesto",
+    "sport_swimming": "Natación",
+    "sport_golf": "Golf",
+    "sport_team": "Deportes de Equipo"
   }
 }

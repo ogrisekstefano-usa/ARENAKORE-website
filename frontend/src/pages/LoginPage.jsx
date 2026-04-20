@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Zap, Mail, Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
@@ -13,6 +14,7 @@ function formatError(err) {
 }
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const [mode, setMode]           = useState('login'); // 'login' | 'register'
   const [email, setEmail]         = useState('');
   const [password, setPassword]   = useState('');
@@ -63,7 +65,7 @@ export default function LoginPage() {
             {mode === 'login' ? 'ENTER THE ARENA' : 'JOIN THE ARENA'}
           </h1>
           <p className="font-inter text-xs text-white/40 uppercase tracking-widest">
-            {mode === 'login' ? 'Sign in to your KORE account' : 'Create your KORE identity'}
+            {mode === 'login' ? t('ui.sign_in') + ' to your KORE account' : 'Create your KORE identity'}
           </p>
         </div>
 
@@ -123,7 +125,7 @@ export default function LoginPage() {
               {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
               <button onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}
                 className="text-ak-cyan hover:underline font-semibold">
-                {mode === 'login' ? 'Join now' : 'Sign in'}
+                {mode === 'login' ? 'Join now' : t('ui.sign_in')}
               </button>
             </p>
           </div>
@@ -131,7 +133,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center">
           <Link to="/" className="font-inter text-xs text-white/25 hover:text-white transition-colors">
-            ← Back to ArenaKore
+            {t('ui.back_to_site')}
           </Link>
         </div>
       </div>

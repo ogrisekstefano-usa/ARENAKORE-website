@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../utils/tracking';
 
 const SPORTS = [
@@ -43,6 +44,7 @@ export default function SportSelector({ onSelect, compact = false }) {
   const [customError, setCustomError] = useState('');
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -89,13 +91,13 @@ export default function SportSelector({ onSelect, compact = false }) {
       <div className={compact ? 'max-w-4xl mx-auto' : 'max-w-5xl mx-auto text-center'}>
         {/* Header */}
         <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-3 text-ak-cyan">
-          CHOOSE YOUR DISCIPLINE
+          {t('ui.arena_everywhere_badge', 'CHOOSE YOUR DISCIPLINE')}
         </div>
         <h3 className={`font-anton uppercase text-white leading-none mb-2 ${compact ? 'text-2xl text-left' : 'text-3xl md:text-4xl'}`}>
-          What's your arena?
+          {t('ui.sport_selector_title', "What's your arena?")}
         </h3>
         <p className={`font-inter text-xs mb-8 ${compact ? 'text-left' : ''}`} style={{ color: 'rgba(255,255,255,0.35)' }}>
-          Choose your primary discipline
+          {t('ui.sport_selector_sub', 'Choose your primary discipline')}
         </p>
 
         {/* Sport grid */}
@@ -167,7 +169,7 @@ export default function SportSelector({ onSelect, compact = false }) {
         {displayName && selected !== 'other' && (
           <p className="font-inter text-xs mt-5 uppercase tracking-widest"
             style={{ color: 'rgba(255,255,255,0.25)', textAlign: compact ? 'left' : 'center' }}>
-            Arena: <span className="text-ak-cyan">{displayName}</span> — tap to change
+            Arena: <span className="text-ak-cyan">{displayName}</span> — {t('ui.sport_selector_sub', 'tap to change')}
           </p>
         )}
       </div>
