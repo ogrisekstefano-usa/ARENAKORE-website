@@ -643,6 +643,7 @@ async def seed_hero_slides(_=Depends(verify_admin)):
 class PageMeta(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     slug: str; seo_title: str = ''; meta_description: str = ''; h1: str = ''
+    translations: Optional[Dict[str, Any]] = None
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PageMetaCreate(BaseModel):
@@ -650,6 +651,7 @@ class PageMetaCreate(BaseModel):
 
 class PageMetaUpdate(BaseModel):
     seo_title: Optional[str]=None; meta_description: Optional[str]=None; h1: Optional[str]=None
+    translations: Optional[Dict[str, Any]] = None
 
 @api_router.get("/pages", response_model=List[PageMeta])
 async def get_pages(_=Depends(verify_admin)):
@@ -679,6 +681,78 @@ async def upsert_page_meta(slug: str, data: PageMetaUpdate, _=Depends(verify_adm
     result = await db.cms_pages.find_one({"slug": slug}, {"_id": 0})
     if isinstance(result.get('updated_at'), str): result['updated_at'] = datetime.fromisoformat(result['updated_at'])
     return result
+
+class PageSeoTranslateRequest(BaseModel):
+    target_lang: str
+    target_lang_name: str = ''
+
+@api_router.post("/pages/{slug:path}/translate")
+async def translate_page_seo(slug: str, req: PageSeoTranslateRequest, _=Depends(verify_admin)):
+    """Translate page SEO metadata (seo_title, meta_description, h1) from EN to target language."""
+    doc = await db.cms_pages.find_one({"slug": slug}, {"_id": 0})
+    lang = req.target_lang.lower()
+    lang_name = req.target_lang_name or lang
+
+    # EN source fields — from the page itself (or empty)
+    fields = {
+        "seo_title":        (doc or {}).get("seo_title", ""),
+        "meta_description": (doc or {}).get("meta_description", ""),
+        "h1":               (doc or {}).get("h1", ""),
+    }
+    # Try to get H1 default from DEFAULT_PAGES if not set
+    defaults = DEFAULT_PAGES.get(slug.lstrip('/'), [])
+    if not fields["h1"]:
+        for s in defaults:
+            if isinstance(s, dict) and s.get("key") == "hero_h1":
+                en_val = s.get("translations", {}).get("en", "")
+                if en_val: fields["h1"] = en_val; break
+
+    to_translate = {k: v for k, v in fields.items() if v}
+    if not to_translate:
+        raise HTTPException(400, "No English content to translate. Add SEO title and meta description first.")
+
+    prompt_items = "\n".join([f"[{k}]: {v}" for k, v in to_translate.items()])
+    system_msg = f"""You are a professional SEO translator for ArenaKore, a competitive sports/fitness platform.
+Translate the following page SEO metadata from English to {lang_name}.
+Keep the tone bold and competitive. Preserve brand names (ArenaKore, NEXUS, K-Rating).
+SEO titles: max 60 characters. Meta descriptions: max 155 characters.
+Return a JSON object with the translated fields."""
+
+    try:
+        import json as _json
+        resp = await asyncio.to_thread(
+            lambda: openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": f"Translate to {lang_name}:\n{prompt_items}"},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.3,
+            )
+        )
+        translated = _json.loads(resp.choices[0].message.content)
+    except Exception as e:
+        logger.error(f"Page SEO translation error: {e}")
+        raise HTTPException(500, f"Translation failed: {str(e)}")
+
+    # Merge into existing translations
+    existing = (doc or {}).get("translations") or {}
+    existing[lang] = {**(existing.get(lang) or {}), **translated}
+
+    update = {
+        "translations": existing,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "slug": slug
+    }
+    if doc:
+        await db.cms_pages.update_one({"slug": slug}, {"$set": update})
+    else:
+        update['id'] = str(uuid.uuid4())
+        await db.cms_pages.insert_one(update)
+
+    logger.info(f"Page SEO {slug} translated {len(translated)} fields → {lang}")
+    return {"ok": True, "translated": len(translated), "lang": lang, "fields": translated}
 
 # ─── CMS: MEDIA LIBRARY ───────────────────────────────────────
 class MediaItem(BaseModel):
@@ -1689,6 +1763,7 @@ async def get_pages_catalog(_=Depends(verify_admin)):
             "seo_title":        override.get("seo_title", "") if override else "",
             "meta_description": override.get("meta_description", "") if override else "",
             "h1":               override.get("h1", "") if override else "",
+            "translations":     override.get("translations") if override else None,
         })
     return result
 

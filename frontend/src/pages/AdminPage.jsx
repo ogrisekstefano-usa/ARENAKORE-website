@@ -1674,45 +1674,107 @@ function BlogManager({ call }) {
 /* ─── PAGES MANAGER ─── */
 /* ─── PAGES MANAGER (Auto-sync) ─── */
 function PagesManager({ call }) {
-  const [pages, setPages]     = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [form, setForm]       = useState({});
-  const [saving, setSaving]   = useState(false);
-  const [msg, setMsg]         = useState('');
-  const [filter, setFilter]   = useState('all');
+  const [pages, setPages]           = useState([]);
+  const [selected, setSelected]     = useState(null);
+  const [form, setForm]             = useState({});
+  const [activeLang, setActiveLang] = useState('en');
+  const [saving, setSaving]         = useState(false);
+  const [translating, setTranslating] = useState('');
+  const [msg, setMsg]               = useState('');
+  const [filter, setFilter]         = useState('all');
+
+  const SEO_LANGS = [
+    { code: 'en', label: 'EN', flag: '🌍', name: 'English' },
+    { code: 'it', label: 'IT', flag: '🇮🇹', name: 'Italian' },
+    { code: 'es', label: 'ES', flag: '🇪🇸', name: 'Spanish' },
+  ];
+  const EMPTY_SEO = { seo_title: '', meta_description: '', h1: '' };
 
   const load = useCallback(async () => {
-    try {
-      const data = await call('get', '/cms/pages');
-      setPages(data);
-    } catch { setPages([]); }
+    try { const data = await call('get', '/cms/pages'); setPages(data); }
+    catch { setPages([]); }
   }, [call]);
-
   useEffect(() => { load(); }, [load]);
 
   const selectPage = (page) => {
     setSelected(page);
-    setForm({ seo_title: page.seo_title || '', meta_description: page.meta_description || '', h1: page.h1 || '' });
-    setMsg('');
+    setForm({
+      seo_title: page.seo_title || '',
+      meta_description: page.meta_description || '',
+      h1: page.h1 || '',
+      translations: {
+        it: { ...EMPTY_SEO, ...(page.translations?.it || {}) },
+        es: { ...EMPTY_SEO, ...(page.translations?.es || {}) },
+      },
+    });
+    setActiveLang('en'); setMsg('');
+  };
+
+  // Get/set field for active language
+  const getField = (field) => {
+    if (activeLang === 'en') return form[field] || '';
+    return form.translations?.[activeLang]?.[field] || '';
+  };
+  const setField = (field, val) => {
+    if (activeLang === 'en') {
+      setForm(prev => ({ ...prev, [field]: val }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        translations: { ...prev.translations, [activeLang]: { ...prev.translations?.[activeLang], [field]: val } },
+      }));
+    }
+  };
+
+  // Count filled fields per language
+  const langFilled = (lang) => {
+    const fields = ['seo_title', 'meta_description'];
+    const src = lang === 'en' ? form : (form.translations?.[lang] || {});
+    return fields.filter(f => (src[f] || '').trim()).length;
   };
 
   const save = async () => {
     if (!selected) return;
     setSaving(true);
     try {
-      await call('put', `/pages${selected.slug}`, { seo_title: form.seo_title, meta_description: form.meta_description, h1: form.h1 });
-      setMsg('Saved!');
-      load(); // refresh status
-    } catch { setMsg('Error'); } finally { setSaving(false); }
+      await call('put', `/pages${selected.slug}`, {
+        seo_title: form.seo_title,
+        meta_description: form.meta_description,
+        h1: form.h1,
+        translations: form.translations,
+      });
+      setMsg('Salvato!');
+      load();
+    } catch { setMsg('Errore'); } finally { setSaving(false); }
   };
 
   const clearOverride = async () => {
     if (!selected || !selected.has_override) return;
-    if (!window.confirm(`Remove SEO override for ${selected.slug}?`)) return;
-    // Delete by setting empty values (effectively resetting to defaults)
+    if (!window.confirm(`Rimuovere override SEO per ${selected.slug}?`)) return;
     await call('put', `/pages${selected.slug}`, { seo_title: '', meta_description: '', h1: '' });
-    setMsg('Override cleared');
+    setMsg('Override rimosso');
     load();
+  };
+
+  const aiTranslate = async (langCode, langName) => {
+    if (!selected) return;
+    setTranslating(langCode); setMsg('');
+    try {
+      const r = await call('post', `/pages${selected.slug}/translate`, { target_lang: langCode, target_lang_name: langName });
+      setMsg(`✓ ${r.translated} campi tradotti in ${langCode.toUpperCase()} con AI`);
+      // Refresh translations
+      const updated = await call('get', `/pages/${selected.slug}`).catch(() => null);
+      if (updated?.translations) {
+        setForm(prev => ({
+          ...prev,
+          translations: {
+            it: { ...EMPTY_SEO, ...(updated.translations.it || {}) },
+            es: { ...EMPTY_SEO, ...(updated.translations.es || {}) },
+          },
+        }));
+      }
+    } catch (e) { setMsg(e?.response?.data?.detail || 'Errore traduzione AI'); }
+    finally { setTranslating(''); }
   };
 
   const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-3 py-2.5 rounded-[10px] outline-none focus:border-ak-cyan transition-colors";
@@ -1725,160 +1787,211 @@ function PagesManager({ call }) {
 
   return (
     <div className="grid md:grid-cols-3 gap-6">
-      {/* Page list */}
+      {/* ── PAGE LIST ── */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-anton text-xl uppercase text-white">PAGES</h2>
           <span className="font-inter text-[10px] text-ak-cyan border border-ak-cyan/25 px-2 py-0.5 rounded">
-            {overriddenCount} overridden
+            {overriddenCount} override
           </span>
         </div>
 
-        {/* Main nav pages */}
-        <div className="font-inter text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2 mt-1">MAIN NAVIGATION</div>
-        <div className="space-y-0.5 mb-4">
-          {mainPages.map(p => (
-            <button key={p.slug} onClick={() => selectPage(p)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[10px] text-left transition-all group ${
-                selected?.slug === p.slug
-                  ? 'bg-ak-cyan/10 border border-ak-cyan/30'
-                  : 'border border-transparent hover:bg-white/4'
-              }`}>
-              <div className="flex items-center gap-2 min-w-0">
-                <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${p.has_override ? 'bg-ak-cyan' : 'bg-white/15'}`} />
-                <span className={`font-inter text-sm truncate ${selected?.slug === p.slug ? 'text-ak-cyan' : 'text-white/70 group-hover:text-white'}`}>
-                  {p.name}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                {p.has_override && (
-                  <span className="font-inter text-[8px] uppercase tracking-wider text-ak-cyan">SEO</span>
-                )}
-                <ChevronRight size={11} className="text-white/25" />
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Secondary pages */}
-        <div className="font-inter text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">SEO PAGES</div>
-        <div className="space-y-0.5 mb-4">
-          {secondaryPages.map(p => (
-            <button key={p.slug} onClick={() => selectPage(p)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[10px] text-left transition-all group ${
-                selected?.slug === p.slug ? 'bg-ak-cyan/10 border border-ak-cyan/30' : 'border border-transparent hover:bg-white/4'
-              }`}>
-              <div className="flex items-center gap-2 min-w-0">
-                <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${p.has_override ? 'bg-ak-cyan' : 'bg-white/15'}`} />
-                <span className={`font-inter text-sm truncate ${selected?.slug === p.slug ? 'text-ak-cyan' : 'text-white/50 group-hover:text-white'}`}>{p.name}</span>
-              </div>
-              {p.has_override && <span className="font-inter text-[8px] uppercase tracking-wider text-ak-cyan flex-shrink-0">SEO</span>}
-            </button>
-          ))}
-        </div>
-
-        {/* Support pages */}
-        {supportPages.length > 0 && (
-          <>
-            <div className="font-inter text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">OTHER</div>
+        {[
+          { label: 'MAIN NAVIGATION', items: mainPages },
+          { label: 'SEO PAGES', items: secondaryPages },
+          ...(supportPages.length ? [{ label: 'OTHER', items: supportPages }] : []),
+        ].map(group => (
+          <div key={group.label} className="mb-4">
+            <div className="font-inter text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">{group.label}</div>
             <div className="space-y-0.5">
-              {supportPages.map(p => (
-                <button key={p.slug} onClick={() => selectPage(p)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[10px] text-left transition-all group ${
-                    selected?.slug === p.slug ? 'bg-ak-cyan/10 border border-ak-cyan/30' : 'border border-transparent hover:bg-white/4'
-                  }`}>
-                  <span className={`font-inter text-sm ${selected?.slug === p.slug ? 'text-ak-cyan' : 'text-white/50 group-hover:text-white'}`}>{p.name}</span>
-                  {p.has_override && <span className="font-inter text-[8px] uppercase tracking-wider text-ak-cyan">SEO</span>}
-                </button>
-              ))}
+              {group.items.map(p => {
+                const hasIt = p.translations?.it?.seo_title;
+                const hasEs = p.translations?.es?.seo_title;
+                return (
+                  <button key={p.slug} onClick={() => selectPage(p)}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[10px] text-left transition-all group ${
+                      selected?.slug === p.slug ? 'bg-ak-cyan/10 border border-ak-cyan/30' : 'border border-transparent hover:bg-white/4'
+                    }`}>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${p.has_override ? 'bg-ak-cyan' : 'bg-white/15'}`} />
+                      <span className={`font-inter text-sm truncate ${selected?.slug === p.slug ? 'text-ak-cyan' : 'text-white/70 group-hover:text-white'}`}>
+                        {p.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      {['it','es'].map(l => {
+                        const has = l === 'it' ? hasIt : hasEs;
+                        return (
+                          <span key={l} className="font-inter text-[8px] font-bold px-1 py-0.5 rounded"
+                            style={{
+                              background: has ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
+                              color: has ? '#34d399' : 'rgba(255,255,255,0.2)',
+                            }}>
+                            {l.toUpperCase()}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-          </>
-        )}
+          </div>
+        ))}
 
         <div className="mt-4 p-3 rounded-[10px]" style={{ background: 'rgba(0,255,255,0.04)', border: '1px solid rgba(0,255,255,0.1)' }}>
           <p className="font-inter text-[10px] text-white/40 leading-relaxed">
-            <span style={{ color: '#00FFFF' }}>●</span> Cyan dot = has SEO override<br />
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>●</span> Grey dot = using default SEO
+            <span style={{ color: '#00FFFF' }}>●</span> Cyan = SEO override attivo<br />
+            IT/ES verde = traduzione presente
           </p>
         </div>
       </div>
 
-      {/* Editor */}
+      {/* ── EDITOR ── */}
       <div className="md:col-span-2">
         {!selected ? (
           <div className="flex flex-col items-center justify-center h-full border border-dashed border-white/10 rounded-[14px] py-20 gap-3">
             <FileText size={28} className="text-white/15" />
-            <p className="font-inter text-sm text-white/30">Select a page to edit its SEO metadata</p>
-            <p className="font-inter text-xs text-white/20">Changes override default values without touching code</p>
+            <p className="font-inter text-sm text-white/30">Seleziona una pagina per modificare i metadati SEO</p>
+            <p className="font-inter text-xs text-white/20">EN + IT + ES — override senza toccare il codice</p>
           </div>
         ) : (
           <div>
-            {/* Page header */}
-            <div className="flex items-start justify-between mb-6">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
               <div>
                 <h3 className="font-anton text-2xl uppercase text-white">{selected.name}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-inter text-xs text-white/40">{selected.slug}</span>
                   {selected.has_override && (
                     <span className="font-inter text-[9px] font-bold uppercase tracking-wider text-ak-cyan border border-ak-cyan/30 px-1.5 py-0.5 rounded">
-                      Override Active
+                      Override attivo
                     </span>
                   )}
                 </div>
               </div>
-              {selected.has_override && (
-                <button onClick={clearOverride}
-                  className="font-inter text-xs text-red-400 hover:text-red-300 transition-colors">
-                  Clear Override
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {SEO_LANGS.filter(l => l.code !== 'en').map(l => (
+                  <button key={l.code} onClick={() => aiTranslate(l.code, l.name)} disabled={!!translating}
+                    className="inline-flex items-center gap-1.5 font-inter text-[10px] font-bold uppercase tracking-wider px-3 py-2 rounded-[8px] border transition-all disabled:opacity-40"
+                    style={{
+                      borderColor: translating === l.code ? '#FFD700' : 'rgba(255,215,0,0.3)',
+                      color: translating === l.code ? '#FFD700' : 'rgba(255,215,0,0.7)',
+                      background: translating === l.code ? 'rgba(255,215,0,0.08)' : 'transparent',
+                    }}>
+                    <Sparkles size={10} />
+                    {translating === l.code ? `AI ${l.label}...` : `AI → ${l.label}`}
+                  </button>
+                ))}
+                {selected.has_override && (
+                  <button onClick={clearOverride} className="font-inter text-xs text-red-400 hover:text-red-300 transition-colors ml-2">
+                    Rimuovi override
+                  </button>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
-                  SEO Title <span className="text-white/20">(max 60 characters)</span>
-                </label>
-                <input className={inp} style={inpStyle}
-                  value={form.seo_title||''}
-                  onChange={e => setForm({...form, seo_title: e.target.value})}
-                  placeholder="Leave empty to use default page title"
-                  maxLength={60} />
-                <div className="flex justify-between mt-1">
-                  <span className="font-inter text-[10px] text-white/25">{(form.seo_title||'').length}/60</span>
-                  {(form.seo_title||'').length > 55 && <span className="font-inter text-[10px] text-yellow-500">Too long for Google</span>}
+            {/* Language Tabs */}
+            <div className="rounded-[12px] overflow-hidden mb-5" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="flex" style={{ background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                {SEO_LANGS.map(l => {
+                  const filled = langFilled(l.code);
+                  const pct = Math.round((filled / 2) * 100);
+                  const isAct = activeLang === l.code;
+                  return (
+                    <button key={l.code} onClick={() => setActiveLang(l.code)}
+                      className="flex-1 flex flex-col items-center gap-1 px-4 py-3 transition-all"
+                      style={{
+                        borderBottom: isAct ? '2px solid #00FFFF' : '2px solid transparent',
+                        color: isAct ? '#00FFFF' : 'rgba(255,255,255,0.4)',
+                        background: isAct ? 'rgba(0,255,255,0.05)' : 'transparent',
+                      }}>
+                      <div className="flex items-center gap-1.5">
+                        <span style={{ fontSize: 13 }}>{l.flag}</span>
+                        <span className="font-inter text-xs font-bold uppercase tracking-wider">{l.label}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="rounded-full overflow-hidden" style={{ width: 36, height: 3, background: 'rgba(255,255,255,0.1)' }}>
+                          <div className="h-full rounded-full" style={{ width: `${pct}%`, background: pct === 100 ? '#34d399' : pct > 0 ? '#FFD700' : 'transparent', transition: 'width .3s' }} />
+                        </div>
+                        <span className="font-inter text-[9px]" style={{ color: pct === 100 ? '#34d399' : 'rgba(255,255,255,0.25)' }}>{filled}/2</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="p-5 space-y-4">
+                {activeLang !== 'en' && (
+                  <div className="flex items-center gap-3 p-3 rounded-[8px]" style={{ background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.12)' }}>
+                    <Sparkles size={12} style={{ color: '#FFD700', flexShrink: 0 }} />
+                    <span className="font-inter text-xs text-white/50">
+                      Versione <strong className="text-ak-gold">{activeLang.toUpperCase()}</strong>.
+                      {' '}Usa <strong className="text-ak-gold">AI → {activeLang.toUpperCase()}</strong> per tradurre automaticamente dall&apos;EN.
+                    </span>
+                  </div>
+                )}
+
+                {/* SEO Title */}
+                <div>
+                  <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
+                    SEO Title {activeLang.toUpperCase()}
+                    <span className="text-white/20 ml-1 normal-case">max 60 char</span>
+                    {getField('seo_title') && (
+                      <span className={`ml-2 font-normal ${getField('seo_title').length > 60 ? 'text-red-400' : 'text-white/25'}`}>
+                        {getField('seo_title').length}/60
+                      </span>
+                    )}
+                  </label>
+                  <input className={inp} style={inpStyle}
+                    value={getField('seo_title')}
+                    onChange={e => setField('seo_title', e.target.value)}
+                    placeholder={activeLang === 'en' ? 'Lascia vuoto per usare il titolo default' : `SEO Title in ${SEO_LANGS.find(l=>l.code===activeLang)?.name}...`} />
+                </div>
+
+                {/* Meta Description */}
+                <div>
+                  <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
+                    Meta Description {activeLang.toUpperCase()}
+                    <span className="text-white/20 ml-1 normal-case">max 155 char</span>
+                    {getField('meta_description') && (
+                      <span className={`ml-2 font-normal ${getField('meta_description').length > 155 ? 'text-red-400' : getField('meta_description').length > 145 ? 'text-yellow-500' : 'text-white/25'}`}>
+                        {getField('meta_description').length}/155
+                      </span>
+                    )}
+                  </label>
+                  <textarea className={`${inp} resize-none`} style={inpStyle} rows={3}
+                    value={getField('meta_description')}
+                    onChange={e => setField('meta_description', e.target.value)}
+                    placeholder={activeLang === 'en' ? 'Lascia vuoto per usare la descrizione default' : `Meta description in ${SEO_LANGS.find(l=>l.code===activeLang)?.name}...`} />
+                </div>
+
+                {/* H1 Override */}
+                <div>
+                  <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
+                    H1 Override {activeLang.toUpperCase()}
+                    <span className="text-white/20 ml-1 normal-case">(heading principale)</span>
+                  </label>
+                  <input className={inp} style={inpStyle}
+                    value={getField('h1')}
+                    onChange={e => setField('h1', e.target.value)}
+                    placeholder={activeLang === 'en' ? 'Lascia vuoto per usare H1 default' : `H1 in ${SEO_LANGS.find(l=>l.code===activeLang)?.name}...`} />
                 </div>
               </div>
-              <div>
-                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">
-                  Meta Description <span className="text-white/20">(max 155 characters)</span>
-                </label>
-                <textarea className={`${inp} resize-none`} style={inpStyle} rows={3}
-                  value={form.meta_description||''}
-                  onChange={e => setForm({...form, meta_description: e.target.value})}
-                  placeholder="Leave empty to use default description"
-                  maxLength={155} />
-                <div className="flex justify-between mt-1">
-                  <span className="font-inter text-[10px] text-white/25">{(form.meta_description||'').length}/155</span>
-                  {(form.meta_description||'').length > 145 && <span className="font-inter text-[10px] text-yellow-500">Near limit</span>}
-                </div>
-              </div>
-              <div>
-                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">H1 Override</label>
-                <input className={inp} style={inpStyle}
-                  value={form.h1||''}
-                  onChange={e => setForm({...form, h1: e.target.value})}
-                  placeholder="Leave empty to use default H1" />
-                <p className="font-inter text-[10px] text-white/25 mt-1">Changes the main heading without touching code</p>
-              </div>
-              <div className="flex items-center gap-4 pt-2">
-                <button onClick={save} disabled={saving}
-                  className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-6 rounded-[12px] bg-ak-gold text-black disabled:opacity-60"
-                  style={{ height: '44px' }}>
-                  <Save size={16} /> {saving ? 'Saving...' : 'Save Override'}
-                </button>
-                {msg && <span className={`font-inter text-xs ${msg === 'Saved!' ? 'text-ak-cyan' : msg.includes('cleared') ? 'text-white/50' : 'text-red-400'}`}>{msg}</span>}
-              </div>
+            </div>
+
+            {/* Save */}
+            <div className="flex items-center gap-4">
+              <button onClick={save} disabled={saving}
+                className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-8 rounded-[12px] bg-ak-gold text-black disabled:opacity-60 hover:scale-[1.02] transition-transform"
+                style={{ height: '46px' }}>
+                <Save size={16} /> {saving ? 'Salvataggio...' : 'Salva Override SEO'}
+              </button>
+              {msg && (
+                <span className={`font-inter text-xs font-semibold ${msg.startsWith('✓') || msg === 'Salvato!' ? 'text-ak-cyan' : msg.includes('rimosso') ? 'text-white/50' : 'text-red-400'}`}>
+                  {msg}
+                </span>
+              )}
             </div>
           </div>
         )}
@@ -1887,7 +2000,9 @@ function PagesManager({ call }) {
   );
 }
 
+
 /* ─── MEDIA LIBRARY ─── */
+
 function MediaLibrary({ call }) {
   const [items, setItems] = useState([]);
   const [form, setForm] = useState({ image_url: '', alt_text: '', tag: 'general' });
