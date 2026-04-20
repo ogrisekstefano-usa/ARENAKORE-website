@@ -424,6 +424,19 @@ function ContentEditor({ call }) {
     call('get', '/cms/pages-list').then(setPages).catch(() => setPages([]));
   }, [call]);
 
+  const [seeding, setSeeding] = useState(false);
+  const reseedAll = async () => {
+    if (!window.confirm('Force reseed ALL pages? AI will translate EN → IT, ES. Existing content will be overwritten.')) return;
+    setSeeding(true); setMsg('');
+    try {
+      const r = await call('post', '/cms/seed-all?force=true&translate=true', {});
+      setMsg(`✓ Seeded ${r.total_seeded} pages · AI translations complete`);
+      call('get', '/cms/pages-list').then(setPages).catch(() => {});
+    } catch (e) { setMsg(e?.response?.data?.detail || 'Seed failed'); }
+    finally { setSeeding(false); }
+  };
+
+
   const loadPage = async (slug) => {
     setSelectedPage(slug); setMsg('');
     try {
@@ -505,6 +518,11 @@ function ContentEditor({ call }) {
         <p className="font-inter text-xs mb-4" style={{ color: '#a1a1aa' }}>
           Edit text content per page, per language.
         </p>
+        <button onClick={reseedAll} disabled={seeding}
+          className="w-full mb-4 inline-flex items-center justify-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all disabled:opacity-40"
+          style={{ height: '34px' }}>
+          <Sparkles size={12} /> {seeding ? 'AI Translating...' : 'Force Reseed All + AI Translate'}
+        </button>
         <div className="space-y-1">
           {pages.map(p => (
             <button key={p.slug} onClick={() => loadPage(p.slug)}
