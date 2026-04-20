@@ -1,10 +1,12 @@
 /**
- * ARENAKORE — CMS Fallback Content (Offline Safe)
- * Mirror of actual CMS database content for all pages.
- * Used when backend is unreachable — guarantees 100% readable UI.
+ * ARENAKORE — Complete CMS Fallback Content
+ * Mirror of the EXACT CMS database content (213 page keys + 43 global keys).
+ * Loaded at startup — guarantees 100% readable UI even with backend DOWN.
  *
- * FALLBACK_PAGES[slug][key] → used by usePageContent
- * FALLBACK_GLOBAL[key]      → used by useGlobalContent
+ * AUTO-GENERATED from live CMS data. Do not edit manually.
+ *
+ * FALLBACK_PAGES[slug][key] → usePageContent fallback
+ * FALLBACK_GLOBAL[key]      → useGlobalContent fallback
  */
 
 export const FALLBACK_PAGES = {
@@ -35,7 +37,7 @@ export const FALLBACK_PAGES = {
     insight_line2: 'TO TRAIN.',
     insight_line3: 'THEY COME BACK',
     insight_line4: 'TO NOT LOSE.',
-    insight_body: 'Behavioral science is clear: loss aversion is 2x more motivating than the desire to improve. When performances are ranked, visible and permanent — people show up differently.',
+    insight_body: 'Behavioral science is clear: loss aversion is 2x more motivating than the desire to gain.',
     solution_badge: 'THE SYSTEM',
     solution_h2: 'ARENAKORE TURNS TRAINING INTO COMPETITION.',
     solution_feat1: 'Daily challenges — new challenge every day. Every session has stakes.',
@@ -58,9 +60,9 @@ export const FALLBACK_PAGES = {
     positioning_h2: 'ONE SYSTEM. ANY DISCIPLINE.',
     positioning_body: 'ArenaKore is a competition platform designed for any performance-based activity — from fitness and CrossFit to basketball, running, swimming and beyond.',
     gyms_badge: 'FOR GYM OWNERS',
-    gyms_h2: 'BUILT FOR GYMS THAT WANT',
+    gyms_h2: 'BUILT FOR GYMS THAT WANT ENGAGED MEMBERS.',
     gyms_engaged: 'ENGAGED MEMBERS.',
-    gyms_body: 'The average gym loses 80% of new members within 6 months. ArenaKore gives you a competition layer that makes members come back — because now they have something to lose.',
+    gyms_body: 'The average gym loses 80% of new members within 6 months. ArenaKore gives you a competition layer that makes members come back.',
     gyms_f1: '+40% member retention',
     gyms_f2: 'Live challenge system — no manual setup',
     gyms_f3: 'Box vs box competition across locations',
@@ -70,7 +72,7 @@ export const FALLBACK_PAGES = {
     final_sub: 'Compete or fall behind.',
   },
 
-  // ── FOR ATHLETES ──────────────────────────────────────────────────────────
+  // ── FOR ATHLETES (30 keys) ────────────────────────────────────────────────
   'for-athletes': {
     hero_badge: 'FOR ATHLETES',
     hero_h1: "YOU DON'T TRAIN. YOU COMPETE.",
@@ -81,16 +83,16 @@ export const FALLBACK_PAGES = {
     identity_pretext: "ONCE YOU ENTER, YOU'RE NOT JUST AN ATHLETE.",
     identity_h2_line1: 'YOU ARE A',
     identity_h2_line2: 'KORE.',
-    identity_body: 'A KORE is not a user. Not a member. Not a subscriber. A KORE is a competitor with a permanent record, a certified rank and an identity built entirely on real performance.',
+    identity_body: 'A KORE is not a user. Not a member. Not a subscriber. A KORE is a competitor with a permanent record, a certified rank, and an identity built entirely on real performance.',
     kore_badge: 'THE KORE SYSTEM',
     kore_h2: 'WHAT IT MEANS TO BE A KORE.',
     kore_challenges: 'CHALLENGES — Daily. Direct. Permanent. Every challenge you accept becomes part of your record.',
     kore_ranking: 'RANKING — K-Rating from 0 to 1000. Earned through performance. Updated after every session.',
-    kore_competition: 'COMPETITION — The Arena never closes. There is always someone above you. Always someone targeting your rank.',
-    kore_visibility: 'VISIBILITY — Your performance is public. Your history is permanent. You cannot hide your numbers here.',
+    kore_competition: 'COMPETITION — The Arena never closes. There is always someone above you. Always someone coming for your rank.',
+    kore_visibility: "VISIBILITY — Your performance is public. Your history is permanent. You can't hide your numbers here.",
     kflux_badge: 'K-FLUX',
     kflux_h2: 'EVERY ACTION GENERATES K-FLUX.',
-    kflux_body: "K-Flux is the currency of the Arena. It doesn't come from showing up. It comes from performing. From being consistent. From exceeding the rep you were about to skip.",
+    kflux_body: "K-Flux is the currency of the Arena. It doesn't come from showing up. It comes from performing. From being consistent. From pushing past the rep you were about to skip.",
     kflux_f1: 'Training consistency — Show up 7 days in a row. K-Timeline tracks every session.',
     kflux_f2: 'Validated performance — Every rep certified by NEXUS. Every score earned, not declared.',
     kflux_f3: 'Competitive activity — Accept challenges. Win duels. Enter live events. K-Flux multiplies.',
@@ -98,7 +100,7 @@ export const FALLBACK_PAGES = {
     kflux_hud_sub: '3 sessions · 2 challenges · 1 day streak',
     nexus_badge: 'NEXUS ENGINE',
     nexus_h2: 'SCAN. TRACK. EVOLVE.',
-    nexus_body: "NEXUS doesn't watch you train. It judges you. Puppet Motion Detection tracks every joint, every angle, every rep. A rep that doesn't meet the standard doesn't count. This is not punishment. It's truth.",
+    nexus_body: "NEXUS doesn't watch you train. It judges you. Puppet Motion Detection tracks every joint, every angle, every rep. A rep that doesn't meet standard doesn't count. That's not punishment. That's truth.",
     nexus_f1: 'Biometric tracking — Joint angles, movement timing, range of motion — captured in real time.',
     nexus_f2: 'Performance data — Every session feeds your DNA profile: VEL, FOR, RES, AGI, TEC, POT.',
     nexus_f3: 'Evolution over time — Your DNA score evolves. Not on paper. In data. Visible to all.',
@@ -112,7 +114,7 @@ export const FALLBACK_PAGES = {
     final_t3: 'Rank earned',
   },
 
-  // ── ARENA SYSTEM ──────────────────────────────────────────────────────────
+  // ── ARENA SYSTEM (30 keys) ────────────────────────────────────────────────
   'arena-system': {
     hero_badge: 'UNIVERSAL COMPETITION SYSTEM',
     hero_h1: 'THE SYSTEM BEHIND THE COMPETITION.',
@@ -125,9 +127,9 @@ export const FALLBACK_PAGES = {
     track_title: 'Track performance.',
     track_body: 'Every rep, every result — captured and certified. Nothing is lost. Nothing is inflated. Your history is permanent.',
     rank_title: 'Rank every result.',
-    rank_body: 'K-Rating from 0 to 1000. Public. Permanent. Updated after every validated competition.',
+    rank_body: 'K-Rating from 0 to 1000. Public. Permanent. Updated after every session. Compared globally. You always know where you stand.',
     challenge_title: 'Create continuous competition.',
-    challenge_body: 'New challenges every day. Open or 1v1. Across disciplines. The Arena never closes.',
+    challenge_body: 'New challenges every day. Open or 1v1. Across disciplines. The Arena never closes. There is always someone to beat.',
     why_badge: 'BEHAVIORAL SCIENCE',
     why_h2: 'COMPETITION CHANGES BEHAVIOR.',
     why_1: 'Visibility creates pressure.',
@@ -141,12 +143,12 @@ export const FALLBACK_PAGES = {
     sport_body: "ArenaKore is not built for one sport. It's built for any activity where performance can be measured, validated and compared.",
     nexus_badge: 'POWERED BY NEXUS',
     nexus_callout: 'NEXUS VALIDATES EVERY REP.',
-    nexus_body: "Puppet Motion Detection. Real-time bio-analysis. Bad form doesn't count.",
+    nexus_body: "Puppet Motion Detection. Real-time bio-analysis. Bad form doesn't count. The score is always real.",
     final_h2: 'ENTER THE SYSTEM.',
     final_body: 'ArenaKore is a universal competition system for any performance-based activity.',
   },
 
-  // ── GET THE APP ───────────────────────────────────────────────────────────
+  // ── GET THE APP (38 keys) ─────────────────────────────────────────────────
   'get-the-app': {
     hero_badge: 'FREE DOWNLOAD',
     hero_h1: 'ENTER THE ARENA.',
@@ -185,30 +187,146 @@ export const FALLBACK_PAGES = {
     final_h2_line1: 'DOWNLOAD.',
     final_h2_line2: 'ENTER.',
     final_h2_line3: 'COMPETE.',
-    final_body: 'The Arena is open. Your rank is waiting. Every day you delay is a day someone else advances.',
+    final_body: 'The Arena is open. Your rank is waiting. Every day you delay is a day someone else moves ahead.',
     final_free: 'Free to download · Available worldwide',
     final_learn: 'Learn about the Arena System',
   },
 
+  // ── GYM PILOT (28 keys) ───────────────────────────────────────────────────
+  'gym-pilot': {
+    hero_badge: '14-DAY PILOT · GYMS',
+    hero_h1: "YOUR MEMBERS DON'T NEED MORE WORKOUTS. THEY NEED COMPETITION.",
+    hero_sub: 'Turn your gym into a daily challenge system.',
+    hero_cta: 'Start your pilot — Free',
+    reinforcement_1: 'No setup. No disruption. We activate your athletes in 48 hours.',
+    reinforcement_2: '20–30 athletes. 14 days. Real results.',
+    problem_badge: 'THE REAL PROBLEM',
+    problem_h2: "THE PROBLEM ISN'T ACQUISITION. IT'S RETENTION.",
+    solution_h2: 'ARENAKORE TRANSFORMS YOUR GYM INTO A COMPETITIVE SYSTEM.',
+    how_badge: 'HOW THE PILOT WORKS',
+    how_h2: '4 STEPS. 14 DAYS.',
+    step1_title: 'We activate 20–30 members',
+    step1_desc: 'We select your most engaged members for the launch. Onboarded in 30 minutes.',
+    step2_title: 'We launch the challenges',
+    step2_desc: 'We set up the first week of custom challenges on your programming. No change to your method.',
+    step3_title: 'We track performance',
+    step3_desc: "NEXUS validates every rep. K-Rating updates after each session. You see who trains, who climbs, who's at risk.",
+    step4_title: 'Your gym becomes competitive',
+    step4_desc: 'After 14 days you have real data: more attendance, more interaction, visible ranking. Then you decide.',
+    offer_badge: 'THE PILOT OFFER',
+    offer_h2: 'TEST IT. ZERO RISK.',
+    offer_body: 'No contract. No credit card. Just 14 days to see what happens when your gym becomes competitive.',
+    form_title: 'REQUEST YOUR PILOT',
+    form_subtitle: 'No credit card · No commitment',
+    faq_h2: 'FREQUENTLY ASKED QUESTIONS',
+    final_h2: 'TWO WEEKS.',
+    final_sub: 'Then you decide.',
+    final_cta: 'Start the Pilot',
+  },
+
+  // ── COMPETITION (8 keys) ──────────────────────────────────────────────────
+  competition: {
+    hero_badge: 'WORKOUT COMPETITION',
+    hero_h1: 'TRAIN TO WIN. COMPETE TO PROVE IT.',
+    intro_h2: 'Training without competition is just exercise.',
+    intro_body: 'ArenaKore converts every training session into a competitive event. Your performance is ranked against real athletes globally.',
+    problem_h2: 'Why competitive athletes leave mainstream apps.',
+    solution_h2: 'The arena where performance is everything.',
+    solution_body: 'In ArenaKore, you earn your rank. NEXUS validates every movement. K-Rating tracks your score from 0 to 1000.',
+    prove_it: 'PROVE IT.',
+  },
+
+  // ── AMRAP (8 keys) ────────────────────────────────────────────────────────
+  amrap: {
+    hero_badge: 'AMRAP TRAINING',
+    hero_h1: "AS MANY REPS AS POSSIBLE. WE'RE COUNTING.",
+    intro_h2: 'AMRAP is simple. Executing it correctly is not.',
+    intro_body: 'NEXUS tracks every rep in your AMRAP, validates form in real-time, and gives you a certified score comparable against other athletes.',
+    problem_h2: 'The AMRAP problem nobody talks about.',
+    problem_body: "You count your own reps — accuracy varies. Bad form reps count the same as good ones. No way to compare results between athletes fairly.",
+    solution_h2: 'AMRAP the way it was designed to be done.',
+    prove_it: 'PROVE IT.',
+  },
+
+  // ── CROSSFIT (7 keys) ─────────────────────────────────────────────────────
+  crossfit: {
+    hero_badge: 'CROSSFIT CHALLENGE',
+    hero_h1: 'BOX VS BOX. NO EXCUSES.',
+    intro_h2: 'Your box. Their box. One winner.',
+    intro_body: 'ArenaKore transforms CrossFit from individual effort to inter-box competition. Coaches set the WOD. Athletes perform. NEXUS validates every rep.',
+    problem_h2: 'CrossFit deserves better than spreadsheets.',
+    solution_h2: 'Built for the intensity of CrossFit.',
+    prove_it: 'PROVE IT.',
+  },
+
+  // ── GAMIFICATION (10 keys) ────────────────────────────────────────────────
+  gamification: {
+    hero_badge: 'FITNESS GAMIFICATION',
+    hero_h1: 'GAMIFY FITNESS. DOMINATE RETENTION.',
+    intro_h2: "Gamification is not a gimmick. It's behavioral science.",
+    intro_body: "The reason most fitness apps fail isn't the features — it's the psychology. People stop when there's no consequence. ArenaKore applies proven gamification mechanics.",
+    stat_engagement: '+30% engagement',
+    stat_retention: '+40% retention',
+    problem_h2: 'Why 80% of gym members quit within 6 months.',
+    solution_h2: 'The gamification system that actually changes behavior.',
+    solution_body: "ArenaKore's NEXUS engine creates real stakes. Your K-Rating is public. Your challenges are permanent. Every training decision has a visible, measurable consequence.",
+    prove_it: 'PROVE IT.',
+  },
+
 };
 
-// ─── GLOBAL CONTENT ──────────────────────────────────────────────────────────
-// Keys used by useGlobalContent (navbar, footer)
+// ─── GLOBAL CONTENT (43 keys) ────────────────────────────────────────────────
+// Complete mirror of cms_global database
 
 export const FALLBACK_GLOBAL = {
   // Navbar
-  nav_home:         'Home',
-  nav_arena_system: 'Arena System',
-  nav_athletes:     'Athletes',
-  nav_competition:  'Competition',
-  nav_amrap:        'AMRAP',
-  nav_crossfit:     'CrossFit',
-  nav_business:     'Business',
-  nav_blog:         'Blog',
-  nav_cta:          'Start Your Challenge',
+  nav_home:             'Home',
+  nav_arena_system:     'Arena System',
+  nav_athletes:         'Athletes',
+  nav_competition:      'Competition',
+  nav_amrap:            'AMRAP',
+  nav_crossfit:         'CrossFit',
+  nav_business:         'Business',
+  nav_blog:             'Blog',
+  nav_cta:              'Start Your Challenge',
+
+  // CTAs
+  cta_get_app:          'Get the App',
+  cta_download_app:     'Download the App',
+  cta_start_challenge:  'Start Your Challenge',
+  cta_for_gyms:         'For Gyms & Coaches',
+  cta_for_athletes:     'For Athletes',
+  cta_pilot:            'Start Your Pilot',
+  cta_enter_arena:      'Enter the Arena',
+  cta_learn_more:       'Learn more',
+  cta_explore:          'Explore',
 
   // Footer
-  footer_tagline:   'Global competition platform for athletes and gyms.',
-  footer_nexus:     'NEXUS ONLINE',
-  footer_copyright: '© 2026 ArenaKore. All rights reserved.',
+  footer_tagline:       'Global competition platform for athletes and gyms.',
+  footer_copyright:     '© 2026 ArenaKore. All rights reserved.',
+  footer_nexus:         'NEXUS ONLINE',
+  footer_pages_title:   'PAGES',
+  footer_support_title: 'SUPPORT',
+  footer_language_label:'Language & Region',
+  footer_signin:        'Sign in',
+
+  // System / Microcopy
+  prove_it:             'PROVE IT.',
+  loading:              'Loading...',
+  save:                 'Save',
+  cancel:               'Cancel',
+  delete:               'Delete',
+  edit:                 'Edit',
+  sign_in:              'Sign In',
+  email_placeholder:    'Email',
+  password_placeholder: 'Password',
+  form_error_required:  'Please fill all required fields.',
+  form_success:         'Sent successfully!',
+  form_error_send:      'Error sending. Try again.',
+  back_to_site:         '← Back to site',
+  empty_no_items:       'No items yet.',
+  scroll_more:          'Scroll to learn more',
+  available_worldwide:  'Free · Available worldwide',
+  live_badge:           'LIVE',
+  free_download:        'Free Download',
 };

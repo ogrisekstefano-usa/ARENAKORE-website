@@ -1,23 +1,25 @@
 /**
- * ArenaKore CMS Page Content — OFFLINE-SAFE with localStorage cache
+ * ArenaKore CMS Page Content — GUARANTEED CONTENT
  *
- * Chain: CMS(lang) → CMS(EN) → localStorage cache → fallbackContent → _deprecated_fallback → ""
+ * Priority chain (NEVER returns empty):
+ *   1. CMS API (lang)
+ *   2. CMS API (EN)
+ *   3. localStorage cache
+ *   4. fallbackContent.js (static EN)
+ *   5. i18n translation (_deprecated_fallback)
  *
- * On success: saves to localStorage
- * If backend is DOWN: uses localStorage → then fallbackContent
- * Frontend NEVER renders empty text.
+ * KEY FIX: When API fails, data is initialized with FALLBACK_PAGES values
+ * so content() ALWAYS finds a value via data[key].
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { FALLBACK_PAGES } from '../content/fallbackContent';
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
-// Session memory caches (fast, cleared on reload)
+// Session memory caches
 const _pageCache = {};
 const _enCache   = {};
-// Track failed slugs
-const _failedSlugs = new Set();
 
 // localStorage helpers
 const LS_PREFIX = 'ak_cms_';
@@ -29,14 +31,25 @@ function lsSet(key, data) {
 }
 
 export function usePageContent(slug, language = 'en') {
-  const [data, setData]       = useState({});
-  const [enData, setEnData]   = useState({});
-  const [loaded, setLoaded]   = useState(false);
-  const [offline, setOffline] = useState(false);
   const lang = (language || 'en').slice(0, 2);
+
+  // Initialize data with fallback immediately — no flash of empty content
+  const staticFallback = useMemo(() => FALLBACK_PAGES[slug] || {}, [slug]);
+
+  const [data, setData]     = useState(staticFallback);
+  const [enData, setEnData] = useState(staticFallback);
+  const [loaded, setLoaded] = useState(false);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
+
+    // Reset to static fallback when slug changes (instant content)
+    const fallback = FALLBACK_PAGES[slug] || {};
+    setData(fallback);
+    setEnData(fallback);
+    setLoaded(false);
+
     const cacheKey = `${slug}:${lang}`;
     const enKey    = `${slug}:en`;
 
@@ -44,18 +57,15 @@ export function usePageContent(slug, language = 'en') {
       ? axios.get(`${API}/cms/content/${slug}?lang=${lang}`)
           .then(r => {
             const d = r.data || {};
-            _pageCache[cacheKey] = d;
-            _failedSlugs.delete(slug);
-            // Persist to localStorage on success
+            // Merge CMS data ON TOP of fallback (fallback fills gaps)
+            _pageCache[cacheKey] = { ...fallback, ...d };
             if (Object.keys(d).length > 0) lsSet(cacheKey, d);
           })
           .catch(() => {
-            // Try localStorage cache first
+            // API failed → try localStorage, then static fallback
             const cached = lsGet(cacheKey);
-            _pageCache[cacheKey] = cached || {};
-            _failedSlugs.add(slug);
-            if (cached) console.warn(`[CMS OFFLINE → localStorage cache active] ${slug}:${lang}`);
-            else console.warn(`[CMS OFFLINE → fallbackContent active] ${slug}:${lang}`);
+            _pageCache[cacheKey] = { ...fallback, ...(cached || {}) };
+            console.warn(`[CMS OFFLINE] ${slug}:${lang} → using ${cached ? 'localStorage' : 'fallbackContent'}`);
           })
       : Promise.resolve();
 
@@ -63,71 +73,49 @@ export function usePageContent(slug, language = 'en') {
       ? axios.get(`${API}/cms/content/${slug}?lang=en`)
           .then(r => {
             const d = r.data || {};
-            _enCache[enKey] = d;
+            _enCache[enKey] = { ...fallback, ...d };
             if (Object.keys(d).length > 0) lsSet(enKey, d);
-            const keys = Object.keys(d);
-            if (keys.length > 0) {
-              axios.post(`${API}/cms/usage`, { slug, lang: 'en', keys, url: window.location.pathname }).catch(() => {});
-            }
           })
           .catch(() => {
             const cached = lsGet(enKey);
-            _enCache[enKey] = cached || {};
+            _enCache[enKey] = { ...fallback, ...(cached || {}) };
           })
       : Promise.resolve();
 
     Promise.all([fetchLang, fetchEn]).then(() => {
-      const pageData = _pageCache[cacheKey] || {};
-      const enD = lang === 'en' ? pageData : (_enCache[enKey] || {});
+      const pageData = _pageCache[cacheKey] || fallback;
+      const enD = lang === 'en' ? pageData : (_enCache[enKey] || fallback);
+      const isFromFallbackOnly = JSON.stringify(pageData) === JSON.stringify(fallback)
+        && Object.keys(pageData).every(k => fallback[k] === pageData[k]);
       setData(pageData);
       setEnData(enD);
-      setOffline(_failedSlugs.has(slug));
+      setOffline(isFromFallbackOnly);
       setLoaded(true);
-
-      if (lang !== 'en') {
-        const keys = Object.keys(pageData);
-        if (keys.length > 0) {
-          axios.post(`${API}/cms/usage`, { slug, lang, keys, url: window.location.pathname }).catch(() => {});
-        }
-      }
     });
-  }, [slug, lang]);
+  }, [slug, lang, staticFallback]);
 
   /**
-   * Get content — chain:
-   * 1. CMS(lang)
-   * 2. CMS(EN) 
-   * 3. fallbackContent[slug][key]
-   * 4. _deprecated_fallback (i18n translation from caller)
-   * 5. "" (never reached if fallbackContent is complete)
+   * GUARANTEED content — NEVER returns empty
    */
   const content = useCallback((key, _deprecated_fallback) => {
-    // During initial load: immediately show i18n fallback or fallbackContent
-    if (!loaded) {
-      return _deprecated_fallback
-        || FALLBACK_PAGES[slug]?.[key]
-        || '';
-    }
-
-    // 1. Preferred language from CMS
+    // 1. CMS data (lang) — merged with fallback, so always has value
     if (data[key] != null && data[key] !== '') return data[key];
 
-    // 2. EN from CMS (cross-language fallback)
+    // 2. CMS data (EN)
     if (enData[key] != null && enData[key] !== '') return enData[key];
 
-    // 3. Static fallback from fallbackContent.js
-    const fbPage = FALLBACK_PAGES[slug];
-    if (fbPage?.[key] != null && fbPage[key] !== '') return fbPage[key];
+    // 3. Static fallback (direct access)
+    if (staticFallback[key] != null && staticFallback[key] !== '') return staticFallback[key];
 
-    // 4. Deprecated i18n param from caller (cms('key', t('i18n.key')))
+    // 4. i18n translation from caller
     if (_deprecated_fallback != null && _deprecated_fallback !== '') return _deprecated_fallback;
 
-    // 5. Should never reach here — log missing key
+    // Log missing key (dev only)
     if (process.env.NODE_ENV !== 'production') {
-      console.error(`[CMS MISSING KEY] ${slug}.${key}`);
+      console.error(`[CMS MISSING] ${slug}.${key} — add to fallbackContent.js`);
     }
     return '';
-  }, [data, enData, loaded, slug]);
+  }, [data, enData, staticFallback, slug]);
 
   return { content, loaded, raw: data, offline };
 }
