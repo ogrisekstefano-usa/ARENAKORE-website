@@ -589,6 +589,16 @@ function HeroSlidesManager({ call }) {
   const active = slides.filter(s => s.active).length;
   const total  = slides.length;
 
+  const seedDefaults = async () => {
+    setSaving(true);
+    try {
+      const r = await call('post', '/hero-slides/seed', {});
+      if (r.seeded > 0) { load(); setMsg(`✓ Seeded ${r.seeded} default slides`); }
+      else { setMsg(r.message || 'Already has slides'); }
+    } catch { setMsg('Error seeding'); }
+    finally { setSaving(false); }
+  };
+
   return (
     <div>
       {/* ── Header ── */}
@@ -596,15 +606,24 @@ function HeroSlidesManager({ call }) {
         <div>
           <h2 className="font-anton text-2xl uppercase text-white">HERO SLIDES</h2>
           <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
-            {active} active / {total} total — default slides used if none configured
+            {active} active / {total} total — <span style={{ color: '#00FFFF' }}>CMS = source of truth</span>
           </p>
         </div>
-        {editing && (
-          <button onClick={() => { setEditing(null); setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true }); }}
-            className="inline-flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white transition-colors">
-            <X size={14} /> Cancel Edit
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {total === 0 && (
+            <button onClick={seedDefaults} disabled={saving}
+              className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] border border-ak-cyan text-ak-cyan hover:bg-ak-cyan hover:text-black transition-all disabled:opacity-50"
+              style={{ height: '34px' }}>
+              Load Default Slides
+            </button>
+          )}
+          {editing && (
+            <button onClick={() => { setEditing(null); setForm({ image_url: '', sport_label: '', position: 'center center', order: 0, active: true }); }}
+              className="inline-flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white transition-colors">
+              <X size={14} /> Cancel Edit
+            </button>
+          )}
+        </div>
       </div>
 
       {/* ── Add / Edit Form ── */}

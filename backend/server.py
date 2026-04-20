@@ -372,6 +372,29 @@ async def seed_demo_blog(_=Depends(verify_admin)):
     if count > 0: return {"ok": True, "seeded": 0, "message": "Already has posts"}
     return {"ok": True, "seeded": 0, "message": "Send posts via POST /api/blog"}
 
+# Seed default hero slides
+DEFAULT_HERO_SLIDES = [
+    {"image_url": "https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png", "sport_label": "CROSSFIT",    "position": "center 15%", "order": 0},
+    {"image_url": "https://images.unsplash.com/photo-1726195221766-e4594ff9d025?crop=entropy&cs=srgb&fm=jpg&q=90&w=1600", "sport_label": "RUNNING",    "position": "center center", "order": 1},
+    {"image_url": "https://images.pexels.com/photos/30050101/pexels-photo-30050101.jpeg?auto=compress&cs=tinysrgb&w=1600", "sport_label": "BASKETBALL", "position": "center center", "order": 2},
+    {"image_url": "https://images.pexels.com/photos/6011896/pexels-photo-6011896.jpeg?auto=compress&cs=tinysrgb&w=1600",  "sport_label": "SWIMMING",   "position": "center center", "order": 3},
+    {"image_url": "https://images.pexels.com/photos/29015508/pexels-photo-29015508.jpeg?auto=compress&cs=tinysrgb&w=1600","sport_label": "MMA",        "position": "center 20%",   "order": 4},
+    {"image_url": "https://images.pexels.com/photos/33453950/pexels-photo-33453950.jpeg?auto=compress&cs=tinysrgb&w=1600","sport_label": "SURF",       "position": "center center", "order": 5},
+]
+
+@api_router.post("/hero-slides/seed")
+async def seed_hero_slides(_=Depends(verify_admin)):
+    existing = await db.hero_slides.count_documents({})
+    if existing > 0:
+        return {"ok": True, "seeded": 0, "message": f"Already has {existing} slides"}
+    inserted = 0
+    for slide_data in DEFAULT_HERO_SLIDES:
+        obj = HeroSlide(**slide_data)
+        doc = obj.model_dump(); doc['created_at'] = doc['created_at'].isoformat()
+        await db.hero_slides.insert_one(doc)
+        inserted += 1
+    return {"ok": True, "seeded": inserted, "message": f"Seeded {inserted} default slides"}
+
 # ─── CMS: PAGES ───────────────────────────────────────────────
 class PageMeta(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))

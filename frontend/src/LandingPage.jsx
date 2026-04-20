@@ -101,7 +101,8 @@ const HOW_STEPS = [
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [slide, setSlide] = useState(0);
-  const [heroSlides, setHeroSlides] = useState(HERO_SLIDES_DEFAULT);
+  const [heroSlides, setHeroSlides] = useState(HERO_SLIDES_DEFAULT); // starts with defaults, replaced by CMS
+  const [slidesLoaded, setSlidesLoaded] = useState(false);
   const { t } = useTranslation();
   const API = process.env.REACT_APP_BACKEND_URL + '/api';
   const firedSlides = useRef(new Set());
@@ -112,34 +113,34 @@ export default function LandingPage() {
     description: 'Turn every performance into a challenge. Any sport, any discipline. Daily challenges, live rankings, validated performance. The competition never ends.',
   });
 
-  // Load hero slides from DB, fallback to defaults. Prioritize sport preference.
+  // CMS IS THE SOURCE OF TRUTH.
+  // Fetch from DB. If DB empty → use defaults. Never mix.
   useEffect(() => {
-    const pref = useSportPreference ? localStorage.getItem('arena_sport_preference') : null;
+    const pref = localStorage.getItem('arena_sport_preference');
     axios.get(`${API}/hero-slides`).then(r => {
-      let slides = r.data?.length >= 2
-        ? r.data.map(s => ({ img: s.image_url, sport: s.sport_label, pos: s.position || 'center center' }))
+      const dbSlides = r.data || [];
+      // Use DB slides if ANY exist, otherwise fall back to defaults
+      let slides = dbSlides.length >= 1
+        ? dbSlides.map(s => ({ img: s.image_url, sport: s.sport_label || '', pos: s.position || 'center center' }))
         : [...HERO_SLIDES_DEFAULT];
-      // Phase 2: move preferred sport slide to front
+      // Prioritize preferred sport (Phase 2)
       if (pref) {
         const idx = slides.findIndex(s => s.sport?.toLowerCase() === pref.toLowerCase());
-        if (idx > 0) { const s = slides.splice(idx, 1)[0]; slides.unshift(s); }
+        if (idx > 0) { const [s] = slides.splice(idx, 1); slides.unshift(s); }
       }
       setHeroSlides(slides);
+      setSlide(0); // Reset to first slide when slides reload
     }).catch(() => {
+      // Network error → always show defaults
       const slides = [...HERO_SLIDES_DEFAULT];
       const pref = localStorage.getItem('arena_sport_preference');
       if (pref) {
         const idx = slides.findIndex(s => s.sport?.toLowerCase() === pref.toLowerCase());
-        if (idx > 0) { const s = slides.splice(idx, 1)[0]; slides.unshift(s); }
+        if (idx > 0) { const [s] = slides.splice(idx, 1); slides.unshift(s); }
       }
       setHeroSlides(slides);
-    });
+    }).finally(() => setSlidesLoaded(true));
   }, [API]);
-
-  useSEO({
-    title: 'ArenaKore — The Multi-Sport Competition Platform',
-    description: 'Turn every performance into a challenge. Any sport, any discipline. Daily challenges, live rankings, validated performance. The competition never ends.',
-  });
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
@@ -185,7 +186,12 @@ export default function LandingPage() {
         data-testid="hero-section"
         className="relative min-h-screen flex flex-col justify-end pt-16 overflow-hidden"
       >
-        {/* Slider images — cross-fade stack */}
+        {/* Loading fallback while slides fetch */}
+        {!slidesLoaded && (
+          <div className="absolute inset-0" style={{ background: '#000' }} />
+        )}
+
+        {/* Slider images — CMS-controlled cross-fade stack */}
         {heroSlides.map((s, i) => (
           <div
             key={i}
