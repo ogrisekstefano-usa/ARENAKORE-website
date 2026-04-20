@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, ChevronDown, Download, Zap } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from './SharedLayout';
+import { useTranslation } from 'react-i18next';
 
 export default function ContentPageTemplate({ page }) {
   useSEO({ title: page.seo_title, description: page.meta_description });
+  const { t } = useTranslation();
 
   return (
     <div className="bg-black text-white min-h-screen font-inter">
@@ -31,12 +33,12 @@ export default function ContentPageTemplate({ page }) {
             <a href="#" data-testid="hero-download-btn"
               className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '52px' }}>
-              <Download size={18} /> SCARICA APP
+              <Download size={18} /> {t('cta.downloadApp')}
             </a>
             <a href="#how-it-works"
               className="inline-flex items-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '52px' }}>
-              Come funziona <ChevronDown size={16} />
+              How it works <ChevronDown size={16} />
             </a>
           </div>
         </div>
@@ -91,7 +93,7 @@ export default function ContentPageTemplate({ page }) {
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" className="py-20 px-6 sm:px-10 bg-black">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">COME FUNZIONA</h2>
+          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">HOW IT WORKS</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {page.howItWorks.map((s, i) => (
               <div key={i} className="p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/40 transition-colors" style={{ background: '#0a0a0a' }}>
@@ -107,7 +109,7 @@ export default function ContentPageTemplate({ page }) {
       {/* ── BENEFITS ── */}
       <section className="py-20 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">PERCHÉ ARENAKORE</h2>
+          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">WHY ARENAKORE</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {page.benefits.map((b, i) => (
               <div key={i} className="p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/40 transition-all group" style={{ background: '#0a0a0a' }}>
@@ -143,7 +145,7 @@ export default function ContentPageTemplate({ page }) {
       {/* ── RELATED PAGES ── */}
       <section className="py-16 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
-          <h3 className="font-inter text-xs font-bold uppercase tracking-widest text-ak-cyan mb-6">ESPLORA ANCHE</h3>
+          <h3 className="font-inter text-xs font-bold uppercase tracking-widest text-ak-cyan mb-6">EXPLORE ALSO</h3>
           <div className="flex flex-wrap gap-3">
             {page.relatedPages.map((p, i) => (
               <Link key={i} to={p.href}
@@ -165,12 +167,12 @@ export default function ContentPageTemplate({ page }) {
             <a href="#" data-testid="bottom-cta-btn"
               className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '52px' }}>
-              <Download size={18} /> SCARICA APP GRATIS
+              <Download size={18} /> {t('cta.downloadApp')}
             </a>
             <Link to="/for-gyms"
               className="inline-flex items-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all"
               style={{ height: '52px' }}>
-              Per Palestre
+              For Gyms & Coachess & Coaches
             </Link>
           </div>
         </div>

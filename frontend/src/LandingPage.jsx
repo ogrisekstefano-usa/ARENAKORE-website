@@ -519,7 +519,7 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-px" style={{ background: '#FFD700' }} />
-                <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase" style={{ color: '#FFD700' }}>FOR GYM OWNERS</span>
+                <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase" style={{ color: '#FFD700' }}>FOR GYMS & COACHES</span>
               </div>
               <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
                 BUILT FOR GYMS<br />THAT WANT<br />

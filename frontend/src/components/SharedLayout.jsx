@@ -113,10 +113,10 @@ export function InnerNavbar() {
             to="/get-the-app"
             data-testid="nav-start-challenge-btn"
             onClick={() => trackGetAppClick('navbar')}
-            className="hidden sm:inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-4 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
-            style={{ height: '36px' }}
+            className="hidden sm:inline-flex items-center gap-1.5 font-inter font-black text-[10px] uppercase tracking-wide px-3 rounded-[12px] bg-ak-gold text-black hover:scale-105 transition-transform whitespace-nowrap"
+            style={{ height: '32px' }}
           >
-            <Zap size={13} fill="black" /> {t('nav.startChallenge')}
+            <Zap size={11} fill="black" /> {t('nav.startChallenge')}
           </Link>
           <button onClick={() => setOpen(!open)} className="lg:hidden text-white p-1" data-testid="nav-mobile-toggle">
             {open ? <X size={22} /> : <Menu size={22} />}
@@ -190,7 +190,10 @@ export function InnerFooter() {
                   ['Competition', '/workout-competition'],
                   ['AMRAP', '/amrap-training'],
                   ['CrossFit', '/crossfit-challenge'],
-                  ['Business', '/gym-challenge-pilot'],
+                  ['Fitness App', '/fitness-challenge-app'],
+                  ['Gamification', '/fitness-gamification'],
+                  ['For Gyms & Coaches', '/for-gyms'],
+                  ['Business / Pilot', '/gym-challenge-pilot'],
                   ['Blog', '/blog'],
                   ['Get the App', '/get-the-app'],
                 ].map(([label, href]) => (

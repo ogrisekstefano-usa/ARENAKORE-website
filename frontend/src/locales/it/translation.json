@@ -10,7 +10,7 @@
     "startChallenge": "Inizia la Sfida",
     "arenaSystem": "Arena System",
     "forAthletes": "Per Atleti",
-    "forGymsCoaches": "Per Palestre",
+    "forGymsCoaches": "Per Palestre & Coach",
     "getApp": "Scarica App",
     "business": "Business",
     "athletes": "Atleti"
@@ -83,7 +83,7 @@
       "learnMore": "Scopri di più"
     },
     "gyms": {
-      "badge": "PER TITOLARI DI PALESTRE",
+      "badge": "FOR PER PALESTRE & COACH",
       "h2_line1": "COSTRUITA PER PALESTRE",
       "h2_line2": "CHE VOGLIONO",
       "h2_line3": "ISCRITTI COINVOLTI.",
