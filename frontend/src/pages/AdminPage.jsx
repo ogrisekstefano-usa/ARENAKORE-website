@@ -847,6 +847,57 @@ function ContentEditor({ call }) {
               </div>
             )}
 
+            {/* ── DISCIPLINE IMAGES PANEL (homepage only) ── */}
+            {selectedPage === 'homepage' && (() => {
+              const imgKeys = ['d1_img','d2_img','d3_img','d4_img','d5_img','d6_img','d7_img','d8_img'];
+              const imgLabels = ['Fitness & CrossFit','Running','Basket','Nuoto','Golf','Surf & Kitesurf','Sport di Squadra','Sfide Personali'];
+              const imgSections = imgKeys.map(k => sections.find(s => (typeof s==='object' ? s.key : '') === k)).filter(Boolean);
+              if (imgSections.length === 0) return null;
+              return (
+                <div className="mb-6 p-5 rounded-[14px]" style={{ background: 'rgba(0,255,255,0.03)', border: '1px solid rgba(0,255,255,0.15)' }}>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Image size={14} className="text-ak-cyan flex-shrink-0" />
+                    <span className="font-inter text-xs font-bold uppercase tracking-widest text-ak-cyan">IMMAGINI DISCIPLINE</span>
+                    <span className="font-inter text-[10px] text-white/30 ml-1">— modifica l'URL per cambiare l'immagine di ogni card</span>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {imgSections.map((s, i) => {
+                      const k = typeof s === 'object' ? s.key : '';
+                      const idx = imgKeys.indexOf(k);
+                      const currentVal = (s.translations || {})[activeLang] || (s.translations || {}).en || '';
+                      const label = imgLabels[idx] || k;
+                      return (
+                        <div key={k} className="rounded-[10px] overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                          {/* Thumbnail */}
+                          <div className="relative h-20 bg-black">
+                            {currentVal ? (
+                              <img src={currentVal} alt={label} className="w-full h-full object-cover" loading="lazy"
+                                onError={e => { e.currentTarget.style.opacity='0'; }} />
+                            ) : (
+                              <div className="flex items-center justify-center h-full">
+                                <Image size={20} className="text-white/15" />
+                              </div>
+                            )}
+                            <div className="absolute bottom-0 left-0 right-0 px-2 py-1 font-inter text-[9px] font-bold text-white truncate"
+                              style={{ background:'linear-gradient(transparent,rgba(0,0,0,0.8))' }}>
+                              {label}
+                            </div>
+                          </div>
+                          {/* URL input */}
+                          <input type="url"
+                            value={currentVal}
+                            onChange={e => updateSection(k, activeLang, e.target.value)}
+                            className="w-full font-mono text-[10px] text-white placeholder-white/20 px-2 py-2 outline-none"
+                            style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+                            placeholder="https://..." />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Fields */}
             <div className="space-y-3">
               {sections.map(section => {
@@ -872,8 +923,32 @@ function ContentEditor({ call }) {
                         {isEditingAB ? 'Done A/B' : 'A/B Test'}
                       </button>
                     </div>
-                    {/* Main text input */}
-                    {isLong ? (
+                    {/* Main field input — text, richtext, or image */}
+                    {fieldType === 'image' ? (
+                      <div className="flex gap-3 items-start">
+                        {/* Thumbnail preview */}
+                        <div className="flex-shrink-0 w-20 h-14 rounded-[8px] overflow-hidden border border-white/10 relative" style={{ background: '#111' }}>
+                          {currentValue ? (
+                            <img src={currentValue} alt={key} className="w-full h-full object-cover" loading="lazy"
+                              onError={e => { e.currentTarget.style.display='none'; e.currentTarget.nextSibling.style.display='flex'; }} />
+                          ) : null}
+                          <div className={`absolute inset-0 flex items-center justify-center ${currentValue ? 'hidden' : 'flex'}`}>
+                            <Image size={14} className="text-white/20" />
+                          </div>
+                        </div>
+                        <div className="flex-1 space-y-1.5">
+                          <input type="url" value={currentValue}
+                            onChange={e => updateSection(key, activeLang, e.target.value)}
+                            className={`${inp} h-9 text-xs font-mono`} style={inpStyle}
+                            placeholder="https://..." />
+                          {activeLang !== 'en' && !currentValue && enValue && (
+                            <p className="font-inter text-[9px] text-white/30">
+                              Lascia vuoto per usare immagine EN. EN: {enValue.slice(0, 60)}...
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ) : isLong ? (
                       <textarea rows={3} value={currentValue}
                         onChange={e => updateSection(key, activeLang, e.target.value)}
                         className={inp} style={inpStyle}

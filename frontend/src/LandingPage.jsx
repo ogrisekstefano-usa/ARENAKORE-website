@@ -32,8 +32,9 @@ const HERO_SLIDES_DEFAULT = [
 const IMG_RUNNER     = 'https://images.unsplash.com/photo-1589104666851-dffe3a15aace?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
 const IMG_BASKETBALL = 'https://images.pexels.com/photos/30050102/pexels-photo-30050102.jpeg?auto=compress&cs=tinysrgb&w=800';
 const IMG_SWIMMER    = 'https://images.unsplash.com/photo-1682353242312-2e1f8c5dfd9a?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
-const IMG_GOLF       = 'https://images.unsplash.com/photo-1609408960307-ed11e7fb151f?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
+const IMG_GOLF       = 'https://images.pexels.com/photos/36494151/pexels-photo-36494151.jpeg?auto=compress&cs=tinysrgb&w=800';
 const IMG_SURF       = 'https://images.pexels.com/photos/20071425/pexels-photo-20071425.jpeg?auto=compress&cs=tinysrgb&w=800';
+const IMG_CHALLENGE  = 'https://images.unsplash.com/photo-1758521959549-27f581bc400f?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -55,7 +56,7 @@ export default function LandingPage() {
     { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: ROUTES.competition, color: '#FFD700', img: cms('d5_img', IMG_GOLF) },
     { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: ROUTES.competition, color: '#00FFFF', img: cms('d6_img', IMG_SURF) },
     { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: ROUTES.gyms,        color: '#FFD700', img: cms('d7_img', IMGS.competition) },
-    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: ROUTES.athletes,    color: '#FF2D2D', img: cms('d8_img', IMGS.pullup) },
+    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: ROUTES.athletes,    color: '#FF2D2D', img: cms('d8_img', IMG_CHALLENGE) },
   ];
 
   const HOW_STEPS = [
