@@ -473,6 +473,49 @@ async def get_admin_stats(_=Depends(verify_admin)):
         "hero_slides": await db.hero_slides.count_documents({}),
     }
 
+# All known routes — single source of truth
+KNOWN_ROUTES = [
+    {"slug": "/",                    "name": "Home",               "section": "main"},
+    {"slug": "/arena-system",        "name": "Arena System",        "section": "main"},
+    {"slug": "/for-athletes",        "name": "Athletes",            "section": "main"},
+    {"slug": "/workout-competition", "name": "Competition",         "section": "main"},
+    {"slug": "/amrap-training",      "name": "AMRAP Training",      "section": "main"},
+    {"slug": "/crossfit-challenge",  "name": "CrossFit",            "section": "main"},
+    {"slug": "/gym-challenge-pilot", "name": "Business / Pilot",    "section": "main"},
+    {"slug": "/blog",                "name": "Blog",                "section": "main"},
+    {"slug": "/get-the-app",         "name": "Get the App",         "section": "main"},
+    {"slug": "/for-gyms",            "name": "For Gyms",            "section": "secondary"},
+    {"slug": "/fitness-challenge-app","name": "Fitness Challenge App","section": "secondary"},
+    {"slug": "/fitness-gamification","name": "Fitness Gamification","section": "secondary"},
+    {"slug": "/support",             "name": "Support",             "section": "support"},
+    {"slug": "/for-athletes",        "name": "For Athletes",        "section": "secondary"},
+]
+
+@api_router.get("/cms/pages")
+async def get_pages_catalog(_=Depends(verify_admin)):
+    """Returns all known routes with their CMS override status."""
+    overrides = {}
+    async for d in db.cms_pages.find({}, {"_id": 0}):
+        overrides[d["slug"]] = d
+
+    result = []
+    seen = set()
+    for route in KNOWN_ROUTES:
+        if route["slug"] in seen:
+            continue
+        seen.add(route["slug"])
+        override = overrides.get(route["slug"])
+        result.append({
+            "slug":             route["slug"],
+            "name":             route["name"],
+            "section":          route["section"],
+            "has_override":     override is not None and bool(override.get("seo_title") or override.get("meta_description") or override.get("h1")),
+            "seo_title":        override.get("seo_title", "") if override else "",
+            "meta_description": override.get("meta_description", "") if override else "",
+            "h1":               override.get("h1", "") if override else "",
+        })
+    return result
+
 # ─── HERO SLIDES ──────────────────────────────────────────────
 
 class HeroSlide(BaseModel):
