@@ -446,6 +446,10 @@
     "sport_basketball": "Basket",
     "sport_swimming": "Nuoto",
     "sport_golf": "Golf",
-    "sport_team": "Sport di Squadra"
+    "sport_team": "Sport di Squadra",
+    "sport_other": "Altro",
+    "sport_type_placeholder": "Scrivi la tua disciplina...",
+    "sport_save": "Salva",
+    "sport_tap_change": "cambia"
   }
 }

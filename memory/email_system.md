@@ -20,7 +20,7 @@ POST /api/pilot-requests → fires 2 emails automatically
 
 ## Resend Test (curl)
 ```bash
-API_URL=https://nexus-arena-11.preview.emergentagent.com
+API_URL=https://talent-card-refactor.preview.emergentagent.com
 curl -X POST "$API_URL/api/pilot-requests" \
   -H "Content-Type: application/json" \
   -d '{"gym_name":"Test Box","city":"Roma","owner_name":"Mario Rossi","email":"mario@test.com"}'
