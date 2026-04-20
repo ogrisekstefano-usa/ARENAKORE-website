@@ -161,7 +161,7 @@ export default function ContentPageTemplate({ page }) {
       <section className="py-20 px-6 sm:px-10 bg-black text-center">
         <div className="max-w-2xl mx-auto">
           <Zap size={32} className="text-ak-gold mx-auto mb-4" />
-          <h2 className="font-anton text-4xl md:text-5xl uppercase text-white mb-4">DIMOSTRALO.</h2>
+          <h2 className="font-anton text-4xl md:text-5xl uppercase text-white mb-4">PROVE IT.</h2>
           <p className="font-inter text-base text-white mb-8">No excuses. Your record starts now.</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <a href="#" data-testid="bottom-cta-btn"
@@ -172,7 +172,7 @@ export default function ContentPageTemplate({ page }) {
             <Link to="/for-gyms"
               className="inline-flex items-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all"
               style={{ height: '52px' }}>
-              For Gyms & Coachess & Coaches
+              For Gyms & Coaches
             </Link>
           </div>
         </div>
