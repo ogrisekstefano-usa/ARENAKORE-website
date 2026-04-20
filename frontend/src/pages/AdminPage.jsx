@@ -125,7 +125,12 @@ function Sidebar({ tab, setTab, onLogout }) {
 /* ─── DASHBOARD ─── */
 function Dashboard({ call }) {
   const [stats, setStats] = useState(null);
-  useEffect(() => { call('get', '/admin/stats').then(setStats).catch(() => {}); }, [call]);
+  const [backendDown, setBackendDown] = useState(false);
+  useEffect(() => {
+    call('get', '/admin/stats')
+      .then(d => { setStats(d); setBackendDown(false); })
+      .catch(() => { setBackendDown(true); });
+  }, [call]);
   const cards = stats ? [
     { label: 'Blog Posts', value: stats.blog_posts, color: '#00FFFF' },
     { label: 'Pages CMS', value: stats.pages, color: '#FFD700' },
@@ -135,6 +140,15 @@ function Dashboard({ call }) {
   return (
     <div>
       <h2 className="font-anton text-2xl uppercase text-white mb-6">DASHBOARD</h2>
+      {backendDown && (
+        <div className="mb-6 p-4 rounded-[12px] flex items-center gap-3" style={{ background: 'rgba(255,45,45,0.08)', border: '1px solid rgba(255,45,45,0.25)' }}>
+          <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+          <div>
+            <div className="font-inter text-sm font-bold text-red-400">Backend offline</div>
+            <div className="font-inter text-xs text-white/50">Il server non è raggiungibile. Il CMS non è modificabile. Il sito usa i contenuti in cache.</div>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {cards.map((c, i) => (
           <div key={i} className="p-6 rounded-[14px]" style={{ background: '#0a0a0a', border: `1px solid ${c.color}20` }}>
@@ -298,7 +312,17 @@ function GlobalContentEditor({ call }) {
   const [msg, setMsg]         = useState('');
 
   const load = useCallback(() =>
-    call('get', '/cms/global/full').then(setItems).catch(() => setItems([]))
+    call('get', '/cms/global/full')
+      .then(data => {
+        setItems(data);
+        // Auto-seed if DB is empty (fresh deployment)
+        if (!data || data.length === 0) {
+          call('post', '/cms/global/seed', {}).then(() => {
+            call('get', '/cms/global/full').then(setItems).catch(() => {});
+          }).catch(() => {});
+        }
+      })
+      .catch(() => setItems([]))
   , [call]);
 
   useEffect(() => { load(); }, [load]);
@@ -434,6 +458,7 @@ function GlobalContentEditor({ call }) {
         <div className="text-center py-12 border border-dashed border-white/10 rounded-[14px]">
           <Globe size={24} className="text-white/15 mx-auto mb-2" />
           <p className="font-inter text-sm text-white/30">No global content. Click "Seed Defaults" to start.</p>
+          <p className="font-inter text-xs text-white/20 mt-1">Se il backend è offline, i contenuti sono in cache nel browser.</p>
         </div>
       )}
     </div>
@@ -470,11 +495,14 @@ function ContentEditor({ call }) {
 
 
 
-  useEffect(() => {
-    call('get', '/cms/pages-list').then(setPages).catch(() => setPages([]));
-  }, [call]);
-
   const [seeding, setSeeding] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    call('get', '/cms/pages-list')
+      .then(data => { setPages(data); setLoadError(false); })
+      .catch(() => { setPages([]); setLoadError(true); });
+  }, [call]);
   const reseedAll = async () => {
     if (!window.confirm('Force reseed ALL pages? AI will translate EN → IT, ES. Existing content will be overwritten.')) return;
     setSeeding(true); setMsg('');
@@ -582,6 +610,12 @@ function ContentEditor({ call }) {
           <Sparkles size={12} /> {seeding ? 'AI Translating...' : 'Force Reseed All + AI Translate'}
         </button>
         <div className="space-y-1">
+          {loadError && (
+            <div className="p-3 rounded-[10px] text-center" style={{ background: 'rgba(255,45,45,0.08)', border: '1px solid rgba(255,45,45,0.2)' }}>
+              <div className="font-inter text-xs text-red-400 font-bold">Backend non raggiungibile</div>
+              <div className="font-inter text-[10px] text-white/40 mt-1">Riconnetti il server e ricarica la pagina.</div>
+            </div>
+          )}
           {pages.map(p => (
             <button key={p.slug} onClick={() => loadPage(p.slug)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-[10px] text-left transition-all group ${
