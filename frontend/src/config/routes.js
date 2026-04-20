@@ -38,7 +38,7 @@ export const NAV_ITEMS = [
   { key: 'amrap',        i18nKey: 'nav.amrap',          cmsKey: 'nav_amrap',         route: ROUTES.amrap        },
   { key: 'crossfit',     i18nKey: 'nav.crossfit',       cmsKey: 'nav_crossfit',      route: ROUTES.crossfit     },
   { key: 'gamification', i18nKey: 'nav.gamification',   cmsKey: 'nav_gamification',  route: ROUTES.gamification },
-  { key: 'gyms',         i18nKey: 'nav.forGymsCoaches', cmsKey: 'nav_gyms',          route: ROUTES.gyms         },
+  { key: 'gyms',         i18nKey: 'nav.business',       cmsKey: 'nav_business',      route: ROUTES.gyms         },
   { key: 'blog',         i18nKey: 'nav.blog',           cmsKey: 'nav_blog',          route: ROUTES.blog         },
 ];
 

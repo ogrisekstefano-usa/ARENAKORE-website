@@ -340,7 +340,7 @@ export const PAGES = {
 
 // ─── MULTILINGUAL PAGE TRANSLATIONS ─────────────────────────────────────────
 const PAGE_TRANSLATIONS = {
-  '/fitness-challenge-app': {
+  [ROUTES.fitnessApp]: {
     it: {
       h1: "L'APP FITNESS CHALLENGE PER ATLETI VERI",
       badge: 'APP FITNESS CHALLENGE',
@@ -364,7 +364,7 @@ const PAGE_TRANSLATIONS = {
       relatedPages: [ { label: 'Desafío CrossFit', href: ROUTES.crossfit }, { label: 'Entrenamiento AMRAP', href: ROUTES.amrap }, { label: 'Gamificación Fitness', href: ROUTES.gamification } ],
     },
   },
-  '/crossfit-challenge': {
+  [ROUTES.crossfit]: {
     it: {
       h1: 'BOX VS BOX. ZERO SCUSE.',
       badge: 'SFIDA CROSSFIT',
@@ -388,7 +388,7 @@ const PAGE_TRANSLATIONS = {
       relatedPages: [ { label: 'Para Gimnasios', href: ROUTES.gyms }, { label: 'Competición Workout', href: ROUTES.competition }, { label: 'Entrenamiento AMRAP', href: ROUTES.amrap } ],
     },
   },
-  '/workout-competition': {
+  [ROUTES.competition]: {
     it: {
       h1: 'ALLENATI PER VINCERE. GAREGGIA PER DIMOSTRARLO.',
       badge: 'COMPETIZIONE WORKOUT',
@@ -412,7 +412,7 @@ const PAGE_TRANSLATIONS = {
       relatedPages: [ { label: 'App Fitness Challenge', href: ROUTES.fitnessApp }, { label: 'Desafío CrossFit', href: ROUTES.crossfit }, { label: 'Gamificación Fitness', href: ROUTES.gamification } ],
     },
   },
-  '/amrap-training': {
+  [ROUTES.amrap]: {
     it: {
       h1: 'PIÙ REP POSSIBILI. LE STIAMO CONTANDO.',
       badge: 'ALLENAMENTO AMRAP',
@@ -436,7 +436,7 @@ const PAGE_TRANSLATIONS = {
       relatedPages: [ { label: 'Desafío CrossFit', href: ROUTES.crossfit }, { label: 'Competición Workout', href: ROUTES.competition }, { label: 'App Fitness Challenge', href: ROUTES.fitnessApp } ],
     },
   },
-  '/fitness-gamification': {
+  [ROUTES.gamification]: {
     it: {
       h1: 'GAMIFICA IL FITNESS. DOMINA LA FIDELIZZAZIONE.',
       badge: 'GAMIFICATION FITNESS',

@@ -233,6 +233,7 @@ export function InnerFooter() {
                   [t('nav.crossfit'),       ROUTES.crossfit],
                   [t('nav.gamification'),   ROUTES.gamification],
                   [t('nav.forGymsCoaches'), ROUTES.gyms],
+                  [t('nav.fitnessApp'),     ROUTES.fitnessApp],
                   [t('nav.blog'),           ROUTES.blog],
                   [t('nav.getApp'),         ROUTES.app],
                 ].map(([label, href]) => (
