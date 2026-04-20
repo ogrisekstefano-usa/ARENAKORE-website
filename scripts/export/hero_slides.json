@@ -1,0 +1,56 @@
+[
+  {
+    "id": "e802cb19-4149-4fc7-99dd-f063f5ca53fe",
+    "image_url": "https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png",
+    "sport_label": "CROSSFIT",
+    "position": "center 15%",
+    "order": 0,
+    "active": true,
+    "created_at": "2026-04-20T00:21:16.410381+00:00"
+  },
+  {
+    "id": "ea29af3f-9467-47e0-902b-102216bdaf8a",
+    "image_url": "https://images.unsplash.com/photo-1726195221766-e4594ff9d025?crop=entropy&cs=srgb&fm=jpg&q=90&w=1600",
+    "sport_label": "RUNNING",
+    "position": "center center",
+    "order": 1,
+    "active": true,
+    "created_at": "2026-04-20T00:21:16.410886+00:00"
+  },
+  {
+    "id": "92347307-4e17-4682-88af-044778b7902c",
+    "image_url": "https://images.pexels.com/photos/30050101/pexels-photo-30050101.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "sport_label": "BASKETBALL",
+    "position": "center center",
+    "order": 2,
+    "active": true,
+    "created_at": "2026-04-20T00:21:16.411246+00:00"
+  },
+  {
+    "id": "b3adca95-9ed0-4bdc-a2a2-00eaf23d9c35",
+    "image_url": "https://images.pexels.com/photos/6011896/pexels-photo-6011896.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "sport_label": "SWIMMING",
+    "position": "center center",
+    "order": 3,
+    "active": true,
+    "created_at": "2026-04-20T00:21:16.411585+00:00"
+  },
+  {
+    "id": "fdfc66cc-cb42-42cb-94fb-2f933a7fd9ca",
+    "image_url": "https://images.pexels.com/photos/29015508/pexels-photo-29015508.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "sport_label": "MMA",
+    "position": "center 20%",
+    "order": 4,
+    "active": true,
+    "created_at": "2026-04-20T00:21:16.411856+00:00"
+  },
+  {
+    "id": "3b1890dd-21b5-42c6-a88e-153ff9f5f829",
+    "image_url": "https://images.pexels.com/photos/33453950/pexels-photo-33453950.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "sport_label": "SURF",
+    "position": "center center",
+    "order": 5,
+    "active": true,
+    "created_at": "2026-04-20T00:21:16.412077+00:00"
+  }
+]

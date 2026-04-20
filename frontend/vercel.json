@@ -1,0 +1,6 @@
+## vercel.json — Vercel SPA routing
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

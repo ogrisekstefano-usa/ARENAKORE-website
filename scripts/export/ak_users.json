@@ -1,0 +1,26 @@
+[
+  {
+    "id": "247060da-cd06-46bf-a8fe-c79f55ffa20c",
+    "email": "admin@arenakore.com",
+    "name": "Admin",
+    "password_hash": "$2b$12$xTUnCRiBhtF.XjX5m9qoqOApFn3uqXPYNHObu1Rqlpz/ryLF6Uftu",
+    "role": "admin",
+    "ak_credits": 0,
+    "rank": "Rookie",
+    "level": 1,
+    "sport_preference": null,
+    "created_at": "2026-04-20T01:48:19.143703+00:00"
+  },
+  {
+    "id": "b6efb3f0-06df-4c19-ac57-09c8e35d5ec2",
+    "email": "test@arenakore.com",
+    "name": "Arena Tester",
+    "password_hash": "$2b$12$nlunifYIvpLgbp.zl1sI9OPSwA8H/9816SbGu01/YLQLa3R/FXRF2",
+    "role": "athlete",
+    "ak_credits": 0,
+    "rank": "Rookie",
+    "level": 1,
+    "sport_preference": null,
+    "created_at": "2026-04-20T01:51:15.047436+00:00"
+  }
+]

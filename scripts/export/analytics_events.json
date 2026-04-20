@@ -1,0 +1,3003 @@
+[
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": null,
+    "server_ts": "2026-04-19T22:59:05.565598+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:00:47.294Z",
+    "server_ts": "2026-04-19T23:00:47.353086+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:00:47.529Z",
+    "server_ts": "2026-04-19T23:00:47.589690+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:00:48.484Z",
+    "server_ts": "2026-04-19T23:00:48.631044+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:00:48.679Z",
+    "server_ts": "2026-04-19T23:00:48.712460+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "get_the_app",
+      "language": "en"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-19T23:08:42.273Z",
+    "server_ts": "2026-04-19T23:08:42.314081+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "get_the_app",
+      "language": "en"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-19T23:08:43.403Z",
+    "server_ts": "2026-04-19T23:08:43.509320+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:17:22.056Z",
+    "server_ts": "2026-04-19T23:17:22.129816+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:17:22.259Z",
+    "server_ts": "2026-04-19T23:17:22.330181+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:17:23.365Z",
+    "server_ts": "2026-04-19T23:17:23.500102+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:17:23.535Z",
+    "server_ts": "2026-04-19T23:17:23.673154+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:17:27.443Z",
+    "server_ts": "2026-04-19T23:17:27.488303+00:00"
+  },
+  {
+    "event": "sport_selected",
+    "params": {
+      "sport": "basketball"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:17:28.206Z",
+    "server_ts": "2026-04-19T23:17:28.263785+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-19T23:17:28.698Z",
+    "server_ts": "2026-04-19T23:17:28.746206+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-19T23:46:29.703Z",
+    "server_ts": "2026-04-19T23:46:29.744115+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:44.233Z",
+    "server_ts": "2026-04-19T23:46:44.320342+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:44.388Z",
+    "server_ts": "2026-04-19T23:46:44.427881+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:46.908Z",
+    "server_ts": "2026-04-19T23:46:46.959353+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:47.438Z",
+    "server_ts": "2026-04-19T23:46:47.479912+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:48.189Z",
+    "server_ts": "2026-04-19T23:46:48.264396+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:48.354Z",
+    "server_ts": "2026-04-19T23:46:48.396130+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:52.216Z",
+    "server_ts": "2026-04-19T23:46:52.260093+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:46:56.227Z",
+    "server_ts": "2026-04-19T23:46:56.265111+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:00.233Z",
+    "server_ts": "2026-04-19T23:47:00.320203+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:04.224Z",
+    "server_ts": "2026-04-19T23:47:04.262991+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:08.233Z",
+    "server_ts": "2026-04-19T23:47:08.276068+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:22.730Z",
+    "server_ts": "2026-04-19T23:47:22.863951+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-19T23:47:23.133Z",
+    "server_ts": "2026-04-19T23:47:23.173632+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:23.138Z",
+    "server_ts": "2026-04-19T23:47:23.180638+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:27.193Z",
+    "server_ts": "2026-04-19T23:47:27.239075+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:31.191Z",
+    "server_ts": "2026-04-19T23:47:31.264013+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:35.262Z",
+    "server_ts": "2026-04-19T23:47:35.304401+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:39.211Z",
+    "server_ts": "2026-04-19T23:47:39.275805+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:47:43.206Z",
+    "server_ts": "2026-04-19T23:47:43.314084+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "get_the_app",
+      "language": "en"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-19T23:49:26.331Z",
+    "server_ts": "2026-04-19T23:49:26.363003+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "get_the_app",
+      "language": "en"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-19T23:49:27.331Z",
+    "server_ts": "2026-04-19T23:49:27.403629+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "get_the_app",
+      "language": "it"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-19T23:49:31.682Z",
+    "server_ts": "2026-04-19T23:49:31.731789+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:30.726Z",
+    "server_ts": "2026-04-19T23:53:30.769025+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:30.891Z",
+    "server_ts": "2026-04-19T23:53:30.941124+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:34.756Z",
+    "server_ts": "2026-04-19T23:53:34.802273+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:38.763Z",
+    "server_ts": "2026-04-19T23:53:38.804971+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:42.773Z",
+    "server_ts": "2026-04-19T23:53:42.826706+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:46.772Z",
+    "server_ts": "2026-04-19T23:53:46.817828+00:00"
+  },
+  {
+    "event": "sport_selected",
+    "params": {
+      "sport": "other"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:47.086Z",
+    "server_ts": "2026-04-19T23:53:47.147013+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-19T23:53:47.570Z",
+    "server_ts": "2026-04-19T23:53:47.679937+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:59.259Z",
+    "server_ts": "2026-04-19T23:53:59.304752+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:53:59.411Z",
+    "server_ts": "2026-04-19T23:53:59.448246+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:54:03.289Z",
+    "server_ts": "2026-04-19T23:54:03.419006+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:54:07.288Z",
+    "server_ts": "2026-04-19T23:54:07.331904+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:54:11.301Z",
+    "server_ts": "2026-04-19T23:54:11.343996+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:54:15.281Z",
+    "server_ts": "2026-04-19T23:54:15.328028+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-19T23:54:19.280Z",
+    "server_ts": "2026-04-19T23:54:19.327666+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:02:38.761Z",
+    "server_ts": "2026-04-20T00:02:38.829753+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:02:39.424Z",
+    "server_ts": "2026-04-20T00:02:39.463380+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:02:56.758Z",
+    "server_ts": "2026-04-20T00:02:56.800758+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:02:57.322Z",
+    "server_ts": "2026-04-20T00:02:57.367648+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:03:20.354Z",
+    "server_ts": "2026-04-20T00:03:20.429633+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:03:20.632Z",
+    "server_ts": "2026-04-20T00:03:20.665080+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:03:21.660Z",
+    "server_ts": "2026-04-20T00:03:21.784644+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:03:21.854Z",
+    "server_ts": "2026-04-20T00:03:21.924825+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:03:25.700Z",
+    "server_ts": "2026-04-20T00:03:25.784260+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:04:23.907Z",
+    "server_ts": "2026-04-20T00:04:23.956103+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:04:25.490Z",
+    "server_ts": "2026-04-20T00:04:25.540595+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T00:10:19.929Z",
+    "server_ts": "2026-04-20T00:10:19.965063+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "amrap",
+      "language": "en"
+    },
+    "url": "/amrap-training",
+    "ts": "2026-04-20T00:13:06.759Z",
+    "server_ts": "2026-04-20T00:13:06.840250+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "crossfit",
+      "language": "en"
+    },
+    "url": "/crossfit-challenge",
+    "ts": "2026-04-20T00:13:20.461Z",
+    "server_ts": "2026-04-20T00:13:20.516508+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "gym_pilot",
+      "language": "en"
+    },
+    "url": "/gym-challenge-pilot",
+    "ts": "2026-04-20T00:13:30.732Z",
+    "server_ts": "2026-04-20T00:13:30.788679+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "blog",
+      "language": "en"
+    },
+    "url": "/blog",
+    "ts": "2026-04-20T00:13:41.874Z",
+    "server_ts": "2026-04-20T00:13:41.958311+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "blog_article",
+      "language": "en"
+    },
+    "url": "/blog/how-to-create-competition-in-gym",
+    "ts": "2026-04-20T00:13:47.464Z",
+    "server_ts": "2026-04-20T00:13:47.516080+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "fitness_challenge_app",
+      "language": "en"
+    },
+    "url": "/fitness-challenge-app",
+    "ts": "2026-04-20T00:14:00.020Z",
+    "server_ts": "2026-04-20T00:14:00.058771+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:16:01.266Z",
+    "server_ts": "2026-04-20T00:16:01.309938+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "fitness_challenge_app",
+      "language": "en"
+    },
+    "url": "/fitness-challenge-app",
+    "ts": "2026-04-20T00:16:01.266Z",
+    "server_ts": "2026-04-20T00:16:01.312598+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:16:56.083Z",
+    "server_ts": "2026-04-20T00:16:56.143103+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:16:56.474Z",
+    "server_ts": "2026-04-20T00:16:56.507372+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:16:57.470Z",
+    "server_ts": "2026-04-20T00:16:57.629291+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:16:57.704Z",
+    "server_ts": "2026-04-20T00:16:57.759642+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:17:38.610Z",
+    "server_ts": "2026-04-20T00:17:38.681284+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:17:38.761Z",
+    "server_ts": "2026-04-20T00:17:38.796444+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:17:42.629Z",
+    "server_ts": "2026-04-20T00:17:42.690676+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:17:46.657Z",
+    "server_ts": "2026-04-20T00:17:46.693541+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:17:48.137Z",
+    "server_ts": "2026-04-20T00:17:48.174789+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T00:17:50.806Z",
+    "server_ts": "2026-04-20T00:17:50.850187+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:17:52.320Z",
+    "server_ts": "2026-04-20T00:17:52.372843+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:17:53.292Z",
+    "server_ts": "2026-04-20T00:17:53.356361+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:17:53.444Z",
+    "server_ts": "2026-04-20T00:17:53.479728+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:17:57.328Z",
+    "server_ts": "2026-04-20T00:17:57.367463+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T00:17:58.954Z",
+    "server_ts": "2026-04-20T00:17:58.997138+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "amrap",
+      "language": "en"
+    },
+    "url": "/amrap-training",
+    "ts": "2026-04-20T00:18:00.370Z",
+    "server_ts": "2026-04-20T00:18:00.424601+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "crossfit",
+      "language": "en"
+    },
+    "url": "/crossfit-challenge",
+    "ts": "2026-04-20T00:18:01.165Z",
+    "server_ts": "2026-04-20T00:18:01.210844+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "gym_pilot",
+      "language": "en"
+    },
+    "url": "/gym-challenge-pilot",
+    "ts": "2026-04-20T00:18:02.012Z",
+    "server_ts": "2026-04-20T00:18:02.058569+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "blog",
+      "language": "en"
+    },
+    "url": "/blog",
+    "ts": "2026-04-20T00:18:02.967Z",
+    "server_ts": "2026-04-20T00:18:03.052521+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T00:18:03.911Z",
+    "server_ts": "2026-04-20T00:18:03.955710+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:18:04.805Z",
+    "server_ts": "2026-04-20T00:18:04.847298+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:18:05.575Z",
+    "server_ts": "2026-04-20T00:18:05.675535+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:18:05.732Z",
+    "server_ts": "2026-04-20T00:18:05.773794+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:18:10.180Z",
+    "server_ts": "2026-04-20T00:18:10.215081+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:18:10.695Z",
+    "server_ts": "2026-04-20T00:18:10.734916+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:18:14.176Z",
+    "server_ts": "2026-04-20T00:18:14.216071+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:18:18.196Z",
+    "server_ts": "2026-04-20T00:18:18.251963+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:18:22.238Z",
+    "server_ts": "2026-04-20T00:18:22.274447+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:18:26.275Z",
+    "server_ts": "2026-04-20T00:18:26.316991+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:21:51.264Z",
+    "server_ts": "2026-04-20T00:21:51.357802+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:21:52.148Z",
+    "server_ts": "2026-04-20T00:21:52.186647+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:21:56.221Z",
+    "server_ts": "2026-04-20T00:21:56.341629+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:00.238Z",
+    "server_ts": "2026-04-20T00:22:00.292529+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:04.245Z",
+    "server_ts": "2026-04-20T00:22:04.284959+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:08.269Z",
+    "server_ts": "2026-04-20T00:22:08.401798+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:13.204Z",
+    "server_ts": "2026-04-20T00:22:13.239377+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:17.233Z",
+    "server_ts": "2026-04-20T00:22:17.328822+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:21.215Z",
+    "server_ts": "2026-04-20T00:22:21.260550+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:25.221Z",
+    "server_ts": "2026-04-20T00:22:25.258398+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:29.219Z",
+    "server_ts": "2026-04-20T00:22:29.258557+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:44.661Z",
+    "server_ts": "2026-04-20T00:22:44.729718+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:45.056Z",
+    "server_ts": "2026-04-20T00:22:45.088146+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:45.890Z",
+    "server_ts": "2026-04-20T00:22:46.032854+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:46.154Z",
+    "server_ts": "2026-04-20T00:22:46.189548+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:22:49.968Z",
+    "server_ts": "2026-04-20T00:22:50.008890+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:38:51.253Z",
+    "server_ts": "2026-04-20T00:38:51.329805+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:38:51.812Z",
+    "server_ts": "2026-04-20T00:38:51.845433+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:41:22.554Z",
+    "server_ts": "2026-04-20T00:41:22.594062+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:41:23.186Z",
+    "server_ts": "2026-04-20T00:41:23.227991+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:46:43.145Z",
+    "server_ts": "2026-04-20T00:46:43.186656+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:46:44.162Z",
+    "server_ts": "2026-04-20T00:46:44.205244+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:46:44.161Z",
+    "server_ts": "2026-04-20T00:46:44.206743+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:46:47.252Z",
+    "server_ts": "2026-04-20T00:46:47.290377+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:46:51.237Z",
+    "server_ts": "2026-04-20T00:46:51.283079+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:46:55.272Z",
+    "server_ts": "2026-04-20T00:46:55.329320+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:46:59.269Z",
+    "server_ts": "2026-04-20T00:46:59.320018+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:47:03.256Z",
+    "server_ts": "2026-04-20T00:47:03.320748+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:47:21.458Z",
+    "server_ts": "2026-04-20T00:47:21.530227+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:47:21.664Z",
+    "server_ts": "2026-04-20T00:47:21.729594+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:47:22.982Z",
+    "server_ts": "2026-04-20T00:47:23.130186+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:47:23.271Z",
+    "server_ts": "2026-04-20T00:47:23.393659+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:47:27.073Z",
+    "server_ts": "2026-04-20T00:47:27.200096+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "it"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:47:27.331Z",
+    "server_ts": "2026-04-20T00:47:27.413780+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:48:19.234Z",
+    "server_ts": "2026-04-20T00:48:19.293251+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:48:21.551Z",
+    "server_ts": "2026-04-20T00:48:21.600741+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:48:37.223Z",
+    "server_ts": "2026-04-20T00:48:37.332120+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:49:14.159Z",
+    "server_ts": "2026-04-20T00:49:14.201835+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:49:14.158Z",
+    "server_ts": "2026-04-20T00:49:14.204187+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:50:06.260Z",
+    "server_ts": "2026-04-20T00:50:06.330522+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:50:06.556Z",
+    "server_ts": "2026-04-20T00:50:06.628693+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:50:07.856Z",
+    "server_ts": "2026-04-20T00:50:07.993972+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:50:08.134Z",
+    "server_ts": "2026-04-20T00:50:08.183702+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:50:11.226Z",
+    "server_ts": "2026-04-20T00:50:11.301185+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:50:11.224Z",
+    "server_ts": "2026-04-20T00:50:11.329608+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:50:11.934Z",
+    "server_ts": "2026-04-20T00:50:11.971950+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:52:03.615Z",
+    "server_ts": "2026-04-20T00:52:03.660208+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:10.430Z",
+    "server_ts": "2026-04-20T00:52:10.481938+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:10.582Z",
+    "server_ts": "2026-04-20T00:52:10.627456+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:12.018Z",
+    "server_ts": "2026-04-20T00:52:12.908266+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:14.456Z",
+    "server_ts": "2026-04-20T00:52:14.513019+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:18.470Z",
+    "server_ts": "2026-04-20T00:52:18.526443+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:20.067Z",
+    "server_ts": "2026-04-20T00:52:20.104635+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:22.465Z",
+    "server_ts": "2026-04-20T00:52:22.519495+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:26.454Z",
+    "server_ts": "2026-04-20T00:52:26.500340+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:52:31.238Z",
+    "server_ts": "2026-04-20T00:52:31.281923+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "sport": "home",
+      "source": "home"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:12.357679+00:00"
+  },
+  {
+    "event": "sport_selected",
+    "params": {
+      "sport": "basketball",
+      "source": "basketball"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:12.491531+00:00"
+  },
+  {
+    "event": "cta_get_app_click",
+    "params": {
+      "sport": "hero",
+      "source": "hero"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:12.606290+00:00"
+  },
+  {
+    "event": "sport_selected",
+    "params": {
+      "sport": "crossfit",
+      "source": "crossfit"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:12.774846+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "sport": "arena_system",
+      "source": "arena_system"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:12.931192+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "source": "RUNNING"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:13.090412+00:00"
+  },
+  {
+    "event": "sport_selected",
+    "params": {
+      "sport": "swimming",
+      "source": "swimming"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:13.218636+00:00"
+  },
+  {
+    "event": "cta_business_click",
+    "params": {
+      "sport": "footer",
+      "source": "footer"
+    },
+    "url": "/test",
+    "ts": null,
+    "server_ts": "2026-04-20T00:54:13.337825+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:54:27.266Z",
+    "server_ts": "2026-04-20T00:54:27.329567+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T00:54:27.826Z",
+    "server_ts": "2026-04-20T00:54:27.861699+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T00:55:55.388Z",
+    "server_ts": "2026-04-20T00:55:55.502922+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:55:58.069Z",
+    "server_ts": "2026-04-20T00:55:58.166152+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:55:58.097Z",
+    "server_ts": "2026-04-20T00:55:58.169968+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:55:58.098Z",
+    "server_ts": "2026-04-20T00:55:58.202571+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:55:58.234Z",
+    "server_ts": "2026-04-20T00:55:58.273837+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:56:00.021Z",
+    "server_ts": "2026-04-20T00:56:00.061066+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:56:04.831Z",
+    "server_ts": "2026-04-20T00:56:04.940186+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T00:56:04.986Z",
+    "server_ts": "2026-04-20T00:56:05.026629+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T00:56:05.906Z",
+    "server_ts": "2026-04-20T00:56:05.987010+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T00:56:09.839Z",
+    "server_ts": "2026-04-20T00:56:09.879954+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T00:56:12.797Z",
+    "server_ts": "2026-04-20T00:56:12.839640+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "amrap",
+      "language": "en"
+    },
+    "url": "/amrap-training",
+    "ts": "2026-04-20T00:56:16.180Z",
+    "server_ts": "2026-04-20T00:56:16.226133+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T01:09:59.775Z",
+    "server_ts": "2026-04-20T01:09:59.817195+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "fitness_gamification",
+      "language": "en"
+    },
+    "url": "/fitness-gamification",
+    "ts": "2026-04-20T01:11:25.422Z",
+    "server_ts": "2026-04-20T01:11:25.467900+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T01:12:09.763Z",
+    "server_ts": "2026-04-20T01:12:09.817818+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T01:12:19.686Z",
+    "server_ts": "2026-04-20T01:12:19.728631+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "amrap",
+      "language": "en"
+    },
+    "url": "/amrap-training",
+    "ts": "2026-04-20T01:12:34.955Z",
+    "server_ts": "2026-04-20T01:12:34.996132+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "crossfit",
+      "language": "en"
+    },
+    "url": "/crossfit-challenge",
+    "ts": "2026-04-20T01:12:45.051Z",
+    "server_ts": "2026-04-20T01:12:45.095849+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "gym_pilot",
+      "language": "en"
+    },
+    "url": "/gym-challenge-pilot",
+    "ts": "2026-04-20T01:12:52.828Z",
+    "server_ts": "2026-04-20T01:12:52.870281+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "blog",
+      "language": "en"
+    },
+    "url": "/blog",
+    "ts": "2026-04-20T01:13:07.877Z",
+    "server_ts": "2026-04-20T01:13:07.925330+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T01:13:52.503Z",
+    "server_ts": "2026-04-20T01:13:52.540455+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T01:14:11.785Z",
+    "server_ts": "2026-04-20T01:14:11.829603+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T01:14:46.428Z",
+    "server_ts": "2026-04-20T01:14:46.482148+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "amrap",
+      "language": "en"
+    },
+    "url": "/amrap-training",
+    "ts": "2026-04-20T01:14:52.667Z",
+    "server_ts": "2026-04-20T01:14:52.711429+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "crossfit",
+      "language": "en"
+    },
+    "url": "/crossfit-challenge",
+    "ts": "2026-04-20T01:14:53.941Z",
+    "server_ts": "2026-04-20T01:14:53.980034+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "gym_pilot",
+      "language": "en"
+    },
+    "url": "/gym-challenge-pilot",
+    "ts": "2026-04-20T01:15:00.450Z",
+    "server_ts": "2026-04-20T01:15:00.499450+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "amrap",
+      "language": "en"
+    },
+    "url": "/amrap-training",
+    "ts": "2026-04-20T01:15:14.605Z",
+    "server_ts": "2026-04-20T01:15:14.658044+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T01:15:18.905Z",
+    "server_ts": "2026-04-20T01:15:18.944776+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T01:15:24.476Z",
+    "server_ts": "2026-04-20T01:15:25.527199+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T01:15:27.058Z",
+    "server_ts": "2026-04-20T01:15:27.101265+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T01:16:45.807Z",
+    "server_ts": "2026-04-20T01:16:45.897666+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:16:52.203Z",
+    "server_ts": "2026-04-20T01:16:52.311182+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:16:52.356Z",
+    "server_ts": "2026-04-20T01:16:52.401256+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:16:53.447Z",
+    "server_ts": "2026-04-20T01:16:53.528416+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:16:54.447Z",
+    "server_ts": "2026-04-20T01:16:54.500572+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:16:56.233Z",
+    "server_ts": "2026-04-20T01:16:56.378240+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:17:00.244Z",
+    "server_ts": "2026-04-20T01:17:00.294416+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:17:04.237Z",
+    "server_ts": "2026-04-20T01:17:04.286579+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:17:08.245Z",
+    "server_ts": "2026-04-20T01:17:08.299559+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:17:12.236Z",
+    "server_ts": "2026-04-20T01:17:12.294701+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_gyms",
+      "language": "en"
+    },
+    "url": "/for-gyms",
+    "ts": "2026-04-20T01:17:47.146Z",
+    "server_ts": "2026-04-20T01:17:47.230454+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_gyms",
+      "language": "en"
+    },
+    "url": "/for-gyms",
+    "ts": "2026-04-20T01:21:38.182Z",
+    "server_ts": "2026-04-20T01:21:38.234952+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "en"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T01:21:38.182Z",
+    "server_ts": "2026-04-20T01:21:38.236700+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "fitness_gamification",
+      "language": "en"
+    },
+    "url": "/fitness-gamification",
+    "ts": "2026-04-20T01:22:33.431Z",
+    "server_ts": "2026-04-20T01:22:33.482977+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "fitness_gamification",
+      "language": "en"
+    },
+    "url": "/fitness-gamification",
+    "ts": "2026-04-20T01:22:34.241Z",
+    "server_ts": "2026-04-20T01:22:34.277965+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_gyms",
+      "language": "en"
+    },
+    "url": "/for-gyms",
+    "ts": "2026-04-20T01:23:38.174Z",
+    "server_ts": "2026-04-20T01:23:38.219660+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "fitness_gamification",
+      "language": "en"
+    },
+    "url": "/fitness-gamification",
+    "ts": "2026-04-20T01:24:16.831Z",
+    "server_ts": "2026-04-20T01:24:16.872003+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "fitness_gamification",
+      "language": "en"
+    },
+    "url": "/fitness-gamification",
+    "ts": "2026-04-20T01:24:17.707Z",
+    "server_ts": "2026-04-20T01:24:17.747862+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:13.032Z",
+    "server_ts": "2026-04-20T01:32:13.086603+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:13.183Z",
+    "server_ts": "2026-04-20T01:32:13.228224+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:17.068Z",
+    "server_ts": "2026-04-20T01:32:17.128765+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:21.071Z",
+    "server_ts": "2026-04-20T01:32:21.189338+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:22.228Z",
+    "server_ts": "2026-04-20T01:32:22.274893+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:25.074Z",
+    "server_ts": "2026-04-20T01:32:25.134876+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:29.064Z",
+    "server_ts": "2026-04-20T01:32:29.119411+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:29.261Z",
+    "server_ts": "2026-04-20T01:32:29.324747+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:33.076Z",
+    "server_ts": "2026-04-20T01:32:33.132431+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:36.282Z",
+    "server_ts": "2026-04-20T01:32:36.402142+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:36.612Z",
+    "server_ts": "2026-04-20T01:32:36.668461+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:36.764Z",
+    "server_ts": "2026-04-20T01:32:36.810674+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:40.650Z",
+    "server_ts": "2026-04-20T01:32:40.708247+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:40.962Z",
+    "server_ts": "2026-04-20T01:32:41.008958+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:44.648Z",
+    "server_ts": "2026-04-20T01:32:44.796647+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:45.328Z",
+    "server_ts": "2026-04-20T01:32:45.378131+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:32:48.650Z",
+    "server_ts": "2026-04-20T01:32:48.710737+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "arena_system",
+      "language": "en"
+    },
+    "url": "/arena-system",
+    "ts": "2026-04-20T01:32:49.770Z",
+    "server_ts": "2026-04-20T01:32:49.815540+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "for_athletes",
+      "language": "en"
+    },
+    "url": "/for-athletes",
+    "ts": "2026-04-20T01:33:01.608Z",
+    "server_ts": "2026-04-20T01:33:01.666259+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T01:33:12.690Z",
+    "server_ts": "2026-04-20T01:33:12.735035+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "amrap",
+      "language": "en"
+    },
+    "url": "/amrap-training",
+    "ts": "2026-04-20T01:33:46.747Z",
+    "server_ts": "2026-04-20T01:33:46.794697+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "crossfit",
+      "language": "en"
+    },
+    "url": "/crossfit-challenge",
+    "ts": "2026-04-20T01:34:01.986Z",
+    "server_ts": "2026-04-20T01:34:02.028694+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "gym_pilot",
+      "language": "en"
+    },
+    "url": "/gym-challenge-pilot",
+    "ts": "2026-04-20T01:34:12.376Z",
+    "server_ts": "2026-04-20T01:34:12.421260+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "blog",
+      "language": "en"
+    },
+    "url": "/blog",
+    "ts": "2026-04-20T01:34:28.680Z",
+    "server_ts": "2026-04-20T01:34:28.737157+00:00"
+  },
+  {
+    "event": "cta_get_app_click",
+    "params": {
+      "source": "navbar"
+    },
+    "url": "/blog",
+    "ts": "2026-04-20T01:34:29.840Z",
+    "server_ts": "2026-04-20T01:34:29.915169+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "get_the_app",
+      "language": "en"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-20T01:34:30.038Z",
+    "server_ts": "2026-04-20T01:34:30.159588+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "get_the_app"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-20T01:34:41.646Z",
+    "server_ts": "2026-04-20T01:34:41.719705+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "get_the_app"
+    },
+    "url": "/get-the-app",
+    "ts": "2026-04-20T01:34:44.429Z",
+    "server_ts": "2026-04-20T01:34:44.482048+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:34:55.296Z",
+    "server_ts": "2026-04-20T01:34:55.365470+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:34:55.447Z",
+    "server_ts": "2026-04-20T01:34:55.496190+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:34:59.333Z",
+    "server_ts": "2026-04-20T01:34:59.393611+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:35:04.264Z",
+    "server_ts": "2026-04-20T01:35:04.356204+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:35:08.279Z",
+    "server_ts": "2026-04-20T01:35:08.327277+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:35:12.278Z",
+    "server_ts": "2026-04-20T01:35:12.339471+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:35:16.267Z",
+    "server_ts": "2026-04-20T01:35:16.313377+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T01:37:01.968Z",
+    "server_ts": "2026-04-20T01:37:02.052771+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "competition",
+      "language": "en"
+    },
+    "url": "/workout-competition",
+    "ts": "2026-04-20T01:37:02.818Z",
+    "server_ts": "2026-04-20T01:37:02.855231+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:11.755Z",
+    "server_ts": "2026-04-20T01:38:11.814657+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:11.908Z",
+    "server_ts": "2026-04-20T01:38:11.953190+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:13.777Z",
+    "server_ts": "2026-04-20T01:38:13.826803+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:15.027Z",
+    "server_ts": "2026-04-20T01:38:15.076788+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:15.779Z",
+    "server_ts": "2026-04-20T01:38:15.833134+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:19.780Z",
+    "server_ts": "2026-04-20T01:38:19.834366+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:23.780Z",
+    "server_ts": "2026-04-20T01:38:23.828959+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:27.779Z",
+    "server_ts": "2026-04-20T01:38:27.838900+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:38:31.786Z",
+    "server_ts": "2026-04-20T01:38:31.834116+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "admin",
+      "language": "es"
+    },
+    "url": "/admin",
+    "ts": "2026-04-20T01:49:32.189Z",
+    "server_ts": "2026-04-20T01:49:32.231100+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:49:32.836Z",
+    "server_ts": "2026-04-20T01:49:32.950187+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "es"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:49:33.196Z",
+    "server_ts": "2026-04-20T01:49:33.237241+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:49:37.253Z",
+    "server_ts": "2026-04-20T01:49:37.293323+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:49:41.278Z",
+    "server_ts": "2026-04-20T01:49:41.329460+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:49:45.264Z",
+    "server_ts": "2026-04-20T01:49:45.329694+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:49:49.277Z",
+    "server_ts": "2026-04-20T01:49:49.339559+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:49:53.262Z",
+    "server_ts": "2026-04-20T01:49:53.384018+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "login",
+      "language": "en"
+    },
+    "url": "/login",
+    "ts": "2026-04-20T01:51:27.731Z",
+    "server_ts": "2026-04-20T01:51:27.759609+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "login",
+      "language": "en"
+    },
+    "url": "/login",
+    "ts": "2026-04-20T01:51:28.324Z",
+    "server_ts": "2026-04-20T01:51:28.360449+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:51:31.533Z",
+    "server_ts": "2026-04-20T01:51:31.629332+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:51:31.756Z",
+    "server_ts": "2026-04-20T01:51:31.797260+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:13.702Z",
+    "server_ts": "2026-04-20T01:52:13.765657+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "es"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:13.856Z",
+    "server_ts": "2026-04-20T01:52:13.898355+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:16.226Z",
+    "server_ts": "2026-04-20T01:52:16.271053+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:17.276Z",
+    "server_ts": "2026-04-20T01:52:17.317012+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:17.728Z",
+    "server_ts": "2026-04-20T01:52:17.777335+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:21.729Z",
+    "server_ts": "2026-04-20T01:52:21.785950+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "login",
+      "language": "es"
+    },
+    "url": "/login",
+    "ts": "2026-04-20T01:52:23.557Z",
+    "server_ts": "2026-04-20T01:52:23.601297+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:28.540Z",
+    "server_ts": "2026-04-20T01:52:28.588971+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "es"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:28.692Z",
+    "server_ts": "2026-04-20T01:52:28.733047+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "login",
+      "language": "es"
+    },
+    "url": "/login",
+    "ts": "2026-04-20T01:52:30.368Z",
+    "server_ts": "2026-04-20T01:52:30.422135+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:54.875Z",
+    "server_ts": "2026-04-20T01:52:54.943170+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "es"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:55.027Z",
+    "server_ts": "2026-04-20T01:52:55.066852+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:52:58.899Z",
+    "server_ts": "2026-04-20T01:52:58.983317+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:53:02.897Z",
+    "server_ts": "2026-04-20T01:53:02.937539+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "login",
+      "language": "es"
+    },
+    "url": "/login",
+    "ts": "2026-04-20T01:53:04.702Z",
+    "server_ts": "2026-04-20T01:53:04.742645+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:24.564Z",
+    "server_ts": "2026-04-20T01:55:24.631136+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:24.971Z",
+    "server_ts": "2026-04-20T01:55:25.030392+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:25.963Z",
+    "server_ts": "2026-04-20T01:55:26.130153+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "en"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:26.129Z",
+    "server_ts": "2026-04-20T01:55:26.289207+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:29.338Z",
+    "server_ts": "2026-04-20T01:55:29.471784+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:29.339Z",
+    "server_ts": "2026-04-20T01:55:29.474251+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "CROSSFIT",
+      "slide_index": 0
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:43.865Z",
+    "server_ts": "2026-04-20T01:55:43.969390+00:00"
+  },
+  {
+    "event": "page_view_custom",
+    "params": {
+      "page_name": "home",
+      "language": "es"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:44.017Z",
+    "server_ts": "2026-04-20T01:55:44.131879+00:00"
+  },
+  {
+    "event": "scroll_50",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:45.862Z",
+    "server_ts": "2026-04-20T01:55:45.905370+00:00"
+  },
+  {
+    "event": "scroll_90",
+    "params": {
+      "page_name": "home"
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:46.476Z",
+    "server_ts": "2026-04-20T01:55:46.519105+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "RUNNING",
+      "slide_index": 1
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:47.896Z",
+    "server_ts": "2026-04-20T01:55:47.956783+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "BASKETBALL",
+      "slide_index": 2
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:51.898Z",
+    "server_ts": "2026-04-20T01:55:51.993533+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SWIMMING",
+      "slide_index": 3
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:55:55.895Z",
+    "server_ts": "2026-04-20T01:55:55.938393+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "MMA",
+      "slide_index": 4
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:56:00.212Z",
+    "server_ts": "2026-04-20T01:56:00.261465+00:00"
+  },
+  {
+    "event": "hero_slide_view",
+    "params": {
+      "sport": "SURF",
+      "slide_index": 5
+    },
+    "url": "/",
+    "ts": "2026-04-20T01:56:04.265Z",
+    "server_ts": "2026-04-20T01:56:04.307276+00:00"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "a07a73aa-4e45-46bb-84a9-1feecc89eaa8",
+    "gym_name": "CrossFit Test Box",
+    "city": "Roma",
+    "owner_name": "Marco Rossi",
+    "email": "marco@test.com",
+    "phone": "+39 333 000 0000",
+    "created_at": "2026-04-19T14:58:38.044649+00:00"
+  },
+  {
+    "id": "088dc9b8-ea5f-4cc4-a29f-01719563ac49",
+    "gym_name": "CrossFit Arena Test",
+    "city": "Milano",
+    "owner_name": "Stefano Ogrisek",
+    "email": "ogrisek.stefano@gmail.com",
+    "phone": "+39 333 000 0000",
+    "created_at": "2026-04-19T20:27:20.040461+00:00"
+  },
+  {
+    "id": "a3511120-cf2e-4502-bc82-7c3887915375",
+    "gym_name": "Functional Gym Roma",
+    "city": "Roma",
+    "owner_name": "Marco Ferrari",
+    "email": "ogrisek.stefano@gmail.com",
+    "phone": "+39 333 999 0000",
+    "created_at": "2026-04-19T20:38:31.043777+00:00"
+  }
+]

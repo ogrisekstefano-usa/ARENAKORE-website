@@ -806,9 +806,14 @@ async def lead_alert(payload: LeadAlertPayload):
 
 # ─── APP SETUP ────────────────────────────────────────────────
 app.include_router(api_router)
-app.add_middleware(CORSMiddleware, allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=os.environ.get('CORS_ORIGINS', 'http://localhost:3000,https://arenakore.com,https://www.arenakore.com').split(','),
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["Set-Cookie"],
+)
 
 @app.on_event("shutdown")
 async def shutdown_db_client(): client.close()
