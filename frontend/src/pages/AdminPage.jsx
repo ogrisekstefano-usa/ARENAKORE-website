@@ -84,6 +84,7 @@ const TABS = [
   { id: 'analytics', label: 'Analytics',       icon: Activity },
   { id: 'content',   label: 'Content',         icon: FileText },
   { id: 'global',    label: 'Global Content',  icon: Globe },
+  { id: 'coverage',  label: 'Key Coverage',    icon: BarChart2 },
   { id: 'hero',      label: 'Hero Slides',     icon: Layers },
   { id: 'blog',      label: 'Blog',            icon: BookOpen },
   { id: 'pages',     label: 'SEO Pages',       icon: FileText },
@@ -157,6 +158,95 @@ function Dashboard({ call }) {
   );
 }
 
+/* ─── KEY COVERAGE VIEW ─── */
+function KeyCoverageView({ call }) {
+  const [coverage, setCoverage] = useState({});
+  const [loading, setLoading]   = useState(true);
+  const [expandedSlug, setExpandedSlug] = useState(null);
+
+  useEffect(() => {
+    call('get', '/cms/coverage').then(setCoverage).catch(() => {}).finally(() => setLoading(false));
+  }, [call]);
+
+  const STATUS_COLORS = { unused: '#555', used_not_in_cms: '#FF2D2D', ok: '#00FFFF' };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="font-anton text-2xl uppercase text-white">KEY COVERAGE</h2>
+          <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
+            Tracks which CMS keys are used in the frontend
+          </p>
+        </div>
+        <button onClick={() => call('get', '/cms/coverage').then(setCoverage)} className="font-inter text-xs text-white/40 hover:text-white transition-colors border border-white/10 px-3 py-1.5 rounded-full">
+          <RefreshCw size={12} className="inline mr-1" />Refresh
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-16"><div className="w-6 h-6 border-2 border-ak-cyan border-t-transparent rounded-full animate-spin" /></div>
+      ) : (
+        <div className="space-y-4">
+          {Object.entries(coverage).map(([slug, keys]) => {
+            const total  = keys.length;
+            const used   = keys.filter(k => k.used).length;
+            const inCms  = keys.filter(k => k.in_cms).length;
+            const missing = keys.filter(k => k.used && !k.in_cms).length;
+            const unused  = keys.filter(k => !k.used && k.in_cms).length;
+            const isExpanded = expandedSlug === slug;
+            return (
+              <div key={slug} className="rounded-[14px] overflow-hidden" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <button className="w-full flex items-center justify-between p-5" onClick={() => setExpandedSlug(isExpanded ? null : slug)}>
+                  <div className="flex items-center gap-4">
+                    <div className="font-anton text-lg uppercase text-white">/{slug}</div>
+                    <div className="flex items-center gap-3 font-inter text-xs">
+                      <span className="text-ak-cyan">{used} used</span>
+                      <span className="text-white/30">·</span>
+                      <span style={{ color: missing > 0 ? '#FF2D2D' : '#34d399' }}>{missing} missing from CMS</span>
+                      <span className="text-white/30">·</span>
+                      <span className="text-white/40">{unused} unused</span>
+                    </div>
+                  </div>
+                  <ChevronRight size={14} className={`text-white/25 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                </button>
+                {isExpanded && (
+                  <div className="border-t border-white/8">
+                    <div className="grid grid-cols-3 gap-px" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                      {keys.sort((a,b) => b.count - a.count).map(k => {
+                        const color = !k.in_cms ? '#FF2D2D' : !k.used ? '#555' : '#34d399';
+                        return (
+                          <div key={k.key} className="p-3 flex items-start justify-between gap-2" style={{ background: '#0a0a0a' }}>
+                            <div className="min-w-0">
+                              <div className="font-inter text-[10px] font-bold truncate" style={{ color }}>{k.key}</div>
+                              <div className="font-inter text-[9px] text-white/25">{k.count > 0 ? `${k.count}x · ${k.langs?.join(',')}` : 'not used'}</div>
+                            </div>
+                            <div className="flex-shrink-0">
+                              {!k.in_cms && k.used && <span className="font-inter text-[9px] text-red-400">❌ missing</span>}
+                              {k.in_cms && !k.used && <span className="font-inter text-[9px] text-white/25">unused</span>}
+                              {k.in_cms && k.used && <span className="font-inter text-[9px] text-green-400">✓</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {Object.keys(coverage).length === 0 && (
+            <div className="text-center py-16 border border-dashed border-white/10 rounded-[14px]">
+              <BarChart2 size={24} className="text-white/15 mx-auto mb-2" />
+              <p className="font-inter text-sm text-white/30">No usage data yet. Pages will be tracked as users visit them.</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── GLOBAL CONTENT EDITOR ─── */
 const GROUPS = { navbar: 'Navbar', cta: 'CTA Buttons', footer: 'Footer', system: 'System' };
 
@@ -180,6 +270,16 @@ function GlobalContentEditor({ call }) {
   };
 
   const save = async () => {
+    // Block save if active language has missing required items (nav_cta, cta_download_app required)
+    const requiredGlobalKeys = ['nav_cta', 'cta_download_app', 'footer_tagline'];
+    const missingRequired = requiredGlobalKeys.filter(k => {
+      const item = items.find(i => i.key === k);
+      return !item?.translations?.[activeLang];
+    });
+    if (missingRequired.length > 0 && activeLang !== 'en') {
+      setMsg(`⚠ Cannot save: missing in ${activeLang.toUpperCase()}: ${missingRequired.join(', ')}`);
+      return;
+    }
     setSaving(true); setMsg('');
     try {
       await call('put', '/cms/global', items);
@@ -349,10 +449,23 @@ function ContentEditor({ call }) {
 
   const save = async () => {
     if (!selectedPage) return;
+    // Block save if required fields missing for active language
+    const status = pageCompleteness[activeLang];
+    if (status && !status.has_required) {
+      const required = ['hero_h1_line1', 'hero_h1_line2', 'hero_sub', 'hero_h1', 'hero_sub1'];
+      const missingRequired = sections.filter(s => required.includes(s.key) && !(s.translations || {})[activeLang]);
+      if (missingRequired.length > 0) {
+        setMsg(`⚠ Cannot save: missing required fields in ${activeLang.toUpperCase()}: ${missingRequired.map(s => s.key).join(', ')}`);
+        return;
+      }
+    }
     setSaving(true); setMsg('');
     try {
       await call('put', `/cms/content/${selectedPage}`, sections);
       setMsg('Saved!');
+      // Reload completeness
+      const completeness = await call('get', `/cms/content/${selectedPage}/completeness`).catch(() => ({}));
+      setPageCompleteness(completeness || {});
     } catch { setMsg('Error saving'); }
     finally { setSaving(false); }
   };
@@ -1575,6 +1688,7 @@ export default function AdminPage() {
         {tab === 'analytics' && <AnalyticsDashboard call={call} />}
         {tab === 'content'   && <ContentEditor call={call} />}
         {tab === 'global'    && <GlobalContentEditor call={call} />}
+        {tab === 'coverage'  && <KeyCoverageView call={call} />}
         {tab === 'hero'      && <HeroSlidesManager call={call} />}
         {tab === 'blog'      && <BlogManager call={call} />}
         {tab === 'pages'     && <PagesManager call={call} />}

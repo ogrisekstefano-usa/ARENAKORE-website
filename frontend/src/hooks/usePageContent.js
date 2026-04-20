@@ -47,6 +47,11 @@ export function usePageContent(slug, language = 'en') {
       setData(_pageCache[cacheKey] || {});
       setEnData(isEn ? (_pageCache[cacheKey] || {}) : (_enCache[enKey] || {}));
       setLoaded(true);
+      // Log usage to backend (non-blocking)
+      const keys = Object.keys(_pageCache[cacheKey] || {});
+      if (keys.length > 0) {
+        axios.post(`${API}/cms/usage`, { slug, lang, keys, url: window.location.pathname }).catch(() => {});
+      }
     });
   }, [slug, lang]);
 

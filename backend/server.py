@@ -682,6 +682,40 @@ DEFAULT_PAGES: Dict[str, List[Dict]] = {
     ],
 }
 
+
+# Required keys per page — must exist in ALL active languages before publishing
+REQUIRED_KEYS: Dict[str, List[str]] = {
+    "homepage":     ["hero_h1_line1", "hero_h1_line2", "hero_sub", "cta_primary", "cta_secondary"],
+    "get-the-app":  ["hero_h1", "hero_tension", "hero_sub1", "final_line1"],
+    "for-athletes": ["hero_h1", "identity_h2", "final_h2"],
+    "gym-pilot":    ["hero_h1", "hero_sub", "offer_h2", "final_h2"],
+}
+ACTIVE_LANGUAGES = ["en", "it", "es"]
+
+def _compute_status(sections: list, slug: str) -> dict:
+    """Compute Draft/Ready/Published status per language."""
+    required = REQUIRED_KEYS.get(slug, [])
+    result = {}
+    for lang in ACTIVE_LANGUAGES:
+        total = len(sections)
+        filled = sum(1 for s in sections if (s.get("translations", {}) if isinstance(s, dict) else s.translations).get(lang, ""))
+        has_required = all(
+            any((s.get("key") if isinstance(s, dict) else s.key) == k and (s.get("translations", {}) if isinstance(s, dict) else s.translations).get(lang, "")
+                for s in sections)
+            for k in required
+        )
+        if total == 0:
+            status = "empty"
+        elif not has_required:
+            status = "draft"
+        elif filled == total:
+            status = "published"
+        else:
+            status = "ready"
+        result[lang] = {"status": status, "filled": filled, "total": total, "pct": round(filled/total*100) if total else 0, "has_required": has_required}
+    return result
+
+
 class ContentSection(BaseModel):
     key: str
     field_type: str = "text"  # text | heading | richtext | cta | label
@@ -743,25 +777,69 @@ async def update_page_content(slug: str, sections: List[ContentSection], _=Depen
         await db.cms_content.insert_one(data)
     return {"ok": True, "slug": slug, "sections": len(sections)}
 
+
 @api_router.get("/cms/content/{slug}/completeness")
 async def check_completeness(slug: str, _=Depends(verify_admin)):
-    """Returns completeness % per language for a page."""
     doc = await _get_or_default_page(slug)
     sections = doc.get("sections", [])
-    if not sections:
-        return {}
-    langs = set()
-    for s in sections:
-        t = s.get("translations", {}) if isinstance(s, dict) else s.translations
-        langs.update(t.keys())
-    en_keys = {(s.get("key") if isinstance(s, dict) else s.key) for s in sections}
-    result = {}
-    for lang in langs:
-        filled = sum(1 for s in sections
-                     if (s.get("translations", {}) if isinstance(s, dict) else s.translations).get(lang, ""))
-        total  = len(sections)
-        result[lang] = {"filled": filled, "total": total, "pct": round(filled / total * 100)}
-    return result
+    if not sections: return {}
+    return _compute_status(sections, slug)
+
+@api_router.get("/cms/content/{slug}/status")
+async def get_page_status(slug: str, _=Depends(verify_admin)):
+    doc = await _get_or_default_page(slug)
+    sections = doc.get("sections", [])
+    status = _compute_status(sections, slug)
+    required = REQUIRED_KEYS.get(slug, [])
+    missing = {lang: [k for k in required if not any(
+        (s.get("key") if isinstance(s, dict) else s.key) == k and
+        (s.get("translations", {}) if isinstance(s, dict) else s.translations).get(lang, "")
+        for s in sections
+    )] for lang in ACTIVE_LANGUAGES}
+    return {"slug": slug, "status_per_lang": status, "required_keys": required,
+            "missing_required": {k: v for k, v in missing.items() if v}}
+
+# ─── CMS USAGE TRACKING ───────────────────────────────────────
+
+class UsageLog(BaseModel):
+    slug: str
+    lang: str
+    keys: List[str]
+    url: Optional[str] = None
+
+@api_router.post("/cms/usage")
+async def log_usage(data: UsageLog):
+    now = datetime.now(timezone.utc).isoformat()
+    for key in data.keys[:50]:  # cap at 50 keys per request
+        await db.cms_usage_keys.update_one(
+            {"slug": data.slug, "key": key},
+            {"$set": {"last_seen": now}, "$inc": {"count": 1}, "$addToSet": {"langs": data.lang}},
+            upsert=True
+        )
+    return {"ok": True}
+
+@api_router.get("/cms/coverage")
+async def get_key_coverage(_=Depends(verify_admin)):
+    used_docs = await db.cms_usage_keys.find({}, {"_id": 0}).sort("count", -1).to_list(500)
+    coverage = {}
+    used_by_slug = {}
+    for doc in used_docs:
+        s = doc["slug"]; k = doc["key"]
+        if s not in used_by_slug: used_by_slug[s] = {}
+        used_by_slug[s][k] = doc
+    for slug, defaults in DEFAULT_PAGES.items():
+        coverage[slug] = []
+        all_keys = {s["key"] for s in defaults}
+        used_keys = used_by_slug.get(slug, {})
+        for key in all_keys:
+            u = used_keys.get(key, {})
+            coverage[slug].append({"key": key, "in_cms": True, "count": u.get("count", 0), "langs": u.get("langs", []), "used": key in used_keys, "last_seen": u.get("last_seen", "")})
+        for key, u in used_keys.items():
+            if key not in all_keys:
+                coverage[slug].append({"key": key, "in_cms": False, "count": u.get("count", 0), "langs": u.get("langs", []), "used": True, "last_seen": u.get("last_seen", "")})
+    return coverage
+
+
 
 @api_router.post("/cms/content/{slug}/translate")
 async def translate_page_content(slug: str, req: TranslateRequest, _=Depends(verify_admin)):
@@ -846,22 +924,6 @@ async def get_cms_pages_list(_=Depends(verify_admin)):
     ]
 
 
-@api_router.get("/cms/content/{slug}/completeness")
-async def check_completeness(slug: str, _=Depends(verify_admin)):
-    doc = await _get_or_default_page(slug)
-    sections = doc.get("sections", [])
-    if not sections: return {}
-    langs = set()
-    for s in sections:
-        t = s.get("translations", {}) if isinstance(s, dict) else s.translations
-        langs.update(t.keys())
-    result = {}
-    for lang in langs:
-        filled = sum(1 for s in sections
-                     if (s.get("translations", {}) if isinstance(s, dict) else s.translations).get(lang, ""))
-        total = len(sections)
-        result[lang] = {"filled": filled, "total": total, "pct": round(filled / total * 100)}
-    return result
 
 # ─── CMS GLOBAL CONTENT ───────────────────────────────────────
 
