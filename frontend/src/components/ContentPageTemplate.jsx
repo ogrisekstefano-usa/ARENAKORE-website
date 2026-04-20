@@ -23,12 +23,8 @@ export default function ContentPageTemplate({ page }) {
             <span className="w-2 h-2 rounded-full bg-ak-cyan animate-pulse inline-block" />
             <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">{page.badge}</span>
           </div>
-          <h1 className="font-anton text-5xl md:text-7xl uppercase leading-[0.9] text-white mb-6 max-w-3xl">
-            {page.h1}
-          </h1>
-          <p className="font-inter text-base md:text-lg text-white mb-8 max-w-xl leading-relaxed">
-            {page.intro.body.substring(0, 120)}...
-          </p>
+          <h1 className="font-anton text-5xl md:text-7xl uppercase leading-[0.9] text-white mb-6 max-w-3xl">{page.h1}</h1>
+          <p className="font-inter text-base md:text-lg text-white mb-8 max-w-xl leading-relaxed">{page.intro.body.substring(0, 120)}...</p>
           <div className="flex flex-wrap gap-4">
             <a href="#" data-testid="hero-download-btn"
               className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
@@ -38,7 +34,7 @@ export default function ContentPageTemplate({ page }) {
             <a href="#how-it-works"
               className="inline-flex items-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '52px' }}>
-              How it works <ChevronDown size={16} />
+              {t('ui.section_how_it_works')} <ChevronDown size={16} />
             </a>
           </div>
         </div>
@@ -93,7 +89,9 @@ export default function ContentPageTemplate({ page }) {
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" className="py-20 px-6 sm:px-10 bg-black">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">HOW IT WORKS</h2>
+          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">
+            {t('ui.section_how_it_works')}
+          </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {page.howItWorks.map((s, i) => (
               <div key={i} className="p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/40 transition-colors" style={{ background: '#0a0a0a' }}>
@@ -109,7 +107,9 @@ export default function ContentPageTemplate({ page }) {
       {/* ── BENEFITS ── */}
       <section className="py-20 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">WHY ARENAKORE</h2>
+          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">
+            {t('ui.section_why')}
+          </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {page.benefits.map((b, i) => (
               <div key={i} className="p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/40 transition-all group" style={{ background: '#0a0a0a' }}>
@@ -125,7 +125,9 @@ export default function ContentPageTemplate({ page }) {
       {/* ── FAQ ── */}
       <section className="py-20 px-6 sm:px-10 bg-black">
         <div className="max-w-3xl mx-auto">
-          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">FAQ</h2>
+          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-12 text-center">
+            {t('ui.section_faq')}
+          </h2>
           <div className="space-y-4">
             {page.faq.map((f, i) => (
               <details key={i} className="group border border-white/10 rounded-[14px] overflow-hidden" style={{ background: '#0a0a0a' }}>
@@ -145,7 +147,9 @@ export default function ContentPageTemplate({ page }) {
       {/* ── RELATED PAGES ── */}
       <section className="py-16 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
-          <h3 className="font-inter text-xs font-bold uppercase tracking-widest text-ak-cyan mb-6">EXPLORE ALSO</h3>
+          <h3 className="font-inter text-xs font-bold uppercase tracking-widest text-ak-cyan mb-6">
+            {t('ui.section_explore')}
+          </h3>
           <div className="flex flex-wrap gap-3">
             {page.relatedPages.map((p, i) => (
               <Link key={i} to={p.href}
@@ -161,18 +165,18 @@ export default function ContentPageTemplate({ page }) {
       <section className="py-20 px-6 sm:px-10 bg-black text-center">
         <div className="max-w-2xl mx-auto">
           <Zap size={32} className="text-ak-gold mx-auto mb-4" />
-          <h2 className="font-anton text-4xl md:text-5xl uppercase text-white mb-4">PROVE IT.</h2>
-          <p className="font-inter text-base text-white mb-8">No excuses. Your record starts now.</p>
+          <h2 className="font-anton text-4xl md:text-5xl uppercase text-white mb-4">{t('ui.prove_it')}</h2>
+          <p className="font-inter text-base text-white mb-8">{t('ui.no_excuses')}</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a href="#" data-testid="bottom-cta-btn"
+            <Link to="/get-the-app" data-testid="bottom-cta-btn"
               className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '52px' }}>
               <Download size={18} /> {t('cta.downloadApp')}
-            </a>
-            <Link to="/for-gyms"
+            </Link>
+            <Link to="/gym-challenge-pilot"
               className="inline-flex items-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all"
               style={{ height: '52px' }}>
-              For Gyms & Coaches
+              {t('ui.for_gyms_coaches')}
             </Link>
           </div>
         </div>

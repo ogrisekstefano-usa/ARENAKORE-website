@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock } from 'lucide-react';
@@ -8,6 +9,7 @@ import axios from 'axios';
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
 export default function BlogPage() {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,10 +37,10 @@ export default function BlogPage() {
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <span className="w-2 h-2 rounded-full bg-ak-cyan inline-block" />
-            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">THE ARENA BLOG</span>
+            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">{t('ui.blog_title')}</span>
           </div>
           <h1 className="font-anton text-5xl md:text-7xl uppercase text-white mb-4">THE ARENA BLOG</h1>
-          <p className="font-inter text-base text-white max-w-xl">Competition. Science. Training. No fluff, no wellness marketing. Just what works.</p>
+          <p className="font-inter text-base text-white max-w-xl">{t('ui.blog_sub')}</p>
         </div>
       </section>
 
@@ -68,7 +70,7 @@ export default function BlogPage() {
                         <p className="font-inter text-sm text-white leading-relaxed">{featured.excerpt}</p>
                       </div>
                       <div className="mt-6 flex items-center gap-2 font-inter text-sm font-bold text-ak-gold">
-                        Read article <ArrowRight size={16} />
+                        {t('ui.blog_read_article')} <ArrowRight size={16} />
                       </div>
                     </div>
                   </div>
@@ -109,14 +111,14 @@ export default function BlogPage() {
       {/* CTA */}
       <section className="py-16 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-4">STOP READING. START COMPETING.</h2>
-          <p className="font-inter text-sm text-white mb-8">Everything you read here applies directly in ArenaKore.</p>
+          <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-4">{t('ui.blog_stop_reading')}</h2>
+          <p className="font-inter text-sm text-white mb-8">{t('ui.blog_stop_sub')}</p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link to="/get-the-app" className="inline-flex items-center gap-3 font-inter font-black uppercase text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform" style={{ height: '48px' }}>
-              Get the App <ArrowRight size={16} />
+              {t('ui.blog_app_cta')} <ArrowRight size={16} />
             </Link>
             <Link to="/gym-challenge-pilot" className="inline-flex items-center gap-3 font-inter font-bold uppercase text-sm px-8 rounded-[14px] border border-ak-gold text-ak-gold hover:bg-ak-gold hover:text-black transition-all" style={{ height: '48px' }}>
-              Gym & Coaches Pilot
+              {t('ui.blog_gym_cta')}
             </Link>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, MessageCircle, Zap, Shield, Activity, Bug, ArrowRight } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
+import { useTranslation } from 'react-i18next';
 
 const TOPICS = [
   { icon: <Shield size={20} />, title: 'Account & KORE ID', desc: 'Login, password, account creation, KORE ID recovery.' },
@@ -10,6 +11,7 @@ const TOPICS = [
 ];
 
 export default function SupportPage() {
+  const { t } = useTranslation();
   useSEO({
     title: 'Support | ArenaKore',
     description: 'Get help with ArenaKore. Account issues, challenge problems, technical support. We respond within 24–48 hours.',
@@ -25,9 +27,9 @@ export default function SupportPage() {
           <div className="w-12 h-12 rounded-full bg-ak-cyan/10 border border-ak-cyan/30 flex items-center justify-center mx-auto mb-6">
             <MessageCircle size={22} className="text-ak-cyan" />
           </div>
-          <h1 className="font-anton text-4xl md:text-6xl uppercase text-white mb-4">ARENAKORE SUPPORT</h1>
+          <h1 className="font-anton text-4xl md:text-6xl uppercase text-white mb-4">{t('ui.support_h1')}</h1>
           <p className="font-inter text-base text-white leading-relaxed max-w-xl mx-auto">
-            We're here to help you get the most out of ArenaKore. Find answers below or contact us directly.
+            {t('ui.support_sub')}
           </p>
         </div>
       </section>
@@ -35,7 +37,7 @@ export default function SupportPage() {
       {/* Topics */}
       <section className="py-16 px-6 sm:px-10 bg-black">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-8 text-center">COMMON TOPICS</h2>
+          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-8 text-center">{t('ui.support_topics')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {TOPICS.map((t, i) => (
               <div key={i} className="flex items-start gap-4 p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/30 transition-all" style={{ background: '#0a0a0a' }}>
@@ -56,7 +58,7 @@ export default function SupportPage() {
       <section className="py-16 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-10 h-1 bg-ak-gold mx-auto mb-6 rounded" />
-          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-4">CONTACT SUPPORT</h2>
+          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-4">{t('ui.support_contact')}</h2>
           <p className="font-inter text-sm text-white mb-8">
             We typically respond within <strong className="text-white">24–48 hours</strong>.
             For urgent issues, include your KORE ID in the subject line.
@@ -73,8 +75,8 @@ export default function SupportPage() {
           </a>
 
           <div className="mt-6 p-5 rounded-[14px] border border-white/10" style={{ background: '#0a0a0a' }}>
-            <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">RESPONSE TIME</div>
-            <p className="font-inter text-sm text-white">Standard: 24–48 hours · Business accounts: priority queue</p>
+            <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">{t('ui.support_response_badge')}</div>
+            <p className="font-inter text-sm text-white">{t('ui.support_response_text')}</p>
           </div>
         </div>
       </section>
@@ -82,7 +84,7 @@ export default function SupportPage() {
       {/* FAQ */}
       <section className="py-16 px-6 sm:px-10 bg-black">
         <div className="max-w-3xl mx-auto">
-          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-8 text-center">QUICK ANSWERS</h2>
+          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-8 text-center">{t('ui.support_faq')}</h2>
           <div className="space-y-3">
             {[
               { q: 'How do I reset my password?', a: 'Go to the login screen and tap "Forgot password". Enter your email and follow the reset link sent to your inbox.' },
@@ -108,7 +110,7 @@ export default function SupportPage() {
       {/* Bottom CTA */}
       <section className="py-12 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-xl mx-auto text-center">
-          <p className="font-inter text-sm text-white mb-4">Still need help? Reach out directly.</p>
+          <p className="font-inter text-sm text-white mb-4">{t('ui.support_still_need')}</p>
           <a href="mailto:support@arenakore.com" data-testid="support-contact-cta"
             className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-cyan hover:underline">
             <Mail size={16} /> support@arenakore.com <ArrowRight size={14} />

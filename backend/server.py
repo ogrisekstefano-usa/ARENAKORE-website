@@ -887,6 +887,7 @@ async def seed_all_content(force: bool = False, translate: bool = True, _=Depend
         final_sections = [dict(s) for s in sections]
 
         # AI translate if requested
+        now = datetime.now(timezone.utc).isoformat()
         if translate and openai_client.api_key:
             for lang, lang_name in [("it", "Italian"), ("es", "Spanish")]:
                 to_tr = [{"key": s["key"], "en": s.get("translations", {}).get("en", "")} for s in final_sections if s.get("translations", {}).get("en")]
@@ -905,11 +906,18 @@ async def seed_all_content(force: bool = False, translate: bool = True, _=Depend
                 except Exception as e:
                     logger.error(f"Translate {slug}→{lang}: {e}")
 
-        data = {"slug": slug, "sections": final_sections, "id": str(uuid.uuid4()), "updated_at": datetime.now(timezone.utc).isoformat(), "history": []}
+        data = {"slug": slug, "sections": final_sections, "id": str(uuid.uuid4()), "updated_at": now, "history": []}
         if existing:
-            await db.cms_content.update_one({"slug": slug}, {"$set": data})
+            await db.cms_content.update_one({"slug": slug}, {"$set": {"sections": final_sections, "updated_at": now}})
         else:
             await db.cms_content.insert_one(data)
+        # Auto-publish — archive old, create new published version
+        await db.cms_versions.update_many({"slug": slug, "status": "published", "is_global": False}, {"$set": {"status": "archived"}})
+        await db.cms_versions.insert_one({
+            "id": str(uuid.uuid4()), "version_id": str(uuid.uuid4()), "slug": slug, "is_global": False,
+            "status": "published", "sections": final_sections, "sections_count": len(final_sections),
+            "created_at": now, "published_at": now, "created_by": "seed-all", "note": "Auto-seeded with AI translations",
+        })
         results[slug] = {"status": "seeded", "sections": len(final_sections)}
 
     return {"ok": True, "results": results, "total_seeded": sum(1 for v in results.values() if v.get("status") == "seeded")}

@@ -218,18 +218,18 @@ export function InnerFooter() {
               <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.pages')}</div>
               <ul className="space-y-2.5">
                 {[
-                  ['Home', '/'],
-                  ['Arena System', '/arena-system'],
-                  ['For Athletes', '/for-athletes'],
-                  ['Competition', '/workout-competition'],
-                  ['AMRAP', '/amrap-training'],
-                  ['CrossFit', '/crossfit-challenge'],
-                  ['Fitness App', '/fitness-challenge-app'],
-                  ['Gamification', '/fitness-gamification'],
-                  ['For Gyms & Coaches', '/for-gyms'],
-                  ['Business / Pilot', '/gym-challenge-pilot'],
-                  ['Blog', '/blog'],
-                  ['Get the App', '/get-the-app'],
+                  [t('nav.home'),        '/'],
+                  [t('nav.arenaSystem'), '/arena-system'],
+                  [t('nav.athletes'),    '/for-athletes'],
+                  [t('nav.competition'), '/workout-competition'],
+                  [t('nav.amrap'),       '/amrap-training'],
+                  [t('nav.crossfit'),    '/crossfit-challenge'],
+                  ['Fitness App',        '/fitness-challenge-app'],
+                  ['Gamification',       '/fitness-gamification'],
+                  [t('nav.forGymsCoaches'), '/for-gyms'],
+                  [t('nav.business'),    '/gym-challenge-pilot'],
+                  [t('nav.blog'),        '/blog'],
+                  [t('nav.getApp'),      '/get-the-app'],
                 ].map(([label, href]) => (
                   <li key={href}><Link to={href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{label}</Link></li>
                 ))}
