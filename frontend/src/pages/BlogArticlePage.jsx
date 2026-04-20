@@ -111,7 +111,7 @@ export default function BlogArticlePage() {
           {/* Pilot CTA */}
           <div className="mt-12 p-7 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.2)' }}>
             <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">PROVA ARENAKORE</div>
-            <p className="font-inter text-sm text-white mb-4">Tutto quello che hai letto si applica direttamente in ArenaKore.</p>
+            <p className="font-inter text-sm text-white mb-4">Everything you read here applies directly inside ArenaKore.</p>
             <div className="flex flex-wrap gap-3">
               <Link to="/get-the-app" className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[12px] bg-ak-gold text-black" style={{ height: '38px' }}>
                 Get the App

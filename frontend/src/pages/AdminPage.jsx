@@ -68,7 +68,7 @@ function LoginScreen({ onLogin }) {
         </form>
         <div className="mt-6 text-center">
           <Link to="/" className="font-inter text-xs text-white/30 hover:text-white transition-colors">
-            ← Torna al sito
+            ← Back to site
           </Link>
         </div>
       </div>
@@ -141,10 +141,10 @@ function Dashboard({ call }) {
         <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-3">AZIONI RAPIDE</div>
         <div className="flex flex-wrap gap-3">
           <button className="font-inter text-xs font-semibold text-white border border-white/20 px-4 py-2 rounded-[10px] hover:border-ak-cyan hover:text-ak-cyan transition-all">
-            + Nuovo Articolo Blog
+            + New Blog Post
           </button>
           <button className="font-inter text-xs font-semibold text-white border border-white/20 px-4 py-2 rounded-[10px] hover:border-ak-cyan hover:text-ak-cyan transition-all">
-            + Aggiungi Immagine
+            + Add Image
           </button>
         </div>
       </div>
@@ -173,13 +173,13 @@ function BlogManager({ call }) {
     try {
       if (editing === 'new') { await call('post', '/blog', form); }
       else { await call('put', `/blog/${editing.id}`, form); }
-      setMsg('Salvato!'); load(); setTimeout(() => setEditing(null), 800);
+      setMsg('Saved!'); load(); setTimeout(() => setEditing(null), 800);
     } catch (e) { setMsg(e?.response?.data?.detail || 'Errore'); }
     finally { setSaving(false); }
   };
 
   const del = async (post) => {
-    if (!window.confirm(`Eliminare "${post.title}"?`)) return;
+    if (!window.confirm(`Delete "${post.title}"?`)) return;
     await call('delete', `/blog/${post.id}`); load();
   };
 
@@ -205,7 +205,7 @@ function BlogManager({ call }) {
     return (
       <div>
         <button onClick={() => setEditing(null)} className="flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white mb-6 transition-colors">
-          <ArrowLeft size={14} /> Torna alla lista
+          <ArrowLeft size={14} /> Back to list
         </button>
         <h2 className="font-anton text-2xl uppercase text-white mb-6">{editing === 'new' ? 'NUOVO ARTICOLO' : 'MODIFICA ARTICOLO'}</h2>
         <div className="space-y-4 max-w-3xl">
@@ -247,7 +247,7 @@ function BlogManager({ call }) {
           </div>
           <div>
             <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt</label>
-            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.excerpt||''} onChange={e => setForm({...form,excerpt:e.target.value})} placeholder="Breve anteprima dell'articolo" />
+            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.excerpt||''} onChange={e => setForm({...form,excerpt:e.target.value})} placeholder="Short article preview" />
           </div>
           <div>
             <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Contenuto (Markdown)</label>
@@ -261,7 +261,7 @@ function BlogManager({ call }) {
             <button onClick={save} disabled={saving}
               className="inline-flex items-center gap-2 font-inter font-bold uppercase text-sm px-6 rounded-[12px] bg-ak-gold text-black disabled:opacity-60"
               style={{ height: '44px' }}>
-              <Save size={16} /> {saving ? 'Salvataggio...' : 'Salva'}
+              <Save size={16} /> {saving ? 'Saving...' : 'Salva'}
             </button>
             {msg && <span className={`font-inter text-xs ${msg.includes('Errore') ? 'text-red-400' : 'text-ak-cyan'}`}>{msg}</span>}
           </div>
@@ -279,20 +279,20 @@ function BlogManager({ call }) {
             <button onClick={seedDemo} disabled={saving}
               className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] border border-ak-cyan text-ak-cyan hover:bg-ak-cyan hover:text-black transition-all"
               style={{ height: '36px' }}>
-              Seed Demo Content
+              Seed Demo Articles
             </button>
           )}
           <button onClick={startNew} data-testid="blog-new-btn"
             className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase tracking-wider px-4 rounded-[10px] bg-ak-gold text-black hover:scale-105 transition-transform"
             style={{ height: '36px' }}>
-            <Plus size={14} /> Nuovo Articolo
+            <Plus size={14} /> New Article
           </button>
         </div>
       </div>
       {posts.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-white/15 rounded-[14px]">
           <BookOpen size={32} className="text-white/20 mx-auto mb-3" />
-          <p className="font-inter text-sm text-white/40">Nessun articolo. Crea il primo o importa i demo.</p>
+          <p className="font-inter text-sm text-white/40">No articles yet. Create the first or import demos.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -576,7 +576,7 @@ function MediaLibrary({ call }) {
         <button type="submit" disabled={saving}
           className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[10px] bg-ak-gold text-black disabled:opacity-60"
           style={{ height: '40px' }}>
-          <Upload size={14} /> Aggiungi
+          <Upload size={14} /> Add
         </button>
       </form>
 
@@ -584,7 +584,7 @@ function MediaLibrary({ call }) {
       {items.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-white/15 rounded-[14px]">
           <Image size={32} className="text-white/20 mx-auto mb-3" />
-          <p className="font-inter text-sm text-white/40">Nessuna immagine. Aggiungi il primo URL.</p>
+          <p className="font-inter text-sm text-white/40">No images yet. Add the first URL.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -621,7 +621,7 @@ function PilotRequests({ call }) {
       {requests.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-white/15 rounded-[14px]">
           <Users size={32} className="text-white/20 mx-auto mb-3" />
-          <p className="font-inter text-sm text-white/40">Nessuna richiesta pilot ancora.</p>
+          <p className="font-inter text-sm text-white/40">No pilot requests yet.</p>
         </div>
       ) : (
         <div className="space-y-3">

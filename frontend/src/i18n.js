@@ -11,14 +11,19 @@ i18n
   .use(initReactI18next)
   .init({
     resources: { en: { translation: en }, it: { translation: it }, es: { translation: es } },
-    fallbackLng: 'en',
+    fallbackLng: 'en',         // ALWAYS fall back to EN — never show IT on EN
     supportedLngs: ['en', 'it', 'es'],
+    ns: ['translation'],
+    defaultNS: 'translation',
     detection: {
       order: ['localStorage', 'navigator'],
       lookupLocalStorage: 'ak_lang',
       caches: ['localStorage'],
+      checkWhitelist: true,
     },
     interpolation: { escapeValue: false },
+    returnNull: false,         // never return null — use fallback
+    returnEmptyString: false,  // never return empty — use fallback
   });
 
 export default i18n;

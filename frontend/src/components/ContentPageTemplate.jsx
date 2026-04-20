@@ -160,7 +160,7 @@ export default function ContentPageTemplate({ page }) {
         <div className="max-w-2xl mx-auto">
           <Zap size={32} className="text-ak-gold mx-auto mb-4" />
           <h2 className="font-anton text-4xl md:text-5xl uppercase text-white mb-4">DIMOSTRALO.</h2>
-          <p className="font-inter text-base text-white mb-8">Niente scuse. Il tuo record comincia adesso.</p>
+          <p className="font-inter text-base text-white mb-8">No excuses. Your record starts now.</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <a href="#" data-testid="bottom-cta-btn"
               className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
