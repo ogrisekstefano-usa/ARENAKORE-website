@@ -206,7 +206,7 @@ export function InnerFooter() {
                 {g('footer_tagline', 'Global competition platform for athletes and gyms.')}
               </p>
               <p className="font-inter text-[10px] font-bold uppercase tracking-wider mb-4" style={{ color: 'rgba(0,255,255,0.6)' }}>
-                Universal Competition System
+                {t('footer.universalSystem')}
               </p>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
@@ -224,8 +224,8 @@ export function InnerFooter() {
                   [t('nav.competition'), '/workout-competition'],
                   [t('nav.amrap'),       '/amrap-training'],
                   [t('nav.crossfit'),    '/crossfit-challenge'],
-                  ['Fitness App',        '/fitness-challenge-app'],
-                  ['Gamification',       '/fitness-gamification'],
+                  [t('nav.fitnessApp'),   '/fitness-challenge-app'],
+                  [t('footer.gamification'), '/fitness-gamification'],
                   [t('nav.forGymsCoaches'), '/for-gyms'],
                   [t('nav.business'),    '/gym-challenge-pilot'],
                   [t('nav.blog'),        '/blog'],
@@ -239,7 +239,7 @@ export function InnerFooter() {
             <div>
               <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-5">{t('footer.support')}</div>
               <ul className="space-y-2.5 mb-6">
-                <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">Support Center</Link></li>
+                <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{t('footer.supportCenter')}</Link></li>
                 <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
               </ul>
               <Link to="/get-the-app"
@@ -266,7 +266,7 @@ export function InnerFooter() {
               </button>
               <Link to="/admin" data-testid="footer-signin-btn"
                 className="flex items-center gap-1.5 font-inter text-xs text-white/30 hover:text-white transition-colors">
-                <LogIn size={12} /> Sign in
+                <LogIn size={12} /> {t('ui.sign_in')}
               </Link>
             </div>
           </div>

@@ -29,7 +29,7 @@ const SPORTS = [
   { id: 'volleyball',    label: 'Volleyball',          emoji: '🏐' },
   { id: 'weightlifting', label: 'Weightlifting',       emoji: '🏋️' },
   { id: 'yoga',          label: 'Yoga',                emoji: '🧘' },
-  { id: 'other',         label: 'Other',               emoji: '🎯' },
+  { id: 'other',         label: null,                  emoji: '🎯' },
 ];
 
 const STORAGE_KEY = 'arena_sport_preference';
@@ -75,7 +75,7 @@ export default function SportSelector({ onSelect, compact = false }) {
 
   const handleCustomSave = () => {
     const val = customInput.trim();
-    if (val.length < 2) { setCustomError('Min 2 characters'); return; }
+    if (val.length < 2) { setCustomError(t('ui.sport_error_min_chars')); return; }
     commitSport(val.toLowerCase().replace(/\s+/g, '_'));
   };
 
@@ -126,7 +126,7 @@ export default function SportSelector({ onSelect, compact = false }) {
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
               >
                 <span style={{ fontSize: '15px', flexShrink: 0 }}>{sport.emoji}</span>
-                <span className="truncate">{sport.label}</span>
+                <span className="truncate">{sport.id === 'other' ? t('ui.sport_other') : sport.label}</span>
                 {isSelected && !isOther && (
                   <span className="ml-auto flex-shrink-0 w-1.5 h-1.5 rounded-full bg-ak-cyan" />
                 )}
@@ -146,7 +146,7 @@ export default function SportSelector({ onSelect, compact = false }) {
                 value={customInput}
                 onChange={e => { setCustomInput(e.target.value); setCustomError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleCustomSave()}
-                placeholder="Type your discipline..."
+                placeholder={t('ui.sport_type_placeholder')}
                 className="w-full font-inter text-sm text-white placeholder-white/30 px-4 py-2.5 rounded-[12px] outline-none transition-colors"
                 style={{ background: 'rgba(255,255,255,0.05)', border: `1.5px solid ${customError ? '#FF2D2D' : 'rgba(0,255,255,0.3)'}` }}
                 data-testid="custom-sport-input"
@@ -160,7 +160,7 @@ export default function SportSelector({ onSelect, compact = false }) {
               data-testid="custom-sport-save"
               className="font-inter font-black text-xs uppercase tracking-wider px-6 rounded-[12px] bg-ak-gold text-black hover:scale-105 transition-transform flex-shrink-0"
               style={{ height: '42px' }}>
-              Save
+              {t('ui.sport_save')}
             </button>
           </div>
         )}

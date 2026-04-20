@@ -485,6 +485,7 @@ class BlogPost(BaseModel):
     category: str = 'General'; read_time: str = '5 min read'; date: str = ''
     excerpt: str = ''; content: str; featured_image: str = ''
     published: bool = True
+    translations: Optional[Dict[str, Any]] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -492,12 +493,13 @@ class BlogPostCreate(BaseModel):
     slug: str; title: str; seo_title: str = ''; meta_description: str = ''
     category: str = 'General'; read_time: str = '5 min read'; date: str = ''
     excerpt: str = ''; content: str; featured_image: str = ''; published: bool = True
+    translations: Optional[Dict[str, Any]] = None
 
 class BlogPostUpdate(BaseModel):
     title: Optional[str]=None; seo_title: Optional[str]=None; meta_description: Optional[str]=None
     category: Optional[str]=None; read_time: Optional[str]=None; date: Optional[str]=None
     excerpt: Optional[str]=None; content: Optional[str]=None; featured_image: Optional[str]=None
-    published: Optional[bool]=None
+    published: Optional[bool]=None; translations: Optional[Dict[str, Any]] = None
 
 def _deserialize_post(d):
     for f in ('created_at', 'updated_at'):

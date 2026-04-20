@@ -3,6 +3,7 @@ import { Link, useParams, Navigate } from 'react-router-dom';
 import { ArrowLeft, Clock, ArrowRight } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import { BLOG_POSTS } from '../data/seo-content';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
@@ -48,13 +49,27 @@ function renderContent(text) {
 
 export default function BlogArticlePage() {
   const { slug } = useParams();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.slice(0, 2) || 'en';
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     axios.get(`${API}/blog/${slug}`)
-      .then(r => setPost({ ...r.data, read_time: r.data.read_time || r.data.readTime, featured_image: r.data.featured_image || r.data.coverImage }))
+      .then(r => {
+        const d = r.data;
+        // Language-aware fields
+        const trans = d.translations?.[lang];
+        setPost({
+          ...d,
+          title: trans?.title || d.title,
+          excerpt: trans?.excerpt || d.excerpt,
+          content: trans?.content || d.content,
+          read_time: d.read_time || d.readTime,
+          featured_image: d.featured_image || d.coverImage
+        });
+      })
       .catch(() => {
         const fallback = BLOG_POSTS.find(p => p.slug === slug);
         if (fallback) setPost({ ...fallback, read_time: fallback.readTime, featured_image: fallback.coverImage });
@@ -110,14 +125,14 @@ export default function BlogArticlePage() {
 
           {/* Pilot CTA */}
           <div className="mt-12 p-7 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.2)' }}>
-            <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">PROVA ARENAKORE</div>
-            <p className="font-inter text-sm text-white mb-4">Everything you read here applies directly inside ArenaKore.</p>
+            <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">{t('ui.blog_try_arena')}</div>
+            <p className="font-inter text-sm text-white mb-4">{t('ui.blog_try_body')}</p>
             <div className="flex flex-wrap gap-3">
               <Link to="/get-the-app" className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[12px] bg-ak-gold text-black" style={{ height: '38px' }}>
-                Get the App
+                {t('cta.downloadApp')}
               </Link>
               <Link to="/fitness-challenge-app" className="inline-flex items-center gap-2 font-inter text-xs font-semibold text-ak-cyan hover:underline" style={{ height: '38px' }}>
-                Arena System <ArrowRight size={13} />
+                {t('nav.arenaSystem')} <ArrowRight size={13} />
               </Link>
             </div>
           </div>
@@ -127,7 +142,7 @@ export default function BlogArticlePage() {
       {/* Related */}
       <section className="py-14 px-6 sm:px-10 border-t border-white/8" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
-          <h3 className="font-anton text-2xl uppercase text-white mb-8">ALTRI ARTICOLI</h3>
+          <h3 className="font-anton text-2xl uppercase text-white mb-8">{t('ui.blog_more_articles')}</h3>
           <div className="grid sm:grid-cols-2 gap-6">
             {related.map((p, i) => (
               <Link key={i} to={`/blog/${p.slug}`}

@@ -12,27 +12,28 @@ import { useScrollTracking } from '../hooks/useScrollTracking';
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
 const WHAT_BLOCKS = [
-  { icon: <Activity size={32} />, titleKey: 'track_title', bodyKey: 'track_body', title_en: 'Track performance.', body_en: "Every rep captured and certified by NEXUS in real-time.", color: '#00FFFF' },
-  { icon: <Trophy size={32} />,   titleKey: 'rank_title',  bodyKey: 'rank_body',  title_en: 'Rank every result.',   body_en: 'K-Rating from 0 to 1000. Updated after every session.',    color: '#FFD700' },
-  { icon: <Repeat size={32} />,   titleKey: 'challenge_title', bodyKey: 'challenge_body', title_en: 'Create continuous competition.', body_en: 'New challenges every day. The Arena never closes.', color: '#FF2D2D' },
+  { icon: <Activity size={32} />, titleKey: 'track_title', bodyKey: 'track_body', color: '#00FFFF' },
+  { icon: <Trophy size={32} />,   titleKey: 'rank_title',  bodyKey: 'rank_body',  color: '#FFD700' },
+  { icon: <Repeat size={32} />,   titleKey: 'challenge_title', bodyKey: 'challenge_body', color: '#FF2D2D' },
 ];
 
 const WHY_BLOCKS = [
-  { num: '01', headline_key: 'why_1', headline_en: 'Visibility creates pressure.', body: 'When your score is public, skipping a session has a cost. Visibility is the most powerful behavioral lever in competitive sport.', color: '#00FFFF' },
-  { num: '02', headline_key: 'why_2', headline_en: 'Ranking creates engagement.',   body: "Nobody ignores a leaderboard they're on. K-Rating gives every athlete a personal stake in every session.", color: '#FFD700' },
-  { num: '03', headline_key: 'why_3', headline_en: 'Repetition creates consistency.', body: 'Daily challenges with real consequences build training habits that self-motivation alone cannot sustain.', color: '#00FFFF' },
+  { num: '01', headline_key: 'why_1', body_key: 'why_1_body', color: '#00FFFF' },
+  { num: '02', headline_key: 'why_2', body_key: 'why_2_body', color: '#FFD700' },
+  { num: '03', headline_key: 'why_3', body_key: 'why_3_body', color: '#00FFFF' },
 ];
 
-const DISCIPLINES = [
-  'Fitness & CrossFit', 'Running', 'Basketball',
-  'Swimming', 'Golf', 'Surf', 'Team Sports', 'Any activity',
-];
 
 export default function ArenaSystemPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language?.slice(0, 2) || 'en';
   const { content: cms } = usePageContent('arena-system', lang);
   useScrollTracking('arena_system');
+
+  const DISCIPLINES = [
+    t('arena.d1'), t('arena.d2'), t('arena.d3'), t('arena.d4'),
+    t('arena.d5'), t('arena.d6'), t('arena.d7'), t('arena.d8'),
+  ];
 
   useSEO({
     title: 'Arena System | ArenaKore — The Competition Platform',
@@ -63,18 +64,18 @@ export default function ArenaSystemPage() {
           <div className="ak-hero-badge flex items-center gap-3 mb-6">
             <span className="w-2 h-2 rounded-full bg-ak-cyan inline-block" style={{ boxShadow: '0 0 8px #00FFFF' }} />
             <span className="font-inter text-xs font-bold tracking-[0.35em] uppercase text-ak-cyan">
-              {cms('hero_badge', 'UNIVERSAL COMPETITION SYSTEM')}
+              {cms('hero_badge', t('arena.hero_badge'))}
             </span>
           </div>
           <h1 className="ak-hero-title font-anton uppercase leading-[0.9] text-white mb-5"
             style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
-            {cms('hero_h1', 'THE SYSTEM BEHIND THE COMPETITION.')}
+            {cms('hero_h1', t('arena.hero_h1'))}
           </h1>
           <p className="ak-hero-sub font-inter text-xl md:text-2xl font-semibold text-white mb-3">
-            {cms('hero_sub', 'Track performance. Rank results. Compete every day.')}
+            {cms('hero_sub', t('arena.hero_sub'))}
           </p>
           <p className="ak-hero-sub font-inter text-sm text-white mb-10" style={{ opacity: 0.6 }}>
-            {cms('hero_sub2', 'Any sport. Any discipline. One system.')}
+            {cms('hero_sub2', t('arena.hero_sub2'))}
           </p>
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-10">
             <Link to="/get-the-app" data-testid="arena-download-btn"
@@ -91,7 +92,7 @@ export default function ArenaSystemPage() {
           {/* Not a fitness app statement */}
           <div className="inline-block font-inter text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full"
             style={{ background: 'rgba(255,45,45,0.08)', border: '1px solid rgba(255,45,45,0.25)', color: '#FF2D2D' }}>
-            {cms('not_fitness_app', 'This is not a fitness app. This is a competition system.')}
+            {cms('not_fitness_app', t('arena.not_fitness_app'))}
           </div>
         </div>
       </section>
@@ -101,9 +102,9 @@ export default function ArenaSystemPage() {
         className="py-24 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">{cms('what_badge', 'WHAT IT DOES')}</div>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">{cms('what_badge', t('arena.what_badge'))}</div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase text-white leading-none">
-              {cms('what_h2', 'THREE THINGS.')}<br /><span style={{ color: '#00FFFF' }}>{cms('what_h2_2', 'NO COMPROMISE.')}</span>
+              {cms('what_h2', t('arena.what_h2'))}<br /><span style={{ color: '#00FFFF' }}>{cms('what_h2_2', t('arena.what_h2_2'))}</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
@@ -112,8 +113,8 @@ export default function ArenaSystemPage() {
                 className="ak-reveal p-8 rounded-[14px] flex flex-col gap-5"
                 style={{ background: '#0a0a0a', borderTop: `3px solid ${b.color}`, transitionDelay: `${i * 0.1}s` }}>
                 <div style={{ color: b.color }}>{b.icon}</div>
-                <h3 className="font-anton text-2xl uppercase text-white leading-none">{cms(b.titleKey, b.title_en)}</h3>
-                <p className="font-inter text-sm text-white leading-relaxed">{cms(b.bodyKey, b.body_en)}</p>
+                <h3 className="font-anton text-2xl uppercase text-white leading-none">{cms(b.titleKey, t(`arena.${b.titleKey}`))}</h3>
+                <p className="font-inter text-sm text-white leading-relaxed">{cms(b.bodyKey, t(`arena.${b.bodyKey}`))}</p>
               </div>
             ))}
           </div>
@@ -125,10 +126,10 @@ export default function ArenaSystemPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4" style={{ color: '#FFD700' }}>
-              {cms('why_badge', 'BEHAVIORAL SCIENCE')}
+              {cms('why_badge', t('arena.why_badge'))}
             </div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase text-white leading-none">
-              {cms('why_h2', 'COMPETITION CHANGES BEHAVIOR.')}
+              {cms('why_h2', t('arena.why_h2'))}
             </h2>
           </div>
           <div className="space-y-4">
@@ -138,8 +139,8 @@ export default function ArenaSystemPage() {
                 style={{ background: '#0a0a0a', border: `1px solid ${b.color}15`, transitionDelay: `${i * 0.1}s` }}>
                 <div className="font-anton text-4xl flex-shrink-0" style={{ color: b.color, minWidth: '3rem' }}>{b.num}</div>
                 <div>
-                  <h3 className="font-anton text-xl uppercase text-white mb-2">{cms(b.headline_key, b.headline_en)}</h3>
-                  <p className="font-inter text-sm text-white leading-relaxed">{cms(b.headline_key + "_body", b.body)}</p>
+                  <h3 className="font-anton text-xl uppercase text-white mb-2">{cms(b.headline_key, t(`arena.${b.headline_key}`))}</h3>
+                  <p className="font-inter text-sm text-white leading-relaxed">{cms(b.headline_key + "_body", t(`arena.${b.body_key}`))}</p>
                 </div>
               </div>
             ))}
@@ -153,13 +154,13 @@ export default function ArenaSystemPage() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">
-                {cms('sport_badge', t('ui.arena_everywhere_badge'))}
+                {cms('sport_badge', t('arena.sport_badge'))}
               </div>
               <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-                {cms('sport_h2', t('ui.arena_everywhere_body'))}
+                {cms('sport_h2', t('arena.sport_badge'))}
               </h2>
               <p className="font-inter text-base text-white leading-relaxed mb-8">
-                {cms('sport_body', 'ArenaKore is not built for one sport. It\'s built for any activity where performance can be measured, validated and compared.')}
+                {cms('sport_body', t('arena.sport_body'))}
               </p>
               <div className="flex flex-col gap-2">
                 <Link to="/gym-challenge-pilot" data-testid="multisport-gyms-link"
@@ -191,13 +192,13 @@ export default function ArenaSystemPage() {
         <div className="max-w-4xl mx-auto ak-reveal">
           <div className="p-8 rounded-[16px] text-center" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.15)' }}>
             <div className="font-inter text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(0,255,255,0.6)' }}>
-              {cms('nexus_badge', 'POWERED BY NEXUS')}
+              {cms('nexus_badge', t('arena.nexus_badge'))}
             </div>
             <p className="font-anton text-2xl md:text-3xl uppercase text-white mb-2">
-              {cms('nexus_callout', 'NEXUS VALIDATES EVERY REP.')}
+              {cms('nexus_callout', t('arena.nexus_callout'))}
             </p>
             <p className="font-inter text-sm text-white max-w-lg mx-auto">
-              {cms('nexus_body', "Puppet Motion Detection. Real-time bio-analysis. Bad form doesn't count.")}
+              {cms('nexus_body', t('arena.nexus_body'))}
             </p>
           </div>
         </div>
@@ -208,10 +209,10 @@ export default function ArenaSystemPage() {
         <div className="max-w-2xl mx-auto text-center ak-reveal">
           <div className="w-10 h-1 bg-ak-gold mx-auto mb-8 rounded" />
           <h2 className="font-anton text-5xl md:text-6xl uppercase text-white mb-4 leading-none">
-            {cms('final_h2', 'ENTER THE SYSTEM.')}
+            {cms('final_h2', t('arena.final_h2'))}
           </h2>
           <p className="font-inter text-base text-white mb-10">
-            {cms('final_body', 'ArenaKore is a universal competition system for any performance-based activity.')}
+            {cms('final_body', t('arena.final_body'))}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/get-the-app" data-testid="arena-final-download"

@@ -1280,14 +1280,28 @@ function BlogManager({ call }) {
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
+  const [transLang, setTransLang] = useState('it'); // active translation lang tab
 
   const load = useCallback(() => call('get', '/blog').then(setPosts).catch(() => {}), [call]);
   useEffect(() => { load(); }, [load]);
 
-  const newForm = { slug: '', title: '', seo_title: '', meta_description: '', category: 'General', read_time: '5 min read', date: new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }), excerpt: '', content: '', featured_image: '', published: true };
+  const newForm = { slug: '', title: '', seo_title: '', meta_description: '', category: 'General', read_time: '5 min read', date: new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }), excerpt: '', content: '', featured_image: '', published: true, translations: { it: { title:'', excerpt:'', content:'' }, es: { title:'', excerpt:'', content:'' } } };
 
-  const startEdit = (post) => { setEditing(post); setForm({ ...post }); setMsg(''); };
+  const startEdit = (post) => {
+    const merged = {
+      ...post,
+      translations: post.translations || { it: { title:'', excerpt:'', content:'' }, es: { title:'', excerpt:'', content:'' } }
+    };
+    setEditing(post); setForm(merged); setMsg('');
+  };
   const startNew = () => { setEditing('new'); setForm({ ...newForm }); setMsg(''); };
+
+  const setTransField = (lang, field, val) => {
+    setForm(prev => ({
+      ...prev,
+      translations: { ...prev.translations, [lang]: { ...prev.translations?.[lang], [field]: val } }
+    }));
+  };
 
   const save = async () => {
     setSaving(true); setMsg('');
@@ -1323,6 +1337,7 @@ function BlogManager({ call }) {
   const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.12)' };
 
   if (editing !== null) {
+    const transLangData = form.translations?.[transLang] || {};
     return (
       <div>
         <button onClick={() => setEditing(null)} className="flex items-center gap-2 font-inter text-xs text-white/50 hover:text-white mb-6 transition-colors">
@@ -1332,8 +1347,8 @@ function BlogManager({ call }) {
         <div className="space-y-4 max-w-3xl">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Titolo *</label>
-              <input className={inp} style={inpStyle} value={form.title||''} onChange={e => setForm({...form,title:e.target.value})} placeholder="Titolo articolo" />
+              <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Titolo EN *</label>
+              <input className={inp} style={inpStyle} value={form.title||''} onChange={e => setForm({...form,title:e.target.value})} placeholder="Article title (EN)" />
             </div>
             <div>
               <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Slug *</label>
@@ -1367,13 +1382,41 @@ function BlogManager({ call }) {
             <input className={inp} style={inpStyle} value={form.featured_image||''} onChange={e => setForm({...form,featured_image:e.target.value})} placeholder="https://..." />
           </div>
           <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt</label>
-            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.excerpt||''} onChange={e => setForm({...form,excerpt:e.target.value})} placeholder="Short article preview" />
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt EN</label>
+            <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={form.excerpt||''} onChange={e => setForm({...form,excerpt:e.target.value})} placeholder="Short article preview (EN)" />
           </div>
           <div>
-            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Contenuto (Markdown)</label>
-            <textarea className={`${inp} resize-y font-mono text-xs`} style={{ ...inpStyle, minHeight: '300px' }} value={form.content||''} onChange={e => setForm({...form,content:e.target.value})} placeholder="## Titolo&#10;&#10;Contenuto in markdown..." />
+            <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Contenuto EN (Markdown)</label>
+            <textarea className={`${inp} resize-y font-mono text-xs`} style={{ ...inpStyle, minHeight: '200px' }} value={form.content||''} onChange={e => setForm({...form,content:e.target.value})} placeholder="## Titolo&#10;&#10;Contenuto in markdown..." />
           </div>
+
+          {/* Translations Section */}
+          <div className="border border-white/10 rounded-[12px] overflow-hidden">
+            <div className="flex border-b border-white/10">
+              <div className="flex-1 px-4 py-3 font-inter text-xs font-bold uppercase tracking-wider text-white/40">Traduzioni</div>
+              {['it', 'es'].map(l => (
+                <button key={l} onClick={() => setTransLang(l)}
+                  className={`px-5 py-3 font-inter text-xs font-bold uppercase tracking-wider transition-colors ${transLang === l ? 'text-ak-cyan border-b-2 border-ak-cyan' : 'text-white/40 hover:text-white'}`}>
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <div className="p-4 space-y-3">
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Titolo {transLang.toUpperCase()}</label>
+                <input className={inp} style={inpStyle} value={transLangData.title||''} onChange={e => setTransField(transLang,'title',e.target.value)} placeholder={`Titolo in ${transLang.toUpperCase()}...`} />
+              </div>
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Excerpt {transLang.toUpperCase()}</label>
+                <textarea className={`${inp} resize-none`} style={inpStyle} rows={2} value={transLangData.excerpt||''} onChange={e => setTransField(transLang,'excerpt',e.target.value)} placeholder={`Excerpt in ${transLang.toUpperCase()}...`} />
+              </div>
+              <div>
+                <label className="font-inter text-xs text-white/50 uppercase tracking-wider block mb-1">Contenuto {transLang.toUpperCase()} (Markdown)</label>
+                <textarea className={`${inp} resize-y font-mono text-xs`} style={{ ...inpStyle, minHeight: '200px' }} value={transLangData.content||''} onChange={e => setTransField(transLang,'content',e.target.value)} placeholder={`Contenuto in ${transLang.toUpperCase()}...`} />
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center gap-3">
             <input type="checkbox" id="pub" checked={form.published||false} onChange={e => setForm({...form,published:e.target.checked})} className="w-4 h-4" />
             <label htmlFor="pub" className="font-inter text-sm text-white">Pubblicato</label>

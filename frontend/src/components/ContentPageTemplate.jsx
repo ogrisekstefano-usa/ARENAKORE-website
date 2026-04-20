@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, ChevronDown, Download, Zap } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from './SharedLayout';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedPage } from '../data/seo-content';
 
 export default function ContentPageTemplate({ page }) {
-  useSEO({ title: page.seo_title, description: page.meta_description });
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.slice(0, 2) || 'en';
+  const p = getLocalizedPage(page, lang);
+  useSEO({ title: p.seo_title, description: p.meta_description });
 
   return (
     <div className="bg-black text-white min-h-screen font-inter">
@@ -15,16 +18,16 @@ export default function ContentPageTemplate({ page }) {
       {/* ── HERO ── */}
       <section
         className="relative min-h-[70vh] flex flex-col justify-end pt-16"
-        style={{ backgroundImage: `url(${page.heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }}
+        style={{ backgroundImage: `url(${p.heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }}
       >
         <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, rgba(0,0,0,0.88) 0%, rgba(0,10,20,0.82) 100%)' }} />
         <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 pb-20 w-full">
           <div className="flex items-center gap-3 mb-5">
             <span className="w-2 h-2 rounded-full bg-ak-cyan animate-pulse inline-block" />
-            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">{page.badge}</span>
+            <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">{p.badge}</span>
           </div>
-          <h1 className="font-anton text-5xl md:text-7xl uppercase leading-[0.9] text-white mb-6 max-w-3xl">{page.h1}</h1>
-          <p className="font-inter text-base md:text-lg text-white mb-8 max-w-xl leading-relaxed">{page.intro.body.substring(0, 120)}...</p>
+          <h1 className="font-anton text-5xl md:text-7xl uppercase leading-[0.9] text-white mb-6 max-w-3xl">{p.h1}</h1>
+          <p className="font-inter text-base md:text-lg text-white mb-8 max-w-xl leading-relaxed">{p.intro.body.substring(0, 120)}...</p>
           <div className="flex flex-wrap gap-4">
             <a href="#" data-testid="hero-download-btn"
               className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
@@ -46,11 +49,11 @@ export default function ContentPageTemplate({ page }) {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="w-10 h-1 bg-ak-cyan mb-6 rounded" />
-              <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-5">{page.intro.heading}</h2>
-              <p className="font-inter text-sm md:text-base text-white leading-relaxed">{page.intro.body}</p>
+              <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-5">{p.intro.heading}</h2>
+              <p className="font-inter text-sm md:text-base text-white leading-relaxed">{p.intro.body}</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {page.keywords.slice(0, 4).map((kw, i) => (
+              {p.keywords.slice(0, 4).map((kw, i) => (
                 <div key={i} className="p-4 rounded-[14px] font-inter text-xs font-bold uppercase tracking-wider text-ak-cyan border border-ak-cyan/20 bg-ak-cyan/5">
                   {kw.replace(/-/g, ' ')}
                 </div>
@@ -64,12 +67,12 @@ export default function ContentPageTemplate({ page }) {
       <section className="py-20 px-6 sm:px-10 bg-black">
         <div className="max-w-5xl mx-auto">
           <div className="border-l-4 border-red-500 pl-8">
-            <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-8">{page.problem.heading}</h2>
+            <h2 className="font-anton text-3xl md:text-4xl uppercase text-white mb-8">{p.problem.heading}</h2>
             <ul className="space-y-4">
-              {page.problem.points.map((p, i) => (
+              {p.problem.points.map((pt, i) => (
                 <li key={i} className="flex items-start gap-4">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 flex-shrink-0 inline-block" />
-                  <span className="font-inter text-base text-white">{p}</span>
+                  <span className="font-inter text-base text-white">{pt}</span>
                 </li>
               ))}
             </ul>
@@ -81,8 +84,8 @@ export default function ContentPageTemplate({ page }) {
       <section className="py-20 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto text-center">
           <div className="w-10 h-1 bg-ak-gold mx-auto mb-6 rounded" />
-          <h2 className="font-anton text-3xl md:text-5xl uppercase text-white mb-6">{page.solution.heading}</h2>
-          <p className="font-inter text-base md:text-lg text-white max-w-2xl mx-auto leading-relaxed">{page.solution.body}</p>
+          <h2 className="font-anton text-3xl md:text-5xl uppercase text-white mb-6">{p.solution.heading}</h2>
+          <p className="font-inter text-base md:text-lg text-white max-w-2xl mx-auto leading-relaxed">{p.solution.body}</p>
         </div>
       </section>
 
@@ -93,7 +96,7 @@ export default function ContentPageTemplate({ page }) {
             {t('ui.section_how_it_works')}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {page.howItWorks.map((s, i) => (
+            {p.howItWorks.map((s, i) => (
               <div key={i} className="p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/40 transition-colors" style={{ background: '#0a0a0a' }}>
                 <div className="font-anton text-4xl text-ak-gold mb-3">{s.step}</div>
                 <div className="font-anton text-lg uppercase text-white mb-2">{s.title}</div>
@@ -111,7 +114,7 @@ export default function ContentPageTemplate({ page }) {
             {t('ui.section_why')}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {page.benefits.map((b, i) => (
+            {p.benefits.map((b, i) => (
               <div key={i} className="p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/40 transition-all group" style={{ background: '#0a0a0a' }}>
                 <div className="text-2xl mb-3">{b.icon}</div>
                 <div className="font-anton text-lg uppercase text-white mb-2 group-hover:text-ak-cyan transition-colors">{b.title}</div>
@@ -129,7 +132,7 @@ export default function ContentPageTemplate({ page }) {
             {t('ui.section_faq')}
           </h2>
           <div className="space-y-4">
-            {page.faq.map((f, i) => (
+            {p.faq.map((f, i) => (
               <details key={i} className="group border border-white/10 rounded-[14px] overflow-hidden" style={{ background: '#0a0a0a' }}>
                 <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
                   <span className="font-inter text-sm font-semibold text-white">{f.q}</span>
@@ -151,10 +154,10 @@ export default function ContentPageTemplate({ page }) {
             {t('ui.section_explore')}
           </h3>
           <div className="flex flex-wrap gap-3">
-            {page.relatedPages.map((p, i) => (
-              <Link key={i} to={p.href}
+            {p.relatedPages.map((rp, i) => (
+              <Link key={i} to={rp.href}
                 className="inline-flex items-center gap-2 font-inter text-sm font-semibold text-white border border-white/20 px-5 py-3 rounded-[14px] hover:border-ak-cyan hover:text-ak-cyan transition-all">
-                {p.label} <ArrowRight size={14} />
+                {rp.label} <ArrowRight size={14} />
               </Link>
             ))}
           </div>

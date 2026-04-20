@@ -9,7 +9,8 @@ import axios from 'axios';
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
 export default function BlogPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.slice(0, 2) || 'en';
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,11 +20,21 @@ export default function BlogPage() {
   });
 
   useEffect(() => {
+    const normalize = (p) => {
+      const trans = p.translations?.[lang];
+      return {
+        ...p,
+        title: trans?.title || p.title,
+        excerpt: trans?.excerpt || p.excerpt,
+        read_time: p.read_time || p.readTime,
+        featured_image: p.featured_image || p.coverImage
+      };
+    };
     axios.get(`${API}/blog`)
-      .then(r => setPosts(r.data.length > 0 ? r.data : BLOG_POSTS.map(p => ({ ...p, read_time: p.readTime, featured_image: p.coverImage }))))
-      .catch(() => setPosts(BLOG_POSTS.map(p => ({ ...p, read_time: p.readTime, featured_image: p.coverImage }))))
+      .then(r => setPosts(r.data.length > 0 ? r.data.map(normalize) : BLOG_POSTS.map(normalize)))
+      .catch(() => setPosts(BLOG_POSTS.map(normalize)))
       .finally(() => setLoading(false));
-  }, []);
+  }, [lang]);
 
   const featured = posts[0];
   const rest = posts.slice(1);
@@ -39,7 +50,7 @@ export default function BlogPage() {
             <span className="w-2 h-2 rounded-full bg-ak-cyan inline-block" />
             <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">{t('ui.blog_title')}</span>
           </div>
-          <h1 className="font-anton text-5xl md:text-7xl uppercase text-white mb-4">THE ARENA BLOG</h1>
+          <h1 className="font-anton text-5xl md:text-7xl uppercase text-white mb-4">{t('ui.blog_title')}</h1>
           <p className="font-inter text-base text-white max-w-xl">{t('ui.blog_sub')}</p>
         </div>
       </section>
@@ -97,7 +108,7 @@ export default function BlogPage() {
                       <h3 className="font-anton text-xl uppercase text-white mb-2 group-hover:text-ak-cyan transition-colors flex-1">{post.title}</h3>
                       <p className="font-inter text-xs text-white leading-relaxed mb-4 line-clamp-2">{post.excerpt}</p>
                       <div className="flex items-center gap-2 font-inter text-xs font-bold text-ak-gold mt-auto">
-                        Read <ArrowRight size={13} />
+                        {t('ui.blog_read')} <ArrowRight size={13} />
                       </div>
                     </div>
                   </Link>

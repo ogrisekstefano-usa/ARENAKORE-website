@@ -33,72 +33,6 @@ const IMG_BASKETBALL = 'https://images.pexels.com/photos/30050102/pexels-photo-3
 const IMG_SWIMMER    = 'https://images.unsplash.com/photo-1682353242312-2e1f8c5dfd9a?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
 const IMG_GOLF       = 'https://images.unsplash.com/photo-1609408960307-ed11e7fb151f?crop=entropy&cs=srgb&fm=jpg&q=85&w=800';
 
-const DISCIPLINES = [
-  {
-    title: 'Fitness & CrossFit',
-    sub: 'PRIMARY USE CASE',
-    desc: 'Daily challenges, NEXUS rep validation, box vs box competition.',
-    href: '/fitness-challenge-app',
-    color: '#00FFFF', img: IMGS.barbell, primary: true,
-  },
-  {
-    title: 'Running',
-    sub: 'ANY DISTANCE',
-    desc: 'Time, pace, splits. Compete against runners worldwide.',
-    href: '/workout-competition',
-    color: '#FFD700', img: IMG_RUNNER,
-  },
-  {
-    title: 'Basketball',
-    sub: 'REPS & DRILLS',
-    desc: 'Shots, dribbling, 1v1. Your court becomes a leaderboard.',
-    href: '/workout-competition',
-    color: '#FF2D2D', img: IMG_BASKETBALL,
-  },
-  {
-    title: 'Swimming',
-    sub: 'SPEED & SPLITS',
-    desc: 'Lap times, stroke analysis, competitive performance data.',
-    href: '/workout-competition',
-    color: '#00FFFF', img: IMG_SWIMMER,
-  },
-  {
-    title: 'Golf',
-    sub: 'STROKE PLAY',
-    desc: 'Scorecard competition. Handicap-based ranking. Permanent results.',
-    href: '/workout-competition',
-    color: '#FFD700', bg: 'linear-gradient(135deg,#0a1a00 0%,#000 100%)',
-  },
-  {
-    title: 'Surf & Kitesurf',
-    sub: 'WAVE PERFORMANCE',
-    desc: 'Session scoring, outdoor competition. The ocean is your arena.',
-    href: '/workout-competition',
-    color: '#00FFFF', bg: 'linear-gradient(135deg,#001a2a 0%,#000 100%)',
-  },
-  {
-    title: 'Team Sports',
-    sub: 'COLLECTIVE RANKING',
-    desc: 'Group challenges, team K-Flux. Compete as a unit.',
-    href: '/gym-challenge-pilot',
-    color: '#FFD700', img: IMGS.competition,
-  },
-  {
-    title: 'Personal Challenges',
-    sub: 'ANY ACTIVITY',
-    desc: 'Set your own standard. Any movement. Any goal. Your rules.',
-    href: '/for-athletes',
-    color: '#FF2D2D', img: IMGS.pullup,
-  },
-];
-
-const HOW_STEPS = [
-  { num: '01', title: 'Join a challenge', desc: 'Pick any discipline, set your target. Open challenge or 1v1.', color: '#00FFFF' },
-  { num: '02', title: 'Track your performance', desc: 'NEXUS validates every rep. Bad form doesn\'t count. Anywhere.', color: '#00FFFF' },
-  { num: '03', title: 'Climb the ranking', desc: 'K-Rating updates after every performance. Public. Permanent.', color: '#FFD700' },
-  { num: '04', title: 'Compete daily', desc: 'New challenges every day across every discipline.', color: '#FFD700' },
-];
-
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [slide, setSlide] = useState(0);
@@ -110,6 +44,24 @@ export default function LandingPage() {
   const API = process.env.REACT_APP_BACKEND_URL + '/api';
   const firedSlides = useRef(new Set());
   useScrollTracking('home');
+
+  const DISCIPLINES = [
+    { title: t('home.d1_title'), sub: t('home.d1_sub'), desc: t('home.d1_desc'), href: '/fitness-challenge-app', color: '#00FFFF', img: IMGS.barbell, primary: true },
+    { title: t('home.d2_title'), sub: t('home.d2_sub'), desc: t('home.d2_desc'), href: '/workout-competition',  color: '#FFD700', img: IMG_RUNNER },
+    { title: t('home.d3_title'), sub: t('home.d3_sub'), desc: t('home.d3_desc'), href: '/workout-competition',  color: '#FF2D2D', img: IMG_BASKETBALL },
+    { title: t('home.d4_title'), sub: t('home.d4_sub'), desc: t('home.d4_desc'), href: '/workout-competition',  color: '#00FFFF', img: IMG_SWIMMER },
+    { title: t('home.d5_title'), sub: t('home.d5_sub'), desc: t('home.d5_desc'), href: '/workout-competition',  color: '#FFD700', bg: 'linear-gradient(135deg,#0a1a00 0%,#000 100%)' },
+    { title: t('home.d6_title'), sub: t('home.d6_sub'), desc: t('home.d6_desc'), href: '/workout-competition',  color: '#00FFFF', bg: 'linear-gradient(135deg,#001a2a 0%,#000 100%)' },
+    { title: t('home.d7_title'), sub: t('home.d7_sub'), desc: t('home.d7_desc'), href: '/gym-challenge-pilot',  color: '#FFD700', img: IMGS.competition },
+    { title: t('home.d8_title'), sub: t('home.d8_sub'), desc: t('home.d8_desc'), href: '/for-athletes',         color: '#FF2D2D', img: IMGS.pullup },
+  ];
+
+  const HOW_STEPS = [
+    { num: '01', title: t('home.howItWorks.s1_title'), desc: t('home.howItWorks.s1_desc'), color: '#00FFFF' },
+    { num: '02', title: t('home.howItWorks.s2_title'), desc: t('home.howItWorks.s2_desc'), color: '#00FFFF' },
+    { num: '03', title: t('home.howItWorks.s3_title'), desc: t('home.howItWorks.s3_desc'), color: '#FFD700' },
+    { num: '04', title: t('home.howItWorks.s4_title'), desc: t('home.howItWorks.s4_desc'), color: '#FFD700' },
+  ];
 
   useSEO({
     title: 'ArenaKore — The Multi-Sport Competition Platform',
@@ -322,21 +274,21 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center ak-reveal">
             <div>
-              <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">THE PLATFORM</div>
+              <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">{cms('positioning_badge', t('home.positioning_badge'))}</div>
               <h2 className="font-anton text-4xl md:text-6xl uppercase leading-none text-white">
                 {cms('positioning_h2', 'ONE SYSTEM. ANY DISCIPLINE.')}
               </h2>
             </div>
             <div>
               <p className="font-inter text-base text-white leading-relaxed mb-8">
-                ArenaKore is a competition platform designed for any performance-based activity — from fitness and CrossFit to basketball, running, swimming and beyond.
+                {cms('positioning_body', t('home.positioning_body'))}
               </p>
               <p className="font-inter text-sm text-white mb-8 leading-relaxed" style={{ borderLeft: '3px solid #FFD700', paddingLeft: '1rem' }}>
-                <strong className="text-ak-gold">Today:</strong> Fitness & CrossFit.<br />
-                <strong className="text-white">Tomorrow:</strong> Every sport on the planet.
+                <strong className="text-ak-gold">{t('home.positioning_today')}</strong> {t('home.positioning_today_val')}<br />
+                <strong className="text-white">{t('home.positioning_tomorrow')}</strong> {t('home.positioning_tomorrow_val')}
               </p>
               <div className="flex flex-wrap gap-2">
-                {['Fitness', 'CrossFit', 'Running', 'Basketball', 'Swimming', 'Golf', 'Surf', 'Team Sports'].map((s, i) => (
+                {[t('home.d1_title'), 'CrossFit', t('home.d2_title'), t('home.d3_title'), t('home.d4_title'), 'Golf', 'Surf', t('home.d7_title')].map((s, i) => (
                   <span key={i} className="font-inter text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border"
                     style={{ borderColor: i < 2 ? 'rgba(0,255,255,0.4)' : 'rgba(255,255,255,0.15)', color: i < 2 ? '#00FFFF' : 'rgba(255,255,255,0.6)' }}>
                     {s}
@@ -423,10 +375,10 @@ export default function LandingPage() {
             {/* Right: quick stats */}
             <div className="ak-reveal ak-delay-2 grid grid-cols-2 gap-3">
               {[
-                { value: '+30%', label: 'Engagement', color: '#00FFFF' },
-                { value: '+40%', label: 'Retention', color: '#FFD700' },
-                { value: '15+', label: 'Disciplines', color: '#00FFFF' },
-                { value: '0', label: 'Self-reported reps', color: '#FF2D2D' },
+                { value: '+30%', label: t('home.sol_s1'), color: '#00FFFF' },
+                { value: '+40%', label: t('home.sol_s2'), color: '#FFD700' },
+                { value: '15+',  label: t('home.sol_s3'), color: '#00FFFF' },
+                { value: '0',    label: t('home.sol_s4'), color: '#FF2D2D' },
               ].map((s, i) => (
                 <div key={i} className="p-6 rounded-[14px] text-center" style={{ background: '#0a0a0a', border: `1px solid ${s.color}20` }}>
                   <div className="font-anton text-4xl mb-1" style={{ color: s.color }}>{s.value}</div>
@@ -473,7 +425,7 @@ export default function LandingPage() {
       <section data-testid="disciplines-section" className="py-24 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14 ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">EVERY ARENA</div>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">{cms('disciplines_badge', t('home.disciplines_badge'))}</div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">{cms('disciplines_h2', t('home.useCases.h2'))}</h2>
             <p className="font-inter text-sm text-white mt-4 max-w-xl mx-auto">{cms('disciplines_sub', 'One ranking system. One identity. Any sport.')}</p>
           </div>
@@ -493,7 +445,7 @@ export default function LandingPage() {
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.7) 100%)' }} />
                   {d.primary && (
                     <div className="absolute top-3 left-3 font-inter text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded" style={{ background: '#00FFFF', color: '#000' }}>
-                      ★ Primary
+                      {t('home.disciplines_primary')}
                     </div>
                   )}
                   <div className="absolute bottom-3 left-3">
@@ -505,7 +457,7 @@ export default function LandingPage() {
                   <h3 className="font-anton text-base uppercase text-white mb-1 group-hover:text-ak-cyan transition-colors leading-tight">{d.title}</h3>
                   <p className="font-inter text-xs text-white leading-relaxed flex-1">{d.desc}</p>
                   <div className="flex items-center gap-1 mt-3 font-inter text-[10px] font-bold" style={{ color: d.color }}>
-                    Explore <ArrowRight size={10} />
+                  {t('home.disciplines_explore')} <ArrowRight size={10} />
                   </div>
                 </div>
               </Link>
@@ -514,8 +466,8 @@ export default function LandingPage() {
           {/* Global positioning statement */}
           <div className="mt-12 ak-reveal p-6 rounded-[14px] text-center" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.15)' }}>
             <p className="font-inter text-sm text-white leading-relaxed">
-              <span style={{ color: '#00FFFF' }} className="font-bold">ArenaKore</span> is a universal competition system for any performance-based activity.
-              {' '}<Link to="/fitness-challenge-app" className="underline" style={{ color: '#FFD700' }}>Start with fitness</Link> — expand to any discipline.
+              <span style={{ color: '#00FFFF' }} className="font-bold">ArenaKore</span> {t('home.disciplines_global')}
+              {' '}<Link to="/fitness-challenge-app" className="underline" style={{ color: '#FFD700' }}>{t('home.disciplines_start')}</Link> — {t('home.positioning_tomorrow_val')}
             </p>
           </div>
         </div>
@@ -532,12 +484,10 @@ export default function LandingPage() {
               </div>
               <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
                 {cms('gyms_h2', t('home.gyms.h2_line1'))}<br />
-                <span style={{ color: '#FFD700' }}>ENGAGED MEMBERS.</span>
+                <span style={{ color: '#FFD700' }}>{cms('gyms_engaged', t('home.gyms_engaged'))}</span>
               </h2>
               <p className="font-inter text-base text-white mb-8 leading-relaxed">
-                The average gym loses 80% of new members within 6 months.
-                ArenaKore gives you a competition layer that makes members come back —
-                because now they have something to lose.
+                {cms('gyms_body', t('home.gyms_body'))}
               </p>
               <div className="space-y-3 mb-8">
                 {[
@@ -562,16 +512,16 @@ export default function LandingPage() {
               </Link>
               <Link to="/for-athletes" data-testid="home-for-athletes-link"
                 className="inline-flex items-center gap-2 font-inter font-semibold text-sm text-ak-cyan hover:underline">
-                For Athletes <ArrowRight size={14} />
+                {t('home.for_athletes_link')} <ArrowRight size={14} />
               </Link>
             </div>
             {/* Stats */}
             <div className="ak-reveal ak-delay-2 grid grid-cols-2 gap-4">
               {[
-                { val: '14', unit: 'days', desc: 'full pilot, free', color: '#FFD700' },
-                { val: '20–30', unit: 'members', desc: 'activated on day 1', color: '#00FFFF' },
-                { val: '€0', unit: 'cost', desc: 'zero commitment', color: '#FFD700' },
-                { val: '48h', unit: 'setup', desc: 'first challenge live', color: '#00FFFF' },
+                { val: '14',    unit: t('home.gyms_stat_1_unit'), desc: t('home.gyms_stat_1_desc'), color: '#FFD700' },
+                { val: '20–30', unit: t('home.gyms_stat_2_unit'), desc: t('home.gyms_stat_2_desc'), color: '#00FFFF' },
+                { val: '€0',    unit: t('home.gyms_stat_3_unit'), desc: t('home.gyms_stat_3_desc'), color: '#FFD700' },
+                { val: '48h',   unit: t('home.gyms_stat_4_unit'), desc: t('home.gyms_stat_4_desc'), color: '#00FFFF' },
               ].map((s, i) => (
                 <div key={i} className="p-6 rounded-[14px] text-center" style={{ background: '#0a0a0a', border: `2px solid ${s.color}25` }}>
                   <div className="font-anton text-3xl md:text-4xl" style={{ color: s.color }}>{s.val}</div>

@@ -1,0 +1,77 @@
+{
+  "summary": "Comprehensive multilingual testing of ARENAKORE website. Tested EN/IT/ES language switching via footer LangModal, mobile hamburger LangSwitcher, SportSelector translations, Blog page, BlogArticlePage, SharedLayout footer, LandingPage disciplines/FOR GYMS, ArenaSystemPage, and ContentPageTemplate. All core multilingual features working.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "SportSelector",
+        "issue": "Sport names in the grid (Athletics, Badminton, Basketball, etc.) are hardcoded English strings in SPORTS array in SportSelector.jsx - not i18n translated. Only the 'Other' button label uses t('ui.sport_other').",
+        "selector": "[data-testid='sport-btn-athletics']",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "ArenaSystemPage hero badge exact value",
+        "issue": "hero badge shows 'SISTEMA DI COMPETIZIONE UNIVERSALE' (from CMS DB override) instead of 'SISTEMA UNIVERSALE DI COMPETIZIONE' (from i18n). Both are Italian. CMS content takes precedence over i18n via usePageContent chain. Not a code bug but content inconsistency between CMS and i18n.",
+        "affected_selectors": ["[data-testid='arena-system-hero']"]
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "Desktop Navigation",
+        "issues": ["No language switcher visible on desktop navbar - only available via footer globe button (LangModal). Mobile hamburger menu has EN|IT|ES buttons. Desktop-only users may not find the language switcher easily. This is by-design."]
+      },
+      {
+        "screen": "Blog Posts",
+        "issues": ["Blog post titles and excerpts remain in English even when IT/ES is active - static BLOG_POSTS fallback in seo-content.js has no Italian/Spanish translations field. Only UI labels (Leggi, ALTRI ARTICOLI) are translated. Blog posts from CMS API may have translations if added."]
+      },
+      {
+        "screen": "ContentPageTemplate /fitness-challenge-app",
+        "issues": ["Keywords/SEO tags section (FITNESS CHALLENGE APP, WORKOUT CHALLENGE APP etc) remain in English in IT/ES as they come from p.keywords array which is not localized in PAGE_TRANSLATIONS"]
+      }
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "OPTIONAL: Add translations to SPORTS array in SportSelector.jsx for sport names (Athletics, Badminton, etc.) to be multilingual",
+    "OPTIONAL: Add Italian/Spanish translations to BLOG_POSTS static data or ensure CMS posts have translations.it / translations.es fields",
+    "OPTIONAL: Update ArenaSystemPage CMS Italian content for hero_badge to match i18n value 'SISTEMA UNIVERSALE DI COMPETIZIONE' (currently 'SISTEMA DI COMPETIZIONE UNIVERSALE' in CMS)"
+  ],
+  "critical_code_review_comments": [
+    "SportSelector SPORTS array has hardcoded English labels for all sports except 'Other'. Only Other->Altro, placeholder, and Save are translated. All 25 sport names remain English in IT/ES.",
+    "usePageContent strictly uses CMS → '' (no i18n fallback in production). If CMS lacks a key for IT, it shows '' not the i18n translation. This means some CMS-managed pages could show empty fields if CMS not populated for IT/ES.",
+    "BlogArticlePage: related posts section uses BLOG_POSTS directly (not localized). Language only affects UI labels, not post content in static fallback.",
+    "LandingPage hero badge still shows CMS override value (NEXUS LIVE · COMPETIZIONE GLOBALE ATTIVA) rather than i18n value (NEXUS LIVE · SFIDE APERTE). CMS override is working but CMS content differs from i18n translation."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "95%"
+  },
+  "test_credentials": "No auth required for public pages tested",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 12 multilingual test scenarios verified. Language switching works via: (1) Footer globe button → LangModal, (2) Mobile hamburger EN|IT|ES buttons. Tested pages: /, /blog, /blog/{slug}, /arena-system, /fitness-challenge-app. Known minor issue: SportSelector sport grid names (Athletics, Badminton etc) are hardcoded English - only 'Other' button translates. ArenaSystemPage hero_badge differs between CMS and i18n (both Italian, word order different). Blog post content stays English in static fallback (no IT/ES translations in BLOG_POSTS data).",
+  "passing_tests": [
+    "IT homepage: LA COMPETIZIONE NON FINISCE MAI",
+    "ES homepage: LA COMPETICIÓN NUNCA TERMINA",
+    "IT footer: 'Sistema Universale di Competizione' + 'Accedi'",
+    "ES footer: 'Sistema Universal de Competición' + 'Iniciar sesión'",
+    "IT SportSelector: 'Altro', placeholder 'Scrivi la tua disciplina...', 'Salva'",
+    "IT LandingPage disciplines: Basket, Nuoto, Sport di Squadra",
+    "IT LandingPage FOR GYMS: ISCRITTI COINVOLTI",
+    "IT Blog page: Leggi, subtitle in Italian",
+    "ES Blog page: Leer, subtitle in Spanish",
+    "IT Blog article: ALTRI ARTICOLI, PROVA ARENAKORE",
+    "EN Blog article: MORE ARTICLES, TRY ARENAKORE",
+    "IT ArenaSystem: Italian hero badge (SISTEMA DI COMPETIZIONE UNIVERSALE via CMS)",
+    "IT ContentPageTemplate: L'APP FITNESS CHALLENGE PER ATLETI VERI",
+    "Footer LangModal: opens correctly, EN/IT/ES options work",
+    "Mobile hamburger LangSwitcher: EN|IT|ES buttons visible and functional"
+  ]
+}
