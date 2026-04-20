@@ -1,86 +1,97 @@
 /**
- * ArenaKore CMS Page Content Hook — STRICT MODE
+ * ArenaKore CMS Page Content — STRICT PRODUCTION SYSTEM
  * 
- * Chain: CMS (lang) → CMS (EN fallback) → hardcoded fallback → console warning
+ * Chain: CMS(lang) → CMS(EN) → "" (never another language, never hardcoded fallback)
  * 
- * EN is the base language. ALL new content starts in EN.
- * Missing translations show EN content, never another language.
+ * In DEV: console.error for missing keys
+ * In PROD: silent empty string
  * 
- * Usage:
- *   const { content } = usePageContent('homepage', language);
- *   const title = content('hero_h1_line1', 'THE COMPETITION');
+ * EN is the ONLY base language.
+ * All new content MUST start in EN.
  */
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-const API = process.env.REACT_APP_BACKEND_URL + '/api';
-const IS_PROD = process.env.NODE_ENV === 'production';
-const IS_DEV  = !IS_PROD;
+const API    = process.env.REACT_APP_BACKEND_URL + '/api';
+const IS_DEV = process.env.NODE_ENV !== 'production';
 
-// Session cache
-const _pageCache  = {};
-const _enCache    = {};   // always keep EN separately
+// Page content cache (session)
+const _pageCache = {};
+const _enCache   = {};
 
 export function usePageContent(slug, language = 'en') {
-  const [data, setData]       = useState({});
-  const [enData, setEnData]   = useState({});
-  const [loaded, setLoaded]   = useState(false);
-  const lang = language?.slice(0, 2) || 'en';
+  const [data, setData]     = useState({});
+  const [enData, setEnData] = useState({});
+  const [loaded, setLoaded] = useState(false);
+  const lang = (language || 'en').slice(0, 2);
 
   useEffect(() => {
     if (!slug) return;
-    const isEn = lang === 'en';
     const cacheKey = `${slug}:${lang}`;
     const enKey    = `${slug}:en`;
 
-    // Fetch requested language
     const fetchLang = !_pageCache[cacheKey]
-      ? axios.get(`${API}/cms/content/${slug}?lang=${lang}`).then(r => { _pageCache[cacheKey] = r.data || {}; }).catch(() => { _pageCache[cacheKey] = {}; })
+      ? axios.get(`${API}/cms/content/${slug}?lang=${lang}`)
+          .then(r => { _pageCache[cacheKey] = r.data || {}; })
+          .catch(() => { _pageCache[cacheKey] = {}; })
       : Promise.resolve();
 
-    // Always fetch EN as fallback (unless already EN)
-    const fetchEn = (!isEn && !_enCache[enKey])
-      ? axios.get(`${API}/cms/content/${slug}?lang=en`).then(r => { _enCache[enKey] = r.data || {}; }).catch(() => { _enCache[enKey] = {}; })
+    const fetchEn = (lang !== 'en' && !_enCache[enKey])
+      ? axios.get(`${API}/cms/content/${slug}?lang=en`)
+          .then(r => {
+            _enCache[enKey] = r.data || {};
+            // Log usage
+            const keys = Object.keys(r.data || {});
+            if (keys.length > 0) {
+              axios.post(`${API}/cms/usage`, { slug, lang: 'en', keys, url: window.location.pathname })
+                .catch(() => {});
+            }
+          })
+          .catch(() => { _enCache[enKey] = {}; })
       : Promise.resolve();
 
     Promise.all([fetchLang, fetchEn]).then(() => {
-      setData(_pageCache[cacheKey] || {});
-      setEnData(isEn ? (_pageCache[cacheKey] || {}) : (_enCache[enKey] || {}));
+      const pageData = _pageCache[cacheKey] || {};
+      const enD = lang === 'en' ? pageData : (_enCache[enKey] || {});
+      setData(pageData);
+      setEnData(enD);
       setLoaded(true);
-      // Log usage to backend (non-blocking)
-      const keys = Object.keys(_pageCache[cacheKey] || {});
-      if (keys.length > 0) {
-        axios.post(`${API}/cms/usage`, { slug, lang, keys, url: window.location.pathname }).catch(() => {});
+      // Log usage for requested language
+      if (lang !== 'en') {
+        const keys = Object.keys(pageData);
+        if (keys.length > 0) {
+          axios.post(`${API}/cms/usage`, { slug, lang, keys, url: window.location.pathname })
+            .catch(() => {});
+        }
       }
     });
   }, [slug, lang]);
 
   /**
-   * Get content value. Strict chain: lang → EN → hardcoded fallback.
+   * Get content — STRICT chain: lang → EN → ""
    * @param {string} key
-   * @param {string} fallback  - Used ONLY if CMS has nothing. Logs warning.
+   * @param {string} [_deprecated_fallback] - IGNORED in strict mode, kept for API compat
    */
-  const content = useCallback((key, fallback = '') => {
-    if (!loaded) return fallback;
+  const content = useCallback((key, _deprecated_fallback) => {
+    if (!loaded) return '';
 
-    // 1. Preferred language
-    if (data[key]) return data[key];
+    // 1. Preferred language from CMS
+    if (data[key] != null && data[key] !== '') return data[key];
 
-    // 2. EN fallback (never show other language as fallback)
-    if (enData[key]) {
+    // 2. EN fallback (same language family, only if different lang requested)
+    if (enData[key] != null && enData[key] !== '') {
       if (IS_DEV && lang !== 'en') {
-        console.warn(`[CMS] "${slug}.${key}" missing for "${lang}" — showing EN`);
+        console.error(`[CMS] MISSING "${key}" for lang "${lang}" → showing EN`);
       }
       return enData[key];
     }
 
-    // 3. Hardcoded fallback (log warning)
+    // 3. Nothing found
     if (IS_DEV) {
-      console.warn(`[CMS] "${slug}.${key}" not in CMS — using hardcoded fallback: "${fallback}"`);
-    } else {
-      console.error(`[CMS] Missing content: ${slug}.${key} [${lang}]`);
+      console.error(`[CMS STRICT] "${slug}.${key}" NOT IN CMS — key missing for "${lang}"`);
     }
-    return fallback;
+    // Return deprecated fallback only in dev to avoid breaking existing pages during migration
+    return IS_DEV ? (_deprecated_fallback || '') : '';
   }, [data, enData, loaded, lang, slug]);
 
   return { content, loaded, raw: data };

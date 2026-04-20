@@ -164,11 +164,19 @@ function KeyCoverageView({ call }) {
   const [loading, setLoading]   = useState(true);
   const [expandedSlug, setExpandedSlug] = useState(null);
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true);
     call('get', '/cms/coverage').then(setCoverage).catch(() => {}).finally(() => setLoading(false));
-  }, [call]);
+  };
+  useEffect(() => { load(); }, [call]);
 
-  const STATUS_COLORS = { unused: '#555', used_not_in_cms: '#FF2D2D', ok: '#00FFFF' };
+  // Summary stats
+  const allSlugs = Object.keys(coverage);
+  const totalKeys = allSlugs.reduce((sum, s) => sum + (coverage[s] || []).length, 0);
+  const inCmsKeys = allSlugs.reduce((sum, s) => sum + (coverage[s] || []).filter(k => k.in_cms).length, 0);
+  const usedKeys  = allSlugs.reduce((sum, s) => sum + (coverage[s] || []).filter(k => k.used).length, 0);
+  const missingTotal = allSlugs.reduce((sum, s) => sum + (coverage[s] || []).filter(k => k.used && !k.in_cms).length, 0);
+  const coveragePct = totalKeys > 0 ? Math.round((inCmsKeys / totalKeys) * 100) : 0;
 
   return (
     <div>
@@ -179,9 +187,41 @@ function KeyCoverageView({ call }) {
             Tracks which CMS keys are used in the frontend
           </p>
         </div>
-        <button onClick={() => call('get', '/cms/coverage').then(setCoverage)} className="font-inter text-xs text-white/40 hover:text-white transition-colors border border-white/10 px-3 py-1.5 rounded-full">
+        <button onClick={load} className="font-inter text-xs text-white/40 hover:text-white transition-colors border border-white/10 px-3 py-1.5 rounded-full">
           <RefreshCw size={12} className="inline mr-1" />Refresh
         </button>
+      </div>
+
+      {/* Global summary */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {[
+          { label: 'CMS Coverage', value: `${coveragePct}%`, color: coveragePct === 100 ? '#00FFFF' : coveragePct >= 80 ? '#FFD700' : '#FF2D2D' },
+          { label: 'Keys in CMS', value: `${inCmsKeys}/${totalKeys}`, color: '#00FFFF' },
+          { label: 'Used by Frontend', value: usedKeys, color: '#34d399' },
+          { label: 'Missing from CMS', value: missingTotal, color: missingTotal === 0 ? '#34d399' : '#FF2D2D' },
+        ].map((s, i) => (
+          <div key={i} className="p-4 rounded-[12px] text-center" style={{ background: '#0a0a0a', border: `1px solid ${s.color}20` }}>
+            <div className="font-anton text-3xl mb-1" style={{ color: s.color }}>{s.value}</div>
+            <div className="font-inter text-[10px] font-semibold uppercase tracking-wider text-white">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Coverage bar */}
+      <div className="mb-8 p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-inter text-xs font-bold uppercase tracking-wider text-white">Overall CMS Coverage</span>
+          <span className="font-inter text-sm font-bold" style={{ color: coveragePct === 100 ? '#00FFFF' : '#FFD700' }}>{coveragePct}%</span>
+        </div>
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+          <div className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${coveragePct}%`, background: coveragePct === 100 ? '#00FFFF' : coveragePct >= 80 ? '#FFD700' : '#FF2D2D' }} />
+        </div>
+        {missingTotal === 0 ? (
+          <p className="font-inter text-xs text-green-400 mt-2">✅ Zero missing keys — CMS coverage complete</p>
+        ) : (
+          <p className="font-inter text-xs text-red-400 mt-2">❌ {missingTotal} keys used in frontend but missing from CMS</p>
+        )}
       </div>
 
       {loading ? (

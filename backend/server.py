@@ -1163,22 +1163,53 @@ async def get_cms_pages_list(_=Depends(verify_admin)):
 # ─── CMS GLOBAL CONTENT ───────────────────────────────────────
 
 GLOBAL_DEFAULTS = [
-    {"key": "nav_home",         "group": "navbar",  "translations": {"en": "Home", "it": "Home", "es": "Inicio"}},
-    {"key": "nav_arena_system", "group": "navbar",  "translations": {"en": "Arena System", "it": "Arena System", "es": "Sistema Arena"}},
-    {"key": "nav_athletes",     "group": "navbar",  "translations": {"en": "Athletes", "it": "Atleti", "es": "Atletas"}},
-    {"key": "nav_competition",  "group": "navbar",  "translations": {"en": "Competition", "it": "Competizione", "es": "Competición"}},
-    {"key": "nav_amrap",        "group": "navbar",  "translations": {"en": "AMRAP", "it": "AMRAP", "es": "AMRAP"}},
-    {"key": "nav_crossfit",     "group": "navbar",  "translations": {"en": "CrossFit", "it": "CrossFit", "es": "CrossFit"}},
-    {"key": "nav_business",     "group": "navbar",  "translations": {"en": "Business", "it": "Business", "es": "Business"}},
-    {"key": "nav_blog",         "group": "navbar",  "translations": {"en": "Blog", "it": "Blog", "es": "Blog"}},
-    {"key": "nav_cta",          "group": "navbar",  "translations": {"en": "Start Your Challenge", "it": "Inizia la Sfida", "es": "Empieza Tu Desafío"}},
-    {"key": "cta_download_app", "group": "cta",     "translations": {"en": "Download the App", "it": "Scarica l'App", "es": "Descarga la App"}},
-    {"key": "cta_for_gyms",     "group": "cta",     "translations": {"en": "For Gyms & Coaches", "it": "Per Palestre & Coach", "es": "Para Gimnasios & Coaches"}},
-    {"key": "cta_pilot",        "group": "cta",     "translations": {"en": "Start Your Pilot", "it": "Avvia il Pilot", "es": "Inicia el Piloto"}},
-    {"key": "cta_enter_arena",  "group": "cta",     "translations": {"en": "Enter the Arena", "it": "Entra nell'Arena", "es": "Entra en la Arena"}},
-    {"key": "footer_tagline",   "group": "footer",  "translations": {"en": "Global competition platform for athletes and gyms.", "it": "Piattaforma competitiva globale per atleti e palestre.", "es": "Plataforma de competición global para atletas y gimnasios."}},
-    {"key": "footer_copyright", "group": "footer",  "translations": {"en": "© 2026 ArenaKore. All rights reserved.", "it": "© 2026 ArenaKore. Tutti i diritti riservati.", "es": "© 2026 ArenaKore. Todos los derechos reservados."}},
-    {"key": "prove_it",         "group": "system",  "translations": {"en": "PROVE IT.", "it": "DIMOSTRALO.", "es": "DEMUÉSTRALO."}},
+    # NAVBAR
+    {"key": "nav_home",             "group": "navbar",    "translations": {"en": "Home",           "it": "Home",          "es": "Inicio"}},
+    {"key": "nav_arena_system",     "group": "navbar",    "translations": {"en": "Arena System",   "it": "Arena System",  "es": "Sistema Arena"}},
+    {"key": "nav_athletes",         "group": "navbar",    "translations": {"en": "Athletes",       "it": "Atleti",        "es": "Atletas"}},
+    {"key": "nav_competition",      "group": "navbar",    "translations": {"en": "Competition",    "it": "Competizione",  "es": "Competición"}},
+    {"key": "nav_amrap",            "group": "navbar",    "translations": {"en": "AMRAP",          "it": "AMRAP",         "es": "AMRAP"}},
+    {"key": "nav_crossfit",         "group": "navbar",    "translations": {"en": "CrossFit",       "it": "CrossFit",      "es": "CrossFit"}},
+    {"key": "nav_business",         "group": "navbar",    "translations": {"en": "Business",       "it": "Business",      "es": "Business"}},
+    {"key": "nav_blog",             "group": "navbar",    "translations": {"en": "Blog",           "it": "Blog",          "es": "Blog"}},
+    {"key": "nav_cta",              "group": "navbar",    "translations": {"en": "Start Your Challenge", "it": "Inizia la Sfida", "es": "Empieza Tu Desafío"}},
+    # CTA BUTTONS
+    {"key": "cta_get_app",          "group": "cta",       "translations": {"en": "Get the App",    "it": "Scarica l'App", "es": "Descarga la App"}},
+    {"key": "cta_download_app",     "group": "cta",       "translations": {"en": "Download the App","it": "Scarica l'App","es": "Descarga la App"}},
+    {"key": "cta_start_challenge",  "group": "cta",       "translations": {"en": "Start Your Challenge","it": "Inizia la Sfida","es": "Empieza Tu Desafío"}},
+    {"key": "cta_for_gyms",         "group": "cta",       "translations": {"en": "For Gyms & Coaches","it": "Per Palestre & Coach","es": "Para Gimnasios & Coaches"}},
+    {"key": "cta_for_athletes",     "group": "cta",       "translations": {"en": "For Athletes",   "it": "Per Atleti",    "es": "Para Atletas"}},
+    {"key": "cta_pilot",            "group": "cta",       "translations": {"en": "Start Your Pilot","it": "Avvia il Pilot","es": "Inicia el Piloto"}},
+    {"key": "cta_enter_arena",      "group": "cta",       "translations": {"en": "Enter the Arena","it": "Entra nell'Arena","es": "Entra en la Arena"}},
+    {"key": "cta_learn_more",       "group": "cta",       "translations": {"en": "Learn more",     "it": "Scopri di più", "es": "Saber más"}},
+    {"key": "cta_explore",          "group": "cta",       "translations": {"en": "Explore",        "it": "Esplora",       "es": "Explorar"}},
+    # FOOTER
+    {"key": "footer_tagline",       "group": "footer",    "translations": {"en": "Global competition platform for athletes and gyms.", "it": "Piattaforma competitiva globale per atleti e palestre.", "es": "Plataforma de competición global para atletas y gimnasios."}},
+    {"key": "footer_copyright",     "group": "footer",    "translations": {"en": "© 2026 ArenaKore. All rights reserved.", "it": "© 2026 ArenaKore. Tutti i diritti riservati.", "es": "© 2026 ArenaKore. Todos los derechos reservados."}},
+    {"key": "footer_nexus",         "group": "footer",    "translations": {"en": "NEXUS ONLINE",   "it": "NEXUS ONLINE",  "es": "NEXUS ONLINE"}},
+    {"key": "footer_pages_title",   "group": "footer",    "translations": {"en": "PAGES",          "it": "PAGINE",        "es": "PÁGINAS"}},
+    {"key": "footer_support_title", "group": "footer",    "translations": {"en": "SUPPORT",        "it": "SUPPORTO",      "es": "SOPORTE"}},
+    {"key": "footer_language_label","group": "footer",    "translations": {"en": "Language & Region","it": "Lingua & Regione","es": "Idioma y Región"}},
+    {"key": "footer_signin",        "group": "footer",    "translations": {"en": "Sign in",        "it": "Accedi",        "es": "Iniciar sesión"}},
+    # SYSTEM / MICROCOPY
+    {"key": "prove_it",             "group": "system",    "translations": {"en": "PROVE IT.",      "it": "DIMOSTRALO.",   "es": "DEMUÉSTRALO."}},
+    {"key": "loading",              "group": "microcopy", "translations": {"en": "Loading...",     "it": "Caricamento...", "es": "Cargando..."}},
+    {"key": "save",                 "group": "microcopy", "translations": {"en": "Save",           "it": "Salva",         "es": "Guardar"}},
+    {"key": "cancel",               "group": "microcopy", "translations": {"en": "Cancel",         "it": "Annulla",       "es": "Cancelar"}},
+    {"key": "delete",               "group": "microcopy", "translations": {"en": "Delete",         "it": "Elimina",       "es": "Eliminar"}},
+    {"key": "edit",                 "group": "microcopy", "translations": {"en": "Edit",           "it": "Modifica",      "es": "Editar"}},
+    {"key": "sign_in",              "group": "microcopy", "translations": {"en": "Sign In",        "it": "Accedi",        "es": "Iniciar sesión"}},
+    {"key": "email_placeholder",    "group": "microcopy", "translations": {"en": "Email",          "it": "Email",         "es": "Correo electrónico"}},
+    {"key": "password_placeholder", "group": "microcopy", "translations": {"en": "Password",       "it": "Password",      "es": "Contraseña"}},
+    {"key": "form_error_required",  "group": "microcopy", "translations": {"en": "Please fill all required fields.", "it": "Compila tutti i campi obbligatori.", "es": "Por favor, rellena todos los campos obligatorios."}},
+    {"key": "form_success",         "group": "microcopy", "translations": {"en": "Sent successfully!", "it": "Inviato con successo!", "es": "¡Enviado con éxito!"}},
+    {"key": "form_error_send",      "group": "microcopy", "translations": {"en": "Error sending. Try again.", "it": "Errore nell'invio. Riprova.", "es": "Error al enviar. Inténtalo de nuevo."}},
+    {"key": "back_to_site",         "group": "microcopy", "translations": {"en": "← Back to site", "it": "← Torna al sito", "es": "← Volver al sitio"}},
+    {"key": "empty_no_items",       "group": "microcopy", "translations": {"en": "No items yet.",  "it": "Nessun elemento.", "es": "Sin elementos."}},
+    {"key": "scroll_more",          "group": "microcopy", "translations": {"en": "Scroll to learn more", "it": "Scorri per sapere di più", "es": "Desliza para saber más"}},
+    {"key": "available_worldwide",  "group": "microcopy", "translations": {"en": "Free · Available worldwide", "it": "Gratis · Disponibile ovunque", "es": "Gratis · Disponible en todo el mundo"}},
+    {"key": "live_badge",           "group": "microcopy", "translations": {"en": "LIVE",           "it": "LIVE",          "es": "EN VIVO"}},
+    {"key": "free_download",        "group": "microcopy", "translations": {"en": "Free Download",  "it": "Download Gratuito", "es": "Descarga Gratuita"}},
 ]
 
 @api_router.get("/cms/global")
@@ -1206,13 +1237,16 @@ async def update_global_content(items: List[Dict[str, Any]], _=Depends(verify_ad
     return {"ok": True, "updated": len(items)}
 
 @api_router.post("/cms/global/seed")
-async def seed_global_content(_=Depends(verify_admin)):
+async def seed_global_content(force: bool = False, _=Depends(verify_admin)):
     count = await db.cms_global.count_documents({})
-    if count > 0: return {"ok": True, "seeded": 0, "message": f"Already has {count} items"}
+    if count > 0 and not force:
+        return {"ok": True, "seeded": 0, "message": f"Already has {count} items. Use ?force=true to reseed."}
+    if force:
+        await db.cms_global.drop()
     for item in GLOBAL_DEFAULTS:
         doc = {**item, "id": str(uuid.uuid4()), "updated_at": datetime.now(timezone.utc).isoformat()}
         await db.cms_global.insert_one(doc)
-    return {"ok": True, "seeded": len(GLOBAL_DEFAULTS)}
+    return {"ok": True, "seeded": len(GLOBAL_DEFAULTS), "total": len(GLOBAL_DEFAULTS)}
 
 @api_router.post("/cms/global/translate")
 async def translate_global_content(req: TranslateRequest, _=Depends(verify_admin)):
