@@ -217,7 +217,7 @@ export function InnerFooter() {
   };
 
   const activeFooterLinks = bottomNav
-    .filter(item => item.active !== false)
+    .filter(item => item.active !== false && item.key !== 'support') // Support is in its own footer column
     .sort((a, b) => a.order - b.order);
 
   return (

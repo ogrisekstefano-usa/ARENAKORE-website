@@ -1785,11 +1785,24 @@ DEFAULT_BOTTOM_NAV = [
 
 @api_router.get("/nav/config")
 async def get_nav_config():
-    """Public: returns current navigation configuration."""
+    """Public: returns current navigation configuration, merged with defaults."""
     doc = await db.nav_config.find_one({"type": "nav_config"}, {"_id": 0})
     if not doc:
         return {"top_nav": [i.model_dump() for i in DEFAULT_TOP_NAV], "bottom_nav": [i.model_dump() for i in DEFAULT_BOTTOM_NAV]}
-    return {"top_nav": doc.get("top_nav", []), "bottom_nav": doc.get("bottom_nav", [])}
+
+    # Merge: add any default items missing from stored config (prevents disappearing items)
+    stored_top_keys = {item["key"] for item in doc.get("top_nav", [])}
+    stored_btm_keys = {item["key"] for item in doc.get("bottom_nav", [])}
+
+    top_nav = doc.get("top_nav", [i.model_dump() for i in DEFAULT_TOP_NAV])
+    bottom_nav = doc.get("bottom_nav", [i.model_dump() for i in DEFAULT_BOTTOM_NAV])
+
+    # Append any default top nav items not yet in stored config
+    for item in DEFAULT_TOP_NAV:
+        if item.key not in stored_top_keys:
+            top_nav.append({**item.model_dump(), "order": len(top_nav)})
+
+    return {"top_nav": top_nav, "bottom_nav": bottom_nav}
 
 @api_router.put("/nav/config")
 async def update_nav_config(data: NavConfig, _=Depends(verify_admin)):
