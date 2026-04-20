@@ -127,24 +127,6 @@ export function InnerNavbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Auth indicator */}
-          {authUser ? (
-            <div className="hidden lg:flex items-center gap-2">
-              <span className="font-inter text-xs text-white/60">{authUser.name?.split(' ')[0]}</span>
-              <span className="font-inter text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,255,255,0.1)', color: '#00FFFF' }}>
-                {(authUser.ak_credits ?? 0)} K
-              </span>
-              <button onClick={() => authLogout?.()}
-                className="p-1 text-white/30 hover:text-red-400 transition-colors" title="Sign out">
-                <LogOut size={14} />
-              </button>
-            </div>
-          ) : (
-            <Link to="/login" data-testid="nav-signin-btn"
-              className="hidden lg:inline-flex items-center gap-1.5 font-inter text-xs font-semibold text-white/50 hover:text-white transition-colors px-2 py-1">
-              <LogIn size={13} /> Sign in
-            </Link>
-          )}
           <Link
             to="/get-the-app"
             data-testid="nav-start-challenge-btn"
@@ -266,6 +248,10 @@ export function InnerFooter() {
                 <span className="font-bold">{currentLang}</span>
                 {currentCountry && <span className="text-white/30">· {currentCountry}</span>}
               </button>
+              <Link to="/admin" data-testid="footer-signin-btn"
+                className="flex items-center gap-1.5 font-inter text-xs text-white/30 hover:text-white transition-colors">
+                <LogIn size={12} /> Sign in
+              </Link>
             </div>
           </div>
         </div>
