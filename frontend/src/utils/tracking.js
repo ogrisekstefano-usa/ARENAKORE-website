@@ -93,15 +93,40 @@ export function trackHeroSlideClick(sport, slide_index) {
   trackEvent('hero_slide_click', { sport, slide_index });
 }
 
-export function trackGetAppClick(source, sport_context) {
+export function trackGetAppClick(source, sport_context, cms_key) {
   trackEvent('cta_get_app_click', {
     source,
     ...(sport_context && { sport_context }),
+    ...(cms_key && { content_key: cms_key }),
   });
+  // CMS attribution
+  if (cms_key) {
+    _trackCTAClick({ key: cms_key, text: 'Download the App', language: localStorage.getItem('ak_lang') || 'en', page: source || window.location.pathname });
+  }
 }
 
-export function trackBusinessClick(source) {
-  trackEvent('cta_business_click', { source });
+export function trackBusinessClick(source, cms_key) {
+  trackEvent('cta_business_click', {
+    source,
+    ...(cms_key && { content_key: cms_key }),
+  });
+  if (cms_key) {
+    _trackCTAClick({ key: cms_key, text: 'For Gyms & Coaches', language: localStorage.getItem('ak_lang') || 'en', page: source || window.location.pathname });
+  }
+}
+
+export function trackCMSCTAClick(key, text, page) {
+  const language = localStorage.getItem('ak_lang') || 'en';
+  trackEvent('cta_click', { key, text, language, page });
+  _trackCTAClick({ key, text, language, page, url: window.location.pathname });
+}
+
+function _trackCTAClick({ key, text, language, page, url }) {
+  fetch(`${API_BASE}/cms/cta-click`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, text, language, page, url: url || window.location.pathname }),
+  }).catch(() => {});
 }
 
 export function trackScrollDepth(percent, page_name) {

@@ -459,6 +459,10 @@ function ContentEditor({ call }) {
   const [msg, setMsg]           = useState('');
   const [customLangs, setCustomLangs] = useState([]);
   const [pageCompleteness, setPageCompleteness] = useState({});
+  const [versions, setVersions]         = useState([]);
+  const [showVersions, setShowVersions] = useState(false);
+  const [publishing, setPublishing]     = useState('');
+
 
   useEffect(() => {
     call('get', '/cms/pages-list').then(setPages).catch(() => setPages([]));
@@ -478,11 +482,12 @@ function ContentEditor({ call }) {
 
 
   const loadPage = async (slug) => {
-    setSelectedPage(slug); setMsg('');
+    setSelectedPage(slug); setMsg(''); setShowVersions(false);
     try {
-      const [doc, completeness] = await Promise.all([
+      const [doc, completeness, vers] = await Promise.all([
         call('get', `/cms/content/${slug}/full`),
         call('get', `/cms/content/${slug}/completeness`).catch(() => ({})),
+        call('get', `/cms/versions/${slug}`).catch(() => []),
       ]);
       const secs = doc.sections || [];
       setSections(secs.map(s => ({ ...s, translations: { ...s.translations } })));
@@ -491,6 +496,7 @@ function ContentEditor({ call }) {
       const extra = [...detected].filter(l => !LANGS.find(x => x.code === l));
       setCustomLangs(extra.map(c => ({ code: c, label: c.toUpperCase(), name: c })));
       setPageCompleteness(completeness || {});
+      setVersions(vers || []);
     } catch { setSections([]); }
   };
 
@@ -617,15 +623,98 @@ function ContentEditor({ call }) {
                 <h3 className="font-anton text-2xl uppercase text-white">/{selectedPage}</h3>
                 <p className="font-inter text-xs text-white/40 mt-1">{sections.length} editable fields</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <button onClick={save} disabled={saving}
                   className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[10px] bg-ak-gold text-black disabled:opacity-60"
                   style={{ height: '36px' }}>
-                  <Save size={13} /> {saving ? 'Saving...' : 'Save All'}
+                  <Save size={13} /> {saving ? 'Saving...' : 'Save Draft'}
+                </button>
+                {/* Publish latest version */}
+                {versions.length > 0 && versions[0]?.status !== 'published' && (
+                  <button
+                    onClick={async () => {
+                      setPublishing(versions[0].version_id);
+                      try {
+                        await call('post', `/cms/versions/${selectedPage}/publish/${versions[0].version_id}`, {});
+                        setMsg('✓ Published!');
+                        loadPage(selectedPage);
+                      } catch { setMsg('Publish failed'); }
+                      finally { setPublishing(''); }
+                    }}
+                    disabled={!!publishing}
+                    className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-4 rounded-[10px] border border-green-500 text-green-400 hover:bg-green-500 hover:text-black transition-all disabled:opacity-50"
+                    style={{ height: '36px' }}>
+                    {publishing ? '...' : '⬆ Publish'}
+                  </button>
+                )}
+                {/* Version history toggle */}
+                <button onClick={() => setShowVersions(!showVersions)}
+                  className={`inline-flex items-center gap-1.5 font-inter text-xs px-3 rounded-[10px] border transition-colors ${showVersions ? 'border-ak-cyan text-ak-cyan' : 'border-white/10 text-white/40 hover:text-white'}`}
+                  style={{ height: '36px' }}>
+                  <RefreshCw size={11} /> {versions.length} versions
                 </button>
                 {msg && <span className={`font-inter text-xs ${msg.startsWith('✓') || msg === 'Saved!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
               </div>
             </div>
+
+            {/* Version history panel */}
+            {showVersions && versions.length > 0 && (
+              <div className="mb-5 p-4 rounded-[12px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3">VERSION HISTORY</div>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {versions.map((v, i) => {
+                    const isPublished = v.status === 'published';
+                    const isDraft = v.status === 'draft';
+                    return (
+                      <div key={v.version_id} className="flex items-center justify-between p-3 rounded-[10px]"
+                        style={{ background: '#111', border: `1px solid ${isPublished ? 'rgba(0,255,255,0.2)' : 'rgba(255,255,255,0.05)'}` }}>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="font-inter text-[9px] font-bold uppercase px-1.5 py-0.5 rounded"
+                            style={{ background: isPublished ? 'rgba(0,255,255,0.15)' : 'rgba(255,255,255,0.05)', color: isPublished ? '#00FFFF' : '#555' }}>
+                            {v.status}
+                          </span>
+                          <span className="font-inter text-xs text-white/50 truncate">
+                            v{versions.length - i} · {v.sections_count} fields · {new Date(v.created_at).toLocaleString('en-GB', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}
+                            {v.rolled_back_from && <span className="text-yellow-500 ml-1">↩ rollback</span>}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {!isPublished && (
+                            <button
+                              onClick={async () => {
+                                setPublishing(v.version_id);
+                                try {
+                                  await call('post', `/cms/versions/${selectedPage}/publish/${v.version_id}`, {});
+                                  setMsg('✓ Published!'); loadPage(selectedPage);
+                                } catch { setMsg('Error'); }
+                                finally { setPublishing(''); }
+                              }}
+                              disabled={!!publishing}
+                              className="font-inter text-[9px] uppercase text-green-400 hover:text-green-300 disabled:opacity-40 border border-green-500/30 px-2 py-1 rounded">
+                              Publish
+                            </button>
+                          )}
+                          {i > 0 && (
+                            <button
+                              onClick={async () => {
+                                if (!window.confirm('Rollback to this version? Current draft will be overwritten.')) return;
+                                try {
+                                  const r = await call('post', `/cms/versions/${selectedPage}/rollback/${v.version_id}`, {});
+                                  setMsg(`✓ Rolled back — new draft created`);
+                                  loadPage(selectedPage);
+                                } catch { setMsg('Rollback failed'); }
+                              }}
+                              className="font-inter text-[9px] uppercase text-yellow-500 hover:text-yellow-300 border border-yellow-500/30 px-2 py-1 rounded">
+                              Restore
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Language tabs */}
             <div className="flex items-center gap-1 mb-6 flex-wrap">
@@ -728,17 +817,20 @@ function ContentEditor({ call }) {
 function AnalyticsDashboard({ call }) {
   const [summary, setSummary]   = useState([]);
   const [recent, setRecent]     = useState([]);
+  const [ctaStats, setCtaStats] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [lastRefresh, setLastRefresh] = useState(null);
 
   const load = useCallback(async () => {
     try {
-      const [sum, rec] = await Promise.all([
+      const [sum, rec, cta] = await Promise.all([
         call('get', '/events/summary'),
         call('get', '/events/recent'),
+        call('get', '/cms/cta-analytics').catch(() => []),
       ]);
       setSummary(sum || []);
       setRecent(rec || []);
+      setCtaStats(cta || []);
       setLastRefresh(new Date());
     } catch { }
     finally { setLoading(false); }
@@ -903,6 +995,33 @@ function AnalyticsDashboard({ call }) {
               </div>
             )}
           </div>
+
+
+          {/* CTA Performance */}
+          {ctaStats.length > 0 && (
+            <div className="p-5 rounded-[14px] mb-6" style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.15)' }}>
+              <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-ak-gold mb-4">CTA PERFORMANCE (by CMS key)</div>
+              <div className="space-y-2">
+                {ctaStats.slice(0, 10).map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="font-inter text-[10px] font-bold w-4 text-white/40 text-right">{i+1}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="font-inter text-xs font-semibold text-white truncate">{item.text || item.key}</span>
+                        <span className="font-inter text-[9px] text-ak-cyan border border-ak-cyan/20 px-1 rounded">{item.key}</span>
+                        <span className="font-inter text-[9px] text-white/30">{item.language?.toUpperCase()} · {item.page}</span>
+                      </div>
+                      <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,215,0,0.08)' }}>
+                        <div className="h-full rounded-full" style={{ width: `${(item.clicks / (ctaStats[0]?.clicks || 1)) * 100}%`, background: '#FFD700' }} />
+                      </div>
+                    </div>
+                    <div className="font-inter text-sm font-bold flex-shrink-0 text-ak-gold">{item.clicks}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
 
           {/* Recent events */}
           <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>

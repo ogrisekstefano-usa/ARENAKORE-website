@@ -977,10 +977,20 @@ async def _get_or_default_page(slug: str) -> dict:
 
 @api_router.get("/cms/content/{slug}")
 async def get_page_content(slug: str, lang: str = "en"):
-    """Public endpoint — returns {key: text} map for a given page/language."""
-    doc = await _get_or_default_page(slug)
+    """Public endpoint — returns ONLY published version, falls back to latest draft."""
+    # Try published version first
+    pub = await db.cms_versions.find_one(
+        {"slug": slug, "status": "published", "is_global": False},
+        {"_id": 0}, sort=[("published_at", -1)]
+    )
+    if pub:
+        sections = pub.get("sections", [])
+    else:
+        # Fallback to current draft (cms_content)
+        doc = await _get_or_default_page(slug)
+        sections = doc.get("sections", [])
     result = {}
-    for section in doc.get("sections", []):
+    for section in sections:
         t = section.get("translations", {}) if isinstance(section, dict) else section.translations
         k = section.get("key") if isinstance(section, dict) else section.key
         result[k] = t.get(lang) or t.get("en", "")
@@ -988,29 +998,143 @@ async def get_page_content(slug: str, lang: str = "en"):
 
 @api_router.get("/cms/content/{slug}/full")
 async def get_page_content_full(slug: str, _=Depends(verify_admin)):
-    """Admin endpoint — returns full structure with all translations."""
+    """Admin endpoint — returns full structure with all translations (current draft)."""
     return await _get_or_default_page(slug)
 
 @api_router.put("/cms/content/{slug}")
 async def update_page_content(slug: str, sections: List[ContentSection], _=Depends(verify_admin)):
     doc = await db.cms_content.find_one({"slug": slug})
     now = datetime.now(timezone.utc).isoformat()
-    # Simple version history (keep last 5)
-    history_entry = {"saved_at": now, "sections_count": len(sections)}
+
+    # Create version entry (draft)
+    version_id = str(uuid.uuid4())
+    version = {
+        "id": str(uuid.uuid4()),
+        "version_id": version_id,
+        "slug": slug,
+        "is_global": False,
+        "status": "draft",
+        "sections": [s.model_dump() for s in sections],
+        "sections_count": len(sections),
+        "created_at": now,
+        "published_at": None,
+    }
+    await db.cms_versions.insert_one(version)
+
+    # Keep only last 20 versions per slug
+    all_versions = await db.cms_versions.find(
+        {"slug": slug, "is_global": False}, {"_id": 0, "id": 1}
+    ).sort("created_at", -1).to_list(None)
+    if len(all_versions) > 20:
+        old_ids = [v["id"] for v in all_versions[20:]]
+        await db.cms_versions.delete_many({"id": {"$in": old_ids}})
+
     data = {
         "slug": slug,
         "sections": [s.model_dump() for s in sections],
         "updated_at": now,
+        "latest_version_id": version_id,
     }
     if doc:
-        old_history = doc.get("history", [])[-4:]  # keep last 4 + new = 5
-        data["history"] = old_history + [history_entry]
         await db.cms_content.update_one({"slug": slug}, {"$set": data})
     else:
         data["id"] = str(uuid.uuid4())
-        data["history"] = [history_entry]
+        data["history"] = []
         await db.cms_content.insert_one(data)
-    return {"ok": True, "slug": slug, "sections": len(sections)}
+    return {"ok": True, "slug": slug, "sections": len(sections), "version_id": version_id}
+
+@api_router.get("/cms/versions/{slug}")
+async def get_versions(slug: str, _=Depends(verify_admin)):
+    versions = await db.cms_versions.find(
+        {"slug": slug, "is_global": False}, {"_id": 0, "sections": 0}
+    ).sort("created_at", -1).to_list(20)
+    return versions
+
+@api_router.post("/cms/versions/{slug}/publish/{version_id}")
+async def publish_version(slug: str, version_id: str, _=Depends(verify_admin)):
+    now = datetime.now(timezone.utc).isoformat()
+    # Unpublish current published version
+    await db.cms_versions.update_many(
+        {"slug": slug, "status": "published", "is_global": False},
+        {"$set": {"status": "archived"}}
+    )
+    # Publish selected version
+    result = await db.cms_versions.find_one_and_update(
+        {"slug": slug, "version_id": version_id},
+        {"$set": {"status": "published", "published_at": now}},
+        {"_id": 0}, return_document=True
+    )
+    if not result:
+        raise HTTPException(404, "Version not found")
+    # Also update cms_content with published sections
+    if result.get("sections"):
+        await db.cms_content.update_one(
+            {"slug": slug}, {"$set": {"sections": result["sections"], "published_version_id": version_id, "published_at": now}},
+            upsert=True
+        )
+    logger.info(f"Published version {version_id} for /{slug}")
+    return {"ok": True, "slug": slug, "version_id": version_id, "published_at": now}
+
+@api_router.post("/cms/versions/{slug}/rollback/{version_id}")
+async def rollback_version(slug: str, version_id: str, _=Depends(verify_admin)):
+    """Rollback: create a new draft from an old version's content."""
+    old = await db.cms_versions.find_one({"slug": slug, "version_id": version_id})
+    if not old:
+        raise HTTPException(404, "Version not found")
+    sections = old.get("sections", [])
+    now = datetime.now(timezone.utc).isoformat()
+    new_version_id = str(uuid.uuid4())
+    new_version = {
+        "id": str(uuid.uuid4()),
+        "version_id": new_version_id,
+        "slug": slug,
+        "is_global": False,
+        "status": "draft",
+        "sections": sections,
+        "sections_count": len(sections),
+        "created_at": now,
+        "published_at": None,
+        "rolled_back_from": version_id,
+    }
+    await db.cms_versions.insert_one(new_version)
+    await db.cms_content.update_one(
+        {"slug": slug}, {"$set": {"sections": sections, "updated_at": now, "latest_version_id": new_version_id}},
+        upsert=True
+    )
+    logger.info(f"Rolled back /{slug} to version {version_id}")
+    return {"ok": True, "slug": slug, "new_version_id": new_version_id, "rolled_back_from": version_id}
+
+# ─── CMS VERSION ANALYTICS ────────────────────────────────────
+
+class CTAClickEvent(BaseModel):
+    key: str
+    text: str
+    language: str = "en"
+    page: str = ""
+    url: Optional[str] = None
+
+@api_router.post("/cms/cta-click")
+async def track_cta_click(data: CTAClickEvent):
+    """Track CTA clicks with CMS key attribution."""
+    now = datetime.now(timezone.utc).isoformat()
+    await db.cms_cta_clicks.update_one(
+        {"key": data.key, "language": data.language, "page": data.page},
+        {"$inc": {"clicks": 1}, "$set": {"last_click": now, "text": data.text, "key": data.key, "language": data.language, "page": data.page}},
+        upsert=True
+    )
+    # Also log to analytics_events
+    await db.analytics_events.insert_one({
+        "event": "cta_click",
+        "params": {"key": data.key, "text": data.text, "language": data.language, "page": data.page},
+        "url": data.url,
+        "ts": now, "server_ts": now,
+    })
+    return {"ok": True}
+
+@api_router.get("/cms/cta-analytics")
+async def get_cta_analytics(_=Depends(verify_admin)):
+    docs = await db.cms_cta_clicks.find({}, {"_id": 0}).sort("clicks", -1).to_list(100)
+    return docs
 
 
 @api_router.get("/cms/content/{slug}/completeness")

@@ -10,7 +10,7 @@ import { InnerNavbar, InnerFooter, useSEO } from './components/SharedLayout';
 import { IMGS } from './data/seo-content';
 import SchemaMarkup from './components/SchemaMarkup';
 import { useTranslation } from 'react-i18next';
-import { trackHeroSlideView, trackHeroSlideClick, trackGetAppClick, trackBusinessClick } from './utils/tracking';
+import { trackHeroSlideView, trackHeroSlideClick, trackGetAppClick, trackBusinessClick, trackCMSCTAClick } from './utils/tracking';
 import { useScrollTracking } from './hooks/useScrollTracking';
 import SportSelector from './components/SportSelector';
 import { useSportPreference } from './components/SportSelector';
@@ -265,16 +265,22 @@ export default function LandingPage() {
           {/* CTAs */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
             <Link to="/get-the-app" data-testid="hero-download-app-btn"
-              onClick={() => trackGetAppClick('hero', heroSlides[slide]?.sport)}
+              onClick={() => {
+                trackGetAppClick('hero', heroSlides[slide]?.sport, 'hero_cta_primary');
+                trackCMSCTAClick('cta_primary', cms('cta_primary', 'Download the App'), 'homepage_hero');
+              }}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
-              <Zap size={20} fill="black" /> {t('cta.downloadApp')}
+              <Zap size={20} fill="black" /> {cms('cta_primary', t('home.cta_primary'))}
             </Link>
             <Link to="/gym-challenge-pilot" data-testid="hero-for-gyms-btn"
-              onClick={() => trackBusinessClick('hero')}
+              onClick={() => {
+                trackBusinessClick('hero', 'hero_cta_secondary');
+                trackCMSCTAClick('cta_secondary', cms('cta_secondary', 'For Gyms & Coaches'), 'homepage_hero');
+              }}
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '60px' }}>
-              For Gyms & Coaches <ArrowRight size={16} />
+              {cms('cta_secondary', t('home.cta_secondary'))} <ArrowRight size={16} />
             </Link>
           </div>
           {/* Scroll indicator */}
