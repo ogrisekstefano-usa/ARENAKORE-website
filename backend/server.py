@@ -603,6 +603,11 @@ async def events_summary(_=Depends(verify_admin)):
     result = await db.analytics_events.aggregate(pipeline).to_list(50)
     return [{"event": r["_id"], "count": r["count"]} for r in result]
 
+@api_router.get("/events/recent")
+async def events_recent(_=Depends(verify_admin)):
+    docs = await db.analytics_events.find({}, {"_id": 0}).sort("server_ts", -1).to_list(100)
+    return docs
+
 class LeadAlertPayload(BaseModel):
     gym_name: str
     city: str

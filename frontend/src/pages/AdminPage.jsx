@@ -5,7 +5,8 @@ import {
   LayoutDashboard, FileText, BookOpen, Image, Users,
   LogOut, Plus, Pencil, Trash2, Save, X, Eye,
   ChevronRight, AlertCircle, CheckCircle, Upload, Tag,
-  Zap, ArrowLeft, Layers, ToggleLeft, ToggleRight
+  Zap, ArrowLeft, Layers, ToggleLeft, ToggleRight,
+  Activity, BarChart2, MousePointerClick, TrendingUp, RefreshCw
 } from 'lucide-react';
 import { LOGO, BLOG_POSTS } from '../data/seo-content';
 
@@ -79,6 +80,7 @@ function LoginScreen({ onLogin }) {
 /* ─── SIDEBAR ─── */
 const TABS = [
   { id: 'dashboard', label: 'Dashboard',     icon: LayoutDashboard },
+  { id: 'analytics', label: 'Analytics',     icon: Activity },
   { id: 'hero',      label: 'Hero Slides',   icon: Layers },
   { id: 'blog',      label: 'Blog',          icon: BookOpen },
   { id: 'pages',     label: 'Pages',         icon: FileText },
@@ -148,6 +150,228 @@ function Dashboard({ call }) {
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ─── ANALYTICS DASHBOARD ─── */
+function AnalyticsDashboard({ call }) {
+  const [summary, setSummary]   = useState([]);
+  const [recent, setRecent]     = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [lastRefresh, setLastRefresh] = useState(null);
+
+  const load = useCallback(async () => {
+    try {
+      const [sum, rec] = await Promise.all([
+        call('get', '/events/summary'),
+        call('get', '/events/recent'),
+      ]);
+      setSummary(sum || []);
+      setRecent(rec || []);
+      setLastRefresh(new Date());
+    } catch { }
+    finally { setLoading(false); }
+  }, [call]);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Auto-refresh every 12 seconds
+  useEffect(() => {
+    const timer = setInterval(load, 12000);
+    return () => clearInterval(timer);
+  }, [load]);
+
+  /* ── Derived stats ── */
+  const total        = summary.reduce((s, e) => s + e.count, 0);
+  const pageViews    = summary.filter(e => e.event === 'page_view_custom').reduce((s,e) => s+e.count, 0);
+  const ctaClicks    = summary.filter(e => e.event?.includes('cta_')).reduce((s,e) => s+e.count, 0);
+  const sportSelects = summary.filter(e => e.event === 'sport_selected').reduce((s,e) => s+e.count, 0);
+  const heroViews    = summary.filter(e => e.event === 'hero_slide_view').reduce((s,e) => s+e.count, 0);
+
+  // Top pages (from recent page_view_custom events)
+  const pageMap = {};
+  recent.filter(e => e.event === 'page_view_custom').forEach(e => {
+    const page = e.params?.page_name || e.url || 'unknown';
+    pageMap[page] = (pageMap[page] || 0) + 1;
+  });
+  const topPages = Object.entries(pageMap).sort((a,b) => b[1]-a[1]).slice(0, 8);
+
+  // Top sports
+  const sportMap = {};
+  recent.filter(e => e.event === 'sport_selected').forEach(e => {
+    const sport = e.params?.sport || 'unknown';
+    sportMap[sport] = (sportMap[sport] || 0) + 1;
+  });
+  const topSports = Object.entries(sportMap).sort((a,b) => b[1]-a[1]).slice(0, 8);
+  const maxSport  = topSports[0]?.[1] || 1;
+
+  // Recent 15 events
+  const recentEvents = recent.slice(0, 15);
+
+  const fmt = (d) => {
+    if (!d) return '—';
+    const date = new Date(d.server_ts || d.ts || d);
+    return isNaN(date) ? '—' : date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const EVENT_COLOR = {
+    page_view_custom:   '#00FFFF',
+    hero_slide_view:    '#a78bfa',
+    hero_slide_click:   '#c084fc',
+    cta_get_app_click:  '#FFD700',
+    cta_business_click: '#FFD700',
+    sport_selected:     '#34d399',
+    scroll_50:          '#94a3b8',
+    scroll_90:          '#64748b',
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="font-anton text-2xl uppercase text-white">ANALYTICS</h2>
+          <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
+            Auto-refresh every 12s
+            {lastRefresh && ` · Last: ${lastRefresh.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`}
+          </p>
+        </div>
+        <button onClick={load}
+          className="inline-flex items-center gap-2 font-inter text-xs font-bold uppercase text-white/40 hover:text-white transition-colors border border-white/10 hover:border-white/25 px-3 py-1.5 rounded-full">
+          <RefreshCw size={12} /> Refresh
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-24">
+          <div className="w-6 h-6 border-2 border-ak-cyan border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <>
+          {/* KPI Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+            {[
+              { icon: <Activity size={16} />, label: 'Total Events', value: total,        color: '#a1a1aa' },
+              { icon: <Eye size={16} />,      label: 'Page Views',   value: pageViews,    color: '#00FFFF' },
+              { icon: <MousePointerClick size={16} />, label: 'CTA Clicks',value: ctaClicks, color: '#FFD700' },
+              { icon: <TrendingUp size={16} />,label: 'Sport Selects',value: sportSelects,color: '#34d399' },
+              { icon: <BarChart2 size={16} />, label: 'Hero Views',   value: heroViews,   color: '#a78bfa' },
+            ].map((kpi, i) => (
+              <div key={i} className="p-4 rounded-[12px] flex flex-col gap-2" style={{ background: '#0a0a0a', border: `1px solid ${kpi.color}18` }}>
+                <div style={{ color: kpi.color }}>{kpi.icon}</div>
+                <div className="font-anton text-3xl" style={{ color: kpi.color }}>{kpi.value.toLocaleString()}</div>
+                <div className="font-inter text-[10px] font-semibold uppercase tracking-wider text-white">{kpi.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            {/* Top pages */}
+            <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.1)' }}>
+              <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-ak-cyan mb-4">TOP PAGES</div>
+              {topPages.length === 0 ? (
+                <p className="font-inter text-xs text-white/30 py-4 text-center">No page view data yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {topPages.map(([page, count], i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="font-inter text-xs text-white/60 w-5 text-right flex-shrink-0">{i+1}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-inter text-xs font-semibold text-white truncate">{page}</div>
+                        <div className="mt-1 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(0,255,255,0.08)' }}>
+                          <div className="h-full rounded-full" style={{ width: `${(count / (topPages[0]?.[1] || 1)) * 100}%`, background: '#00FFFF' }} />
+                        </div>
+                      </div>
+                      <div className="font-inter text-xs font-bold flex-shrink-0" style={{ color: '#00FFFF' }}>{count}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Top sports */}
+            <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(52,211,153,0.15)' }}>
+              <div className="font-inter text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: '#34d399' }}>TOP SPORTS SELECTED</div>
+              {topSports.length === 0 ? (
+                <p className="font-inter text-xs text-white/30 py-4 text-center">No sport selection data yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {topSports.map(([sport, count], i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="font-inter text-xs text-white/60 w-5 text-right flex-shrink-0">{i+1}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-inter text-xs font-semibold text-white capitalize">{sport}</div>
+                        <div className="mt-1 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(52,211,153,0.1)' }}>
+                          <div className="h-full rounded-full" style={{ width: `${(count / maxSport) * 100}%`, background: '#34d399' }} />
+                        </div>
+                      </div>
+                      <div className="font-inter text-xs font-bold flex-shrink-0" style={{ color: '#34d399' }}>{count}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* All event types */}
+          <div className="p-5 rounded-[14px] mb-6" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-4">ALL EVENTS</div>
+            {summary.length === 0 ? (
+              <p className="font-inter text-xs text-white/30 py-4 text-center">No events tracked yet</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                {summary.map((e, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-[10px]"
+                    style={{ background: '#111', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-inter text-[10px] truncate" style={{ color: EVENT_COLOR[e.event] || '#a1a1aa' }}>{e.event}</div>
+                    </div>
+                    <div className="font-inter text-sm font-bold text-white ml-2 flex-shrink-0">{e.count}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Recent events */}
+          <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-4">RECENT EVENTS (last 15)</div>
+            {recentEvents.length === 0 ? (
+              <p className="font-inter text-xs text-white/30 py-4 text-center">No events yet</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                      {['Time', 'Event', 'Page', 'Params'].map(h => (
+                        <th key={h} className="text-left pb-2 font-inter text-[9px] font-bold uppercase tracking-widest text-white/30 pr-4">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentEvents.map((e, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                        <td className="py-2 pr-4 font-inter text-[10px] text-white/40 whitespace-nowrap">{fmt(e)}</td>
+                        <td className="py-2 pr-4">
+                          <span className="font-inter text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ background: `${EVENT_COLOR[e.event] || '#a1a1aa'}18`, color: EVENT_COLOR[e.event] || '#a1a1aa' }}>
+                            {e.event}
+                          </span>
+                        </td>
+                        <td className="py-2 pr-4 font-inter text-[10px] text-white/50">{e.url || '—'}</td>
+                        <td className="py-2 font-inter text-[10px] text-white/30 truncate max-w-[160px]">
+                          {e.params ? JSON.stringify(e.params).slice(0, 60) : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -949,6 +1173,7 @@ export default function AdminPage() {
       <Sidebar tab={tab} setTab={setTab} onLogout={logout} />
       <main className="flex-1 p-8 overflow-auto">
         {tab === 'dashboard' && <Dashboard call={call} />}
+        {tab === 'analytics' && <AnalyticsDashboard call={call} />}
         {tab === 'hero'      && <HeroSlidesManager call={call} />}
         {tab === 'blog'      && <BlogManager call={call} />}
         {tab === 'pages'     && <PagesManager call={call} />}
