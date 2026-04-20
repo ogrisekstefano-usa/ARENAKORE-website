@@ -54,13 +54,13 @@ async function _logToBackend(event, params) {
  * @param {string} opts.position - Where on the page: 'hero' | 'kpi_block' | 'final_cta' | 'navbar' | 'footer'
  * @param {string} [opts.language]
  */
-export function trackCMSCTAClick({ key, text, page, position = '', language }) {
+export function trackCMSCTAClick({ key, text, page, position = '', language, variant_id }) {
   const lang = language || localStorage.getItem('ak_lang') || 'en';
-  trackEvent('cta_click', { key, text, language: lang, page, position });
+  trackEvent('cta_click', { key, text, language: lang, page, position, ...(variant_id && { variant_id }) });
   fetch(`${API_BASE}/cms/cta-click`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key, text, language: lang, page, position, url: window.location.pathname }),
+    body: JSON.stringify({ key, text, language: lang, page, position, variant_id: variant_id || null, url: window.location.pathname }),
   }).catch(() => {});
 }
 

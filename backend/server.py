@@ -1150,36 +1150,81 @@ class CTAClickEvent(BaseModel):
     text: str
     language: str = "en"
     page: str = ""
-    position: str = ""   # hero | kpi_block | final_cta | navbar | footer
+    position: str = ""
+    variant_id: Optional[str] = None   # A/B variant
     url: Optional[str] = None
 
 @api_router.post("/cms/cta-click")
 async def track_cta_click(data: CTAClickEvent):
-    """Track CTA clicks with full context (key + page + position + language)."""
     now = datetime.now(timezone.utc).isoformat()
-    # Upsert: group by key + language + page + position
     await db.cms_cta_clicks.update_one(
-        {"key": data.key, "language": data.language, "page": data.page, "position": data.position},
-        {
-            "$inc": {"clicks": 1},
-            "$set": {
-                "last_click": now,
-                "text": data.text,
-                "key": data.key,
-                "language": data.language,
-                "page": data.page,
-                "position": data.position,
-            }
-        },
+        {"key": data.key, "language": data.language, "page": data.page,
+         "position": data.position, "variant_id": data.variant_id},
+        {"$inc": {"clicks": 1}, "$set": {
+            "last_click": now, "text": data.text, "key": data.key,
+            "language": data.language, "page": data.page,
+            "position": data.position, "variant_id": data.variant_id,
+        }},
         upsert=True
     )
     await db.analytics_events.insert_one({
         "event": "cta_click",
-        "params": {"key": data.key, "text": data.text, "language": data.language, "page": data.page, "position": data.position},
-        "url": data.url,
-        "ts": now, "server_ts": now,
+        "params": {"key": data.key, "text": data.text, "language": data.language,
+                   "page": data.page, "position": data.position, "variant_id": data.variant_id},
+        "url": data.url, "ts": now, "server_ts": now,
     })
     return {"ok": True}
+
+# ─── A/B TESTING ──────────────────────────────────────────────
+
+class ABVariant(BaseModel):
+    id: str                  # "A" | "B" | "C"
+    text: str
+    weight: int = 50         # 0–100, determines probability
+
+class ABTestKey(BaseModel):
+    key: str
+    variants: List[ABVariant]
+
+@api_router.get("/cms/ab-tests/{slug}")
+async def get_ab_tests(slug: str):
+    """Public — returns all A/B tests for a page as {key: [variants]}."""
+    doc = await db.cms_ab_tests.find_one({"slug": slug}, {"_id": 0})
+    if not doc: return {}
+    result = {}
+    for t in doc.get("tests", []):
+        result[t["key"]] = t.get("variants", [])
+    return result
+
+@api_router.put("/cms/ab-tests/{slug}")
+async def upsert_ab_tests(slug: str, tests: List[ABTestKey], _=Depends(verify_admin)):
+    now = datetime.now(timezone.utc).isoformat()
+    data = {"slug": slug, "tests": [t.model_dump() for t in tests], "updated_at": now}
+    if await db.cms_ab_tests.find_one({"slug": slug}):
+        await db.cms_ab_tests.update_one({"slug": slug}, {"$set": data})
+    else:
+        data["id"] = str(uuid.uuid4())
+        await db.cms_ab_tests.insert_one(data)
+    return {"ok": True, "slug": slug, "tests": len(tests)}
+
+@api_router.get("/cms/ab-analytics/{slug}")
+async def get_ab_analytics(slug: str, _=Depends(verify_admin)):
+    """Returns click stats grouped by key + variant_id."""
+    docs = await db.cms_cta_clicks.find({"page": slug, "variant_id": {"$ne": None}}, {"_id": 0}).to_list(500)
+    result = {}
+    for d in docs:
+        k = d["key"]
+        vid = d.get("variant_id", "default")
+        if k not in result: result[k] = {}
+        result[k][vid] = result[k].get(vid, 0) + d.get("clicks", 0)
+    # Build structured output
+    output = []
+    for key, variants in result.items():
+        total = sum(variants.values())
+        rows = [{"variant_id": v, "clicks": c, "pct": round(c/total*100) if total else 0}
+                for v, c in sorted(variants.items())]
+        output.append({"key": key, "total_clicks": total, "variants": rows})
+    return sorted(output, key=lambda x: -x["total_clicks"])
 
 @api_router.get("/cms/cta-analytics")
 async def get_cta_analytics(_=Depends(verify_admin)):

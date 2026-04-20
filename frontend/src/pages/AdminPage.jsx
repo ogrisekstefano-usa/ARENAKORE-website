@@ -462,6 +462,9 @@ function ContentEditor({ call }) {
   const [versions, setVersions]         = useState([]);
   const [showVersions, setShowVersions] = useState(false);
   const [publishing, setPublishing]     = useState('');
+  const [abTests, setAbTests]           = useState({});
+  const [editingAB, setEditingAB]       = useState(null); // key being AB edited
+
   const [versionNote, setVersionNote]   = useState('');
   const [versionAuthor, setVersionAuthor] = useState('admin');
 
@@ -487,10 +490,11 @@ function ContentEditor({ call }) {
   const loadPage = async (slug) => {
     setSelectedPage(slug); setMsg(''); setShowVersions(false);
     try {
-      const [doc, completeness, vers] = await Promise.all([
+      const [doc, completeness, vers, ab] = await Promise.all([
         call('get', `/cms/content/${slug}/full`),
         call('get', `/cms/content/${slug}/completeness`).catch(() => ({})),
         call('get', `/cms/versions/${slug}`).catch(() => []),
+        call('get', `/cms/ab-tests/${slug}`).catch(() => ({})),
       ]);
       const secs = doc.sections || [];
       setSections(secs.map(s => ({ ...s, translations: { ...s.translations } })));
@@ -500,6 +504,7 @@ function ContentEditor({ call }) {
       setCustomLangs(extra.map(c => ({ code: c, label: c.toUpperCase(), name: c })));
       setPageCompleteness(completeness || {});
       setVersions(vers || []);
+      setAbTests(ab || {});
     } catch { setSections([]); }
   };
 
@@ -815,15 +820,23 @@ function ContentEditor({ call }) {
                 const currentValue = (s.translations || {})[activeLang] || '';
                 const enValue = (s.translations || {})['en'] || '';
                 const isLong = fieldType === 'richtext';
+                const hasAB = abTests[key] && abTests[key].length > 0;
+                const isEditingAB = editingAB === key;
                 return (
-                  <div key={key} className="p-4 rounded-[12px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div key={key} className="p-4 rounded-[12px]" style={{ background: '#0a0a0a', border: `1px solid ${hasAB ? 'rgba(167,139,250,0.25)' : 'rgba(255,255,255,0.07)'}` }}>
                     <div className="flex items-center gap-3 mb-2">
                       <span className="font-inter text-[9px] font-bold uppercase tracking-widest text-ak-cyan">{key}</span>
                       <span className="font-inter text-[9px] text-white/25 border border-white/10 px-1.5 py-0.5 rounded">{fieldTypes[fieldType] || fieldType}</span>
+                      {hasAB && <span className="font-inter text-[9px] font-bold text-purple-400 border border-purple-400/30 px-1.5 py-0.5 rounded">A/B {abTests[key].length} variants</span>}
                       {activeLang !== 'en' && enValue && (
-                        <span className="font-inter text-[9px] text-white/30 truncate max-w-[200px]" title={enValue}>EN: {enValue.slice(0, 40)}{enValue.length > 40 ? '...' : ''}</span>
+                        <span className="font-inter text-[9px] text-white/30 truncate max-w-[160px]" title={enValue}>EN: {enValue.slice(0, 35)}...</span>
                       )}
+                      <button onClick={() => setEditingAB(isEditingAB ? null : key)}
+                        className={`ml-auto font-inter text-[9px] uppercase px-2 py-0.5 rounded border transition-colors ${isEditingAB ? 'border-purple-400 text-purple-400' : 'border-white/10 text-white/25 hover:text-purple-400 hover:border-purple-400'}`}>
+                        {isEditingAB ? 'Done A/B' : 'A/B Test'}
+                      </button>
                     </div>
+                    {/* Main text input */}
                     {isLong ? (
                       <textarea rows={3} value={currentValue}
                         onChange={e => updateSection(key, activeLang, e.target.value)}
@@ -834,6 +847,55 @@ function ContentEditor({ call }) {
                         onChange={e => updateSection(key, activeLang, e.target.value)}
                         className={`${inp} h-10`} style={inpStyle}
                         placeholder={activeLang !== 'en' ? `Translation (${activeLang.toUpperCase()})` : 'Content...'} />
+                    )}
+                    {/* A/B Editor */}
+                    {isEditingAB && (
+                      <div className="mt-3 p-3 rounded-[10px]" style={{ background: 'rgba(167,139,250,0.05)', border: '1px solid rgba(167,139,250,0.2)' }}>
+                        <div className="font-inter text-[9px] font-bold uppercase tracking-widest text-purple-400 mb-2">A/B VARIANTS (EN base)</div>
+                        {(abTests[key] || [{id:'A',text:enValue,weight:50},{id:'B',text:'',weight:50}]).map((v, vi) => (
+                          <div key={v.id} className="flex items-center gap-2 mb-2">
+                            <span className="font-inter text-[10px] font-bold w-5 text-purple-400">{v.id}</span>
+                            <input type="text" value={v.text}
+                              onChange={async (e) => {
+                                const updated = [...(abTests[key] || [{id:'A',text:enValue,weight:50},{id:'B',text:'',weight:50}])];
+                                updated[vi] = { ...updated[vi], text: e.target.value };
+                                const newAb = { ...abTests, [key]: updated };
+                                setAbTests(newAb);
+                                await call('put', `/cms/ab-tests/${selectedPage}`,
+                                  Object.entries(newAb).map(([k, variants]) => ({ key: k, variants }))
+                                ).catch(() => {});
+                              }}
+                              className="flex-1 font-inter text-xs text-white placeholder-white/25 px-2 py-1.5 rounded-[8px]"
+                              style={{ background: '#111', border: '1px solid rgba(167,139,250,0.2)' }}
+                              placeholder={`Variant ${v.id} text`} />
+                            <input type="number" value={v.weight} min={1} max={99}
+                              onChange={async (e) => {
+                                const updated = [...(abTests[key] || [])];
+                                updated[vi] = { ...updated[vi], weight: parseInt(e.target.value) || 50 };
+                                const newAb = { ...abTests, [key]: updated };
+                                setAbTests(newAb);
+                                await call('put', `/cms/ab-tests/${selectedPage}`,
+                                  Object.entries(newAb).map(([k, variants]) => ({ key: k, variants }))
+                                ).catch(() => {});
+                              }}
+                              className="w-14 font-inter text-xs text-white px-2 py-1.5 rounded-[8px] text-center"
+                              style={{ background: '#111', border: '1px solid rgba(167,139,250,0.2)' }} />
+                            <span className="font-inter text-[9px] text-white/30">%</span>
+                          </div>
+                        ))}
+                        {!(abTests[key]) && (
+                          <button onClick={async () => {
+                            const variants = [{id:'A',text:enValue,weight:50},{id:'B',text:'',weight:50}];
+                            const newAb = { ...abTests, [key]: variants };
+                            setAbTests(newAb);
+                            await call('put', `/cms/ab-tests/${selectedPage}`,
+                              Object.entries(newAb).map(([k, v]) => ({ key: k, variants: v }))
+                            ).catch(() => {});
+                          }} className="font-inter text-[10px] text-purple-400 hover:underline">
+                            + Create A/B test for this key
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 );
@@ -848,6 +910,66 @@ function ContentEditor({ call }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ─── A/B TEST RESULTS ─── */
+function ABTestResults({ call }) {
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    // Load AB analytics for all pages that have tests
+    Promise.all(
+      ['homepage', 'get-the-app', 'for-athletes', 'gym-pilot', 'arena-system'].map(slug =>
+        call('get', `/cms/ab-analytics/${slug}`)
+          .then(d => d.length > 0 ? { slug, tests: d } : null)
+          .catch(() => null)
+      )
+    ).then(results => {
+      const r = {};
+      results.filter(Boolean).forEach(({ slug, tests }) => { if (tests.length) r[slug] = tests; });
+      setData(r);
+    });
+  }, [call]);
+
+  if (Object.keys(data).length === 0) return null;
+
+  return (
+    <div className="p-5 rounded-[14px] mb-6" style={{ background: '#0a0a0a', border: '1px solid rgba(167,139,250,0.2)' }}>
+      <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-4">A/B TEST RESULTS</div>
+      {Object.entries(data).map(([slug, tests]) => (
+        <div key={slug} className="mb-5">
+          <div className="font-inter text-xs font-semibold text-white mb-2">/{slug}</div>
+          {tests.map(test => (
+            <div key={test.key} className="mb-3">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="font-inter text-[10px] font-bold text-ak-cyan">{test.key}</span>
+                <span className="font-inter text-[9px] text-white/30">{test.total_clicks} total clicks</span>
+              </div>
+              <div className="flex gap-2">
+                {test.variants.map(v => (
+                  <div key={v.variant_id} className="flex-1 p-2.5 rounded-[8px] text-center"
+                    style={{ background: '#111', border: '1px solid rgba(167,139,250,0.15)' }}>
+                    <div className="font-anton text-xl text-purple-400">{v.variant_id}</div>
+                    <div className="font-inter text-sm font-bold text-white">{v.clicks}</div>
+                    <div className="font-inter text-[9px] text-white/40">clicks</div>
+                    <div className="mt-1.5 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                      <div className="h-full rounded-full" style={{ width: `${v.pct}%`, background: '#a78bfa' }} />
+                    </div>
+                    <div className="font-inter text-[9px] text-purple-400 mt-1">{v.pct}%</div>
+                  </div>
+                ))}
+              </div>
+              {test.variants.length >= 2 && test.total_clicks > 0 && (
+                <div className="font-inter text-[9px] mt-1" style={{ color: '#a78bfa' }}>
+                  Winner: Variant <strong>{test.variants.reduce((a, b) => a.clicks > b.clicks ? a : b).variant_id}</strong> (+{Math.abs(test.variants[0].pct - (test.variants[1]?.pct || 0))}% more clicks)
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
@@ -1103,6 +1225,10 @@ function AnalyticsDashboard({ call }) {
               </div>
             </div>
           )}
+
+
+          {/* A/B Test Results — show inline if any data */}
+          <ABTestResults call={call} />
 
 
           <div className="p-5 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
