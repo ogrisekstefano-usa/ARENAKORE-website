@@ -508,19 +508,21 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link
-                to={ROUTES.gyms}
-                data-testid="gyms-pilot-cta"
-                className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
-                style={{ height: '52px' }}
-              >
-                <Zap size={16} fill="black" /> {cms('gyms_cta', t('home.gyms.cta'))}
-              </Link>
-              <Link to={ROUTES.athletes} data-testid="home-for-athletes-link"
-                className="inline-flex items-center justify-center gap-2 font-inter font-bold uppercase tracking-wider text-sm px-6 rounded-[12px] border border-white/20 text-white hover:border-white transition-colors"
-                style={{ height: '52px' }}>
-                {cms('gyms_athletes_cta', t('home.for_athletes_link'))} <ArrowRight size={14} />
-              </Link>
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  to={ROUTES.gyms}
+                  data-testid="gyms-pilot-cta"
+                  className="inline-flex items-center gap-3 font-inter font-black uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
+                  style={{ height: '52px' }}
+                >
+                  <Zap size={16} fill="black" /> {cms('gyms_cta', t('home.gyms.cta'))}
+                </Link>
+                <Link to={ROUTES.athletes} data-testid="home-for-athletes-link"
+                  className="inline-flex items-center justify-center gap-2 font-inter font-bold uppercase tracking-wider text-sm px-6 rounded-[12px] border border-white/20 text-white hover:border-white transition-colors"
+                  style={{ height: '52px' }}>
+                  {cms('gyms_athletes_cta', t('home.for_athletes_link'))} <ArrowRight size={14} />
+                </Link>
+              </div>
             </div>
             {/* Stats */}
             <div className="ak-reveal ak-delay-2 grid grid-cols-2 gap-4">
