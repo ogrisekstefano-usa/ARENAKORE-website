@@ -14,6 +14,7 @@ import { trackHeroSlideView, trackHeroSlideClick, trackGetAppClick, trackBusines
 import { useScrollTracking } from './hooks/useScrollTracking';
 import SportSelector from './components/SportSelector';
 import { useSportPreference } from './components/SportSelector';
+import usePageContent from './hooks/usePageContent';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
@@ -103,7 +104,9 @@ export default function LandingPage() {
   const [slide, setSlide] = useState(0);
   const [heroSlides, setHeroSlides] = useState(HERO_SLIDES_DEFAULT); // starts with defaults, replaced by CMS
   const [slidesLoaded, setSlidesLoaded] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language?.slice(0, 2) || 'en';
+  const { content: cms } = usePageContent('homepage', language);
   const API = process.env.REACT_APP_BACKEND_URL + '/api';
   const firedSlides = useRef(new Set());
   useScrollTracking('home');
@@ -246,18 +249,18 @@ export default function LandingPage() {
             <span className="ak-blink w-2.5 h-2.5 rounded-full flex-shrink-0"
               style={{ background: '#FF2D2D', boxShadow: '0 0 8px #FF2D2D', display: 'inline-block' }} />
             <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-white">
-              NEXUS LIVE · GLOBAL COMPETITION ACTIVE
+              {cms('hero_badge', t('home.badge'))}
             </span>
           </div>
           {/* H1 */}
           <h1 className="ak-hero-title font-anton uppercase leading-[0.92] text-white mb-6"
             style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
-            {t('home.h1_line1')}<br />
-            <span style={{ color: '#00FFFF' }}>{t('home.h1_line2')}</span>
+            {cms('hero_h1_line1', t('home.h1_line1'))}<br />
+            <span style={{ color: '#00FFFF' }}>{cms('hero_h1_line2', t('home.h1_line2'))}</span>
           </h1>
           {/* Sub */}
           <p className="ak-hero-sub font-inter text-lg md:text-xl text-white mb-10 max-w-xl leading-relaxed">
-            {t('home.sub')}
+            {cms('hero_sub', t('home.sub'))}
           </p>
           {/* CTAs */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">

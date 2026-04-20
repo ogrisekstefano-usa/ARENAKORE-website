@@ -6,6 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os, logging, uuid, hashlib, hmac, asyncio, bcrypt, jwt, secrets
 import resend
+from openai import OpenAI
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional, Any, Dict
@@ -198,6 +199,12 @@ ADMIN_SECRET   = os.environ.get('ADMIN_SECRET', 'ak-cms-secret-2026')
 resend.api_key     = os.environ.get('RESEND_API_KEY', '')
 FOUNDER_EMAIL      = os.environ.get('FOUNDER_EMAIL', 'ogrisek.stefano@gmail.com')
 SENDER_EMAIL       = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+
+# OpenAI client for AI translation
+openai_client = OpenAI(
+    api_key=os.environ.get('OPENAI_API_KEY', ''),
+    base_url=os.environ.get('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+)
 
 # ─── EMAIL HELPERS ────────────────────────────────────────────
 
@@ -625,6 +632,192 @@ async def add_media(data: MediaItemCreate, _=Depends(verify_admin)):
 @api_router.delete("/media/{item_id}")
 async def delete_media(item_id: str, _=Depends(verify_admin)):
     await db.media_library.delete_one({"id": item_id}); return {"ok": True}
+
+# ─── CMS CONTENT (Multi-language sections) ───────────────────
+
+# Default content — EN source of truth
+DEFAULT_PAGES: Dict[str, List[Dict]] = {
+    "homepage": [
+        {"key": "hero_badge",      "field_type": "text",    "translations": {"en": "NEXUS LIVE · GLOBAL COMPETITION ACTIVE", "it": "NEXUS LIVE · COMPETIZIONE GLOBALE ATTIVA", "es": "NEXUS LIVE · COMPETICIÓN GLOBAL ACTIVA"}},
+        {"key": "hero_h1_line1",   "field_type": "heading", "translations": {"en": "The competition", "it": "La competizione", "es": "La competición"}},
+        {"key": "hero_h1_line2",   "field_type": "heading", "translations": {"en": "never ends.", "it": "non finisce mai.", "es": "nunca termina."}},
+        {"key": "hero_sub",        "field_type": "text",    "translations": {"en": "Every performance is ranked.", "it": "Ogni performance viene classificata.", "es": "Cada actuación queda clasificada."}},
+        {"key": "cta_primary",     "field_type": "cta",     "translations": {"en": "Download the App", "it": "Scarica l'App", "es": "Descarga la App"}},
+        {"key": "cta_secondary",   "field_type": "cta",     "translations": {"en": "For Gyms & Coaches", "it": "Per Palestre & Coach", "es": "Para Gimnasios & Coaches"}},
+        {"key": "problem_badge",   "field_type": "label",   "translations": {"en": "THE PROBLEM", "it": "IL PROBLEMA", "es": "EL PROBLEMA"}},
+        {"key": "problem_h2",      "field_type": "heading", "translations": {"en": "TRAINING WITHOUT COMPETITION DOESN'T LAST.", "it": "SENZA COMPETIZIONE L'ALLENAMENTO NON DURA.", "es": "SIN COMPETICIÓN EL ENTRENAMIENTO NO DURA."}},
+        {"key": "insight_quote",   "field_type": "richtext","translations": {"en": "People don't come back to train. They come back to not lose.", "it": "Le persone non tornano ad allenarsi. Tornano per non perdere.", "es": "La gente no vuelve a entrenar. Vuelve para no perder."}},
+        {"key": "solution_h2",     "field_type": "heading", "translations": {"en": "ArenaKore turns training into competition.", "it": "ArenaKore trasforma l'allenamento in competizione.", "es": "ArenaKore convierte el entrenamiento en competición."}},
+        {"key": "disciplines_h2",  "field_type": "heading", "translations": {"en": "BUILT FOR EVERY DISCIPLINE.", "it": "COSTRUITA PER OGNI DISCIPLINA.", "es": "CONSTRUIDA PARA CADA DISCIPLINA."}},
+        {"key": "gyms_h2",         "field_type": "heading", "translations": {"en": "Built for gyms that want engaged members.", "it": "Costruita per palestre che vogliono iscritti coinvolti.", "es": "Construida para gimnasios que quieren miembros comprometidos."}},
+        {"key": "gyms_cta",        "field_type": "cta",     "translations": {"en": "Start a 14-day Pilot", "it": "Avvia il Pilot 14 Giorni", "es": "Iniciar Piloto de 14 Días"}},
+        {"key": "final_h2",        "field_type": "heading", "translations": {"en": "START NOW.", "it": "INIZIA ORA.", "es": "EMPIEZA AHORA."}},
+        {"key": "final_sub",       "field_type": "text",    "translations": {"en": "Compete or fall behind.", "it": "Compete o resta indietro.", "es": "Compite o quédate atrás."}},
+    ],
+    "get-the-app": [
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "ENTER THE ARENA.", "it": "ENTRA NELL'ARENA.", "es": "ENTRA EN LA ARENA."}},
+        {"key": "hero_tension",    "field_type": "text",    "translations": {"en": "Someone is already ahead.", "it": "Qualcuno è già davanti a te.", "es": "Alguien ya está por delante de ti."}},
+        {"key": "hero_sub1",       "field_type": "text",    "translations": {"en": "Track your performance.", "it": "Traccia le tue performance.", "es": "Mide tu rendimiento."}},
+        {"key": "hero_sub2",       "field_type": "text",    "translations": {"en": "Get ranked. Compete.", "it": "Vieni classificato. Compete.", "es": "Obtén un ranking. Compite."}},
+        {"key": "available",       "field_type": "label",   "translations": {"en": "Available now", "it": "Disponibile ora", "es": "Disponible ahora"}},
+        {"key": "download_time",   "field_type": "text",    "translations": {"en": "Download in 10 seconds", "it": "Scarica in 10 secondi", "es": "Descarga en 10 segundos"}},
+        {"key": "final_line1",     "field_type": "heading", "translations": {"en": "DOWNLOAD.", "it": "SCARICA.", "es": "DESCARGA."}},
+        {"key": "final_line2",     "field_type": "heading", "translations": {"en": "ENTER.", "it": "ENTRA.", "es": "ENTRA."}},
+        {"key": "final_line3",     "field_type": "heading", "translations": {"en": "COMPETE.", "it": "COMPETI.", "es": "COMPITE."}},
+        {"key": "final_body",      "field_type": "richtext","translations": {"en": "The Arena is open. Your rank is waiting. Every day you delay is a day someone else moves ahead.", "it": "L'Arena è aperta. Il tuo rank ti aspetta. Ogni giorno che aspetti è un giorno in cui qualcun altro avanza.", "es": "La Arena está abierta. Tu ranking te espera. Cada día que esperas es un día que alguien más avanza."}},
+    ],
+    "for-athletes": [
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "YOU DON'T TRAIN. YOU COMPETE.", "it": "NON TI ALLENI. COMPETE.", "es": "NO ENTRENAS. COMPITES."}},
+        {"key": "identity_h2",     "field_type": "heading", "translations": {"en": "YOU ARE A KORE.", "it": "SEI UN KORE.", "es": "ERES UN KORE."}},
+        {"key": "identity_body",   "field_type": "richtext","translations": {"en": "A KORE is not a user. Not a member. A competitor with a permanent record.", "it": "Un KORE non è un utente. Non è un iscritto. È un competitor con un record permanente.", "es": "Un KORE no es un usuario. No es un miembro. Es un competidor con un historial permanente."}},
+        {"key": "final_h2",        "field_type": "heading", "translations": {"en": "COMPETE OR FALL BEHIND.", "it": "COMPETE O RESTA INDIETRO.", "es": "COMPITE O QUÉDATE ATRÁS."}},
+        {"key": "final_body",      "field_type": "text",    "translations": {"en": "Right now, someone is training harder than you. They're in the Arena. Are you?", "it": "In questo momento qualcuno si sta allenando più di te. È nell'Arena. Ci sei anche tu?", "es": "Ahora mismo alguien está entrenando más duro que tú. Están en la Arena. ¿Estás tú?"}},
+    ],
+    "gym-pilot": [
+        {"key": "hero_h1",         "field_type": "heading", "translations": {"en": "YOUR MEMBERS NEED COMPETITION.", "it": "I TUOI ISCRITTI HANNO BISOGNO DI COMPETIZIONE.", "es": "TUS MIEMBROS NECESITAN COMPETICIÓN."}},
+        {"key": "hero_sub",        "field_type": "text",    "translations": {"en": "Turn your gym into a daily challenge system.", "it": "Trasforma la tua palestra in un sistema di sfide quotidiane.", "es": "Convierte tu gimnasio en un sistema de desafíos diarios."}},
+        {"key": "offer_h2",        "field_type": "heading", "translations": {"en": "TEST IT. ZERO RISK.", "it": "TESTALO. ZERO RISCHI.", "es": "PRUÉBALO. RIESGO CERO."}},
+        {"key": "final_h2",        "field_type": "heading", "translations": {"en": "TWO WEEKS.", "it": "DUE SETTIMANE.", "es": "DOS SEMANAS."}},
+        {"key": "final_sub",       "field_type": "text",    "translations": {"en": "Then you decide.", "it": "Poi decidi tu.", "es": "Luego decides tú."}},
+    ],
+}
+
+class ContentSection(BaseModel):
+    key: str
+    field_type: str = "text"  # text | heading | richtext | cta | label
+    translations: Dict[str, str] = {}
+
+class PageContentDoc(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    slug: str
+    page_name: str = ""
+    sections: List[ContentSection] = []
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class TranslateRequest(BaseModel):
+    target_lang: str           # e.g. "fr", "de"
+    target_lang_name: str = "" # e.g. "French"
+    keys: Optional[List[str]] = None  # None = translate all
+
+async def _get_or_default_page(slug: str) -> dict:
+    doc = await db.cms_content.find_one({"slug": slug}, {"_id": 0})
+    if doc:
+        return doc
+    defaults = DEFAULT_PAGES.get(slug, [])
+    return {"slug": slug, "sections": defaults}
+
+@api_router.get("/cms/content/{slug}")
+async def get_page_content(slug: str, lang: str = "en"):
+    """Public endpoint — returns {key: text} map for a given page/language."""
+    doc = await _get_or_default_page(slug)
+    result = {}
+    for section in doc.get("sections", []):
+        t = section.get("translations", {}) if isinstance(section, dict) else section.translations
+        k = section.get("key") if isinstance(section, dict) else section.key
+        result[k] = t.get(lang) or t.get("en", "")
+    return result
+
+@api_router.get("/cms/content/{slug}/full")
+async def get_page_content_full(slug: str, _=Depends(verify_admin)):
+    """Admin endpoint — returns full structure with all translations."""
+    return await _get_or_default_page(slug)
+
+@api_router.put("/cms/content/{slug}")
+async def update_page_content(slug: str, sections: List[ContentSection], _=Depends(verify_admin)):
+    doc = await db.cms_content.find_one({"slug": slug})
+    data = {
+        "slug": slug,
+        "sections": [s.model_dump() for s in sections],
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    if doc:
+        await db.cms_content.update_one({"slug": slug}, {"$set": data})
+    else:
+        data["id"] = str(uuid.uuid4())
+        await db.cms_content.insert_one(data)
+    return {"ok": True, "slug": slug, "sections": len(sections)}
+
+@api_router.post("/cms/content/{slug}/translate")
+async def translate_page_content(slug: str, req: TranslateRequest, _=Depends(verify_admin)):
+    """Use OpenAI to translate all EN content into a new language."""
+    doc = await _get_or_default_page(slug)
+    sections = doc.get("sections", [])
+    if not sections:
+        raise HTTPException(400, "No content to translate")
+
+    target = req.target_lang.lower()
+    lang_name = req.target_lang_name or target
+
+    # Collect EN texts to translate
+    to_translate = []
+    for s in sections:
+        t = s.get("translations", {}) if isinstance(s, dict) else s.translations
+        k = s.get("key") if isinstance(s, dict) else s.key
+        if req.keys and k not in req.keys:
+            continue
+        en_text = t.get("en", "")
+        if en_text:
+            to_translate.append({"key": k, "en": en_text})
+
+    if not to_translate:
+        raise HTTPException(400, "Nothing to translate")
+
+    # Batch translate with OpenAI
+    prompt_items = "\n".join([f"{i+1}. [{item['key']}]: {item['en']}" for i, item in enumerate(to_translate)])
+    system_msg = f"""You are a professional translator for ArenaKore, a competitive sports platform.
+Translate the following texts from English to {lang_name}.
+Keep the tone BOLD, DIRECT, and COMPETITIVE.
+Preserve ALL CAPS formatting for headings.
+Return ONLY a JSON object mapping keys to translated strings.
+Format: {{"key1": "translation1", "key2": "translation2"}}"""
+
+    try:
+        resp = await asyncio.to_thread(
+            lambda: openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": prompt_items},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.3,
+            )
+        )
+        import json
+        translations = json.loads(resp.choices[0].message.content)
+    except Exception as e:
+        logger.error(f"Translation error: {e}")
+        raise HTTPException(500, f"Translation failed: {str(e)}")
+
+    # Merge translations back into sections
+    updated_sections = []
+    for s in sections:
+        sec = dict(s) if isinstance(s, dict) else s.model_dump()
+        k = sec["key"]
+        if k in translations:
+            sec["translations"][target] = translations[k]
+        updated_sections.append(sec)
+
+    # Save
+    data = {"slug": slug, "sections": updated_sections, "updated_at": datetime.now(timezone.utc).isoformat()}
+    if await db.cms_content.find_one({"slug": slug}):
+        await db.cms_content.update_one({"slug": slug}, {"$set": data})
+    else:
+        data["id"] = str(uuid.uuid4())
+        await db.cms_content.insert_one(data)
+
+    logger.info(f"Translated {len(translations)} keys for {slug} → {target}")
+    return {"ok": True, "translated": len(translations), "lang": target, "slug": slug}
+
+@api_router.get("/cms/pages-list")
+async def get_cms_pages_list(_=Depends(verify_admin)):
+    """Returns list of all pages with CMS content status."""
+    saved = {doc["slug"] async for doc in db.cms_content.find({}, {"slug": 1, "_id": 0})}
+    return [
+        {"slug": slug, "name": slug.replace("-", " ").title(), "has_content": slug in saved,
+         "section_count": len(DEFAULT_PAGES.get(slug, []))}
+        for slug in DEFAULT_PAGES
+    ]
 
 # ─── STATS ────────────────────────────────────────────────────
 @api_router.get("/admin/stats")

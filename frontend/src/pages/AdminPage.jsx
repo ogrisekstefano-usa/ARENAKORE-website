@@ -6,7 +6,8 @@ import {
   LogOut, Plus, Pencil, Trash2, Save, X, Eye,
   ChevronRight, AlertCircle, CheckCircle, Upload, Tag,
   Zap, ArrowLeft, Layers, ToggleLeft, ToggleRight,
-  Activity, BarChart2, MousePointerClick, TrendingUp, RefreshCw
+  Activity, BarChart2, MousePointerClick, TrendingUp, RefreshCw,
+  Globe, Languages, Sparkles, Copy
 } from 'lucide-react';
 import { LOGO, BLOG_POSTS } from '../data/seo-content';
 
@@ -37,7 +38,7 @@ function LoginScreen({ onLogin }) {
       const res = await axios.post(`${API}/admin/login`, { password: pwd });
       onLogin(res.data.token);
     } catch {
-      setError('Password errata.');
+      setError('Wrong password. Try again.');
     } finally { setLoading(false); }
   };
 
@@ -64,7 +65,7 @@ function LoginScreen({ onLogin }) {
           <button type="submit" disabled={loading}
             className="w-full font-inter font-black uppercase tracking-wider text-sm rounded-[14px] bg-ak-gold text-black disabled:opacity-60 flex items-center justify-center gap-2"
             style={{ height: '48px' }} data-testid="admin-login-btn">
-            {loading ? 'Accesso...' : <><Zap size={16} fill="black" /> Accedi</>}
+            {loading ? 'Signing in...' : <><Zap size={16} fill="black" /> Sign In</>}
           </button>
         </form>
         <div className="mt-6 text-center">
@@ -81,9 +82,10 @@ function LoginScreen({ onLogin }) {
 const TABS = [
   { id: 'dashboard', label: 'Dashboard',     icon: LayoutDashboard },
   { id: 'analytics', label: 'Analytics',     icon: Activity },
+  { id: 'content',   label: 'Content',       icon: FileText },
   { id: 'hero',      label: 'Hero Slides',   icon: Layers },
   { id: 'blog',      label: 'Blog',          icon: BookOpen },
-  { id: 'pages',     label: 'Pages',         icon: FileText },
+  { id: 'pages',     label: 'SEO Pages',     icon: Globe },
   { id: 'media',     label: 'Media',         icon: Image },
   { id: 'pilots',    label: 'Pilot Requests',icon: Users },
 ];
@@ -149,6 +151,237 @@ function Dashboard({ call }) {
             + Add Image
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── CONTENT EDITOR (CMS Multi-language) ─── */
+const LANGS = [
+  { code: 'en', label: 'EN', name: 'English',  flag: '🌍' },
+  { code: 'it', label: 'IT', name: 'Italian',  flag: '🇮🇹' },
+  { code: 'es', label: 'ES', name: 'Spanish',  flag: '🇪🇸' },
+];
+
+function ContentEditor({ call }) {
+  const [pages, setPages]       = useState([]);
+  const [selectedPage, setSelectedPage] = useState(null);
+  const [sections, setSections] = useState([]);
+  const [activeLang, setActiveLang] = useState('en');
+  const [saving, setSaving]     = useState(false);
+  const [translating, setTranslating] = useState(false);
+  const [showAddLang, setShowAddLang] = useState(false);
+  const [newLang, setNewLang]   = useState({ code: '', name: '' });
+  const [msg, setMsg]           = useState('');
+  const [customLangs, setCustomLangs] = useState([]);
+
+  useEffect(() => {
+    call('get', '/cms/pages-list').then(setPages).catch(() => setPages([]));
+  }, [call]);
+
+  const loadPage = async (slug) => {
+    setSelectedPage(slug); setMsg('');
+    try {
+      const doc = await call('get', `/cms/content/${slug}/full`);
+      const secs = doc.sections || [];
+      setSections(secs.map(s => ({ ...s, translations: { ...s.translations } })));
+      // Detect available languages from content
+      const detected = new Set();
+      secs.forEach(s => Object.keys(s.translations || {}).forEach(l => detected.add(l)));
+      const extra = [...detected].filter(l => !LANGS.find(x => x.code === l));
+      setCustomLangs(extra.map(c => ({ code: c, label: c.toUpperCase(), name: c })));
+    } catch { setSections([]); }
+  };
+
+  const updateSection = (key, lang, value) => {
+    setSections(prev => prev.map(s =>
+      s.key === key ? { ...s, translations: { ...s.translations, [lang]: value } } : s
+    ));
+  };
+
+  const save = async () => {
+    if (!selectedPage) return;
+    setSaving(true); setMsg('');
+    try {
+      await call('put', `/cms/content/${selectedPage}`, sections);
+      setMsg('Saved!');
+    } catch { setMsg('Error saving'); }
+    finally { setSaving(false); }
+  };
+
+  const translateToLang = async (lang, langName) => {
+    if (!selectedPage) return;
+    setTranslating(true); setMsg('');
+    try {
+      const r = await call('post', `/cms/content/${selectedPage}/translate`, {
+        target_lang: lang, target_lang_name: langName
+      });
+      setMsg(`✓ Translated ${r.translated} fields to ${lang.toUpperCase()}`);
+      await loadPage(selectedPage);
+    } catch (e) {
+      setMsg(e?.response?.data?.detail || 'Translation failed');
+    } finally { setTranslating(false); }
+  };
+
+  const addCustomLang = async () => {
+    if (!newLang.code || !newLang.name) return;
+    await translateToLang(newLang.code.toLowerCase(), newLang.name);
+    setCustomLangs(prev => [...prev, { code: newLang.code.toLowerCase(), label: newLang.code.toUpperCase(), name: newLang.name }]);
+    setShowAddLang(false);
+    setNewLang({ code: '', name: '' });
+  };
+
+  const allLangs = [...LANGS, ...customLangs.filter(c => !LANGS.find(l => l.code === c.code))];
+  const fieldTypes = { heading: 'Heading', text: 'Text', richtext: 'Rich Text', cta: 'CTA', label: 'Label' };
+  const inp = "w-full font-inter text-sm text-white placeholder-white/30 px-3 py-2 rounded-[10px] outline-none focus:border-ak-cyan transition-colors resize-none";
+  const inpStyle = { background: '#111', border: '1px solid rgba(255,255,255,0.1)' };
+
+  return (
+    <div className="grid md:grid-cols-3 gap-6">
+      {/* Page list */}
+      <div>
+        <h2 className="font-anton text-xl uppercase text-white mb-4">PAGE CONTENT</h2>
+        <p className="font-inter text-xs mb-4" style={{ color: '#a1a1aa' }}>
+          Edit text content per page, per language.
+        </p>
+        <div className="space-y-1">
+          {pages.map(p => (
+            <button key={p.slug} onClick={() => loadPage(p.slug)}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-[10px] text-left transition-all group ${
+                selectedPage === p.slug ? 'bg-ak-cyan/10 border border-ak-cyan/30' : 'border border-transparent hover:bg-white/4'
+              }`}>
+              <div>
+                <div className={`font-inter text-sm font-semibold ${selectedPage === p.slug ? 'text-ak-cyan' : 'text-white/70'}`}>
+                  {p.name}
+                </div>
+                <div className="font-inter text-[10px] text-white/30">/{p.slug} · {p.section_count} fields</div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {p.has_content && <span className="w-1.5 h-1.5 rounded-full bg-ak-cyan" title="Has CMS content" />}
+                <ChevronRight size={12} className="text-white/25" />
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Editor */}
+      <div className="md:col-span-2">
+        {!selectedPage ? (
+          <div className="flex flex-col items-center justify-center h-full border border-dashed border-white/10 rounded-[14px] py-20 gap-3">
+            <Languages size={28} className="text-white/15" />
+            <p className="font-inter text-sm text-white/30">Select a page to edit its content</p>
+          </div>
+        ) : (
+          <div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="font-anton text-2xl uppercase text-white">/{selectedPage}</h3>
+                <p className="font-inter text-xs text-white/40 mt-1">{sections.length} editable fields</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={save} disabled={saving}
+                  className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[10px] bg-ak-gold text-black disabled:opacity-60"
+                  style={{ height: '36px' }}>
+                  <Save size={13} /> {saving ? 'Saving...' : 'Save All'}
+                </button>
+                {msg && <span className={`font-inter text-xs ${msg.startsWith('✓') || msg === 'Saved!' ? 'text-ak-cyan' : 'text-red-400'}`}>{msg}</span>}
+              </div>
+            </div>
+
+            {/* Language tabs */}
+            <div className="flex items-center gap-1 mb-6 flex-wrap">
+              {allLangs.map(l => (
+                <button key={l.code} onClick={() => setActiveLang(l.code)}
+                  className={`inline-flex items-center gap-1.5 font-inter text-xs font-bold uppercase px-3 py-1.5 rounded-[8px] transition-all ${
+                    activeLang === l.code ? 'bg-ak-cyan/15 text-ak-cyan border border-ak-cyan/35' : 'text-white/50 hover:text-white border border-white/8'
+                  }`}>
+                  {l.flag || ''} {l.label}
+                </button>
+              ))}
+              {/* Translate buttons */}
+              {LANGS.filter(l => l.code !== 'en').map(l => (
+                <button key={`tr-${l.code}`}
+                  onClick={() => translateToLang(l.code, l.name)}
+                  disabled={translating}
+                  className="inline-flex items-center gap-1 font-inter text-[10px] text-white/30 hover:text-ak-gold transition-colors disabled:opacity-40 px-2 py-1.5 border border-white/5 rounded-[8px]"
+                  title={`AI translate EN → ${l.name}`}>
+                  <Sparkles size={10} /> AI {l.label}
+                </button>
+              ))}
+              {/* Add Language button */}
+              <button onClick={() => setShowAddLang(!showAddLang)}
+                className="inline-flex items-center gap-1 font-inter text-[10px] text-white/30 hover:text-ak-cyan transition-colors px-2 py-1.5 border border-dashed border-white/10 rounded-[8px]">
+                <Plus size={10} /> Add Language
+              </button>
+            </div>
+
+            {/* Add Language form */}
+            {showAddLang && (
+              <div className="flex gap-3 mb-5 p-4 rounded-[12px]" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.15)' }}>
+                <div>
+                  <label className="font-inter text-[10px] text-white/40 uppercase block mb-1">Code (e.g. fr)</label>
+                  <input value={newLang.code} onChange={e => setNewLang({...newLang, code: e.target.value})}
+                    placeholder="fr" className="w-16 font-inter text-sm text-white px-2 py-1.5 rounded-[8px]" style={inpStyle} />
+                </div>
+                <div className="flex-1">
+                  <label className="font-inter text-[10px] text-white/40 uppercase block mb-1">Language Name</label>
+                  <input value={newLang.name} onChange={e => setNewLang({...newLang, name: e.target.value})}
+                    placeholder="French" className="w-full font-inter text-sm text-white px-3 py-1.5 rounded-[8px]" style={inpStyle} />
+                </div>
+                <div className="flex items-end gap-2">
+                  <button onClick={addCustomLang} disabled={translating || !newLang.code || !newLang.name}
+                    className="inline-flex items-center gap-1.5 font-inter text-xs font-bold uppercase px-4 rounded-[8px] bg-ak-gold text-black disabled:opacity-50"
+                    style={{ height: '34px' }}>
+                    <Sparkles size={12} /> AI Translate
+                  </button>
+                  {translating && <div className="w-4 h-4 border-2 border-ak-cyan border-t-transparent rounded-full animate-spin" />}
+                </div>
+              </div>
+            )}
+
+            {/* Fields */}
+            <div className="space-y-3">
+              {sections.map(section => {
+                const s = typeof section === 'object' ? section : {};
+                const key = s.key || '';
+                const fieldType = s.field_type || 'text';
+                const currentValue = (s.translations || {})[activeLang] || '';
+                const enValue = (s.translations || {})['en'] || '';
+                const isLong = fieldType === 'richtext';
+                return (
+                  <div key={key} className="p-4 rounded-[12px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="font-inter text-[9px] font-bold uppercase tracking-widest text-ak-cyan">{key}</span>
+                      <span className="font-inter text-[9px] text-white/25 border border-white/10 px-1.5 py-0.5 rounded">{fieldTypes[fieldType] || fieldType}</span>
+                      {activeLang !== 'en' && enValue && (
+                        <span className="font-inter text-[9px] text-white/30 truncate max-w-[200px]" title={enValue}>EN: {enValue.slice(0, 40)}{enValue.length > 40 ? '...' : ''}</span>
+                      )}
+                    </div>
+                    {isLong ? (
+                      <textarea rows={3} value={currentValue}
+                        onChange={e => updateSection(key, activeLang, e.target.value)}
+                        className={inp} style={inpStyle}
+                        placeholder={activeLang !== 'en' ? `Translation (${activeLang.toUpperCase()}) — EN: ${enValue.slice(0, 50)}...` : 'Content...'} />
+                    ) : (
+                      <input type="text" value={currentValue}
+                        onChange={e => updateSection(key, activeLang, e.target.value)}
+                        className={`${inp} h-10`} style={inpStyle}
+                        placeholder={activeLang !== 'en' ? `Translation (${activeLang.toUpperCase()})` : 'Content...'} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {sections.length === 0 && (
+              <div className="text-center py-10 border border-dashed border-white/10 rounded-[14px]">
+                <p className="font-inter text-sm text-white/30">No content sections defined for this page.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1174,6 +1407,7 @@ export default function AdminPage() {
       <main className="flex-1 p-8 overflow-auto">
         {tab === 'dashboard' && <Dashboard call={call} />}
         {tab === 'analytics' && <AnalyticsDashboard call={call} />}
+        {tab === 'content'   && <ContentEditor call={call} />}
         {tab === 'hero'      && <HeroSlidesManager call={call} />}
         {tab === 'blog'      && <BlogManager call={call} />}
         {tab === 'pages'     && <PagesManager call={call} />}
