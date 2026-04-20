@@ -1,9 +1,9 @@
 /**
- * ArenaKore CMS Global Content — OFFLINE-SAFE
+ * ArenaKore CMS Global Content — OFFLINE-SAFE with localStorage cache
  *
- * Chain: CMS(lang) → CMS(EN) → FALLBACK_GLOBAL → _deprecated → ""
+ * Chain: CMS(lang) → CMS(EN) → localStorage cache → FALLBACK_GLOBAL → _deprecated → ""
  *
- * If backend is down → FALLBACK_GLOBAL provides navbar/footer content.
+ * Navbar/Footer NEVER shows blank text even when backend is down.
  */
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
@@ -13,6 +13,15 @@ const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
 const _globalCache = {};
 let _globalFailed  = false;
+
+// localStorage helpers
+const LS_GLOBAL = 'ak_cms_global';
+function lsGet(key) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch { return null; }
+}
+function lsSet(key, data) {
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
+}
 
 export function useGlobalContent(language = 'en') {
   const [data, setData]       = useState({});
@@ -27,14 +36,31 @@ export function useGlobalContent(language = 'en') {
 
     const fetchLang = !_globalCache[cacheKey]
       ? axios.get(`${API}/cms/global?lang=${lang}`)
-          .then(r => { _globalCache[cacheKey] = r.data || {}; _globalFailed = false; })
-          .catch(() => { _globalCache[cacheKey] = {}; _globalFailed = true; })
+          .then(r => {
+            const d = r.data || {};
+            _globalCache[cacheKey] = d;
+            _globalFailed = false;
+            if (Object.keys(d).length > 0) lsSet(`${LS_GLOBAL}_${lang}`, d);
+          })
+          .catch(() => {
+            const cached = lsGet(`${LS_GLOBAL}_${lang}`);
+            _globalCache[cacheKey] = cached || {};
+            _globalFailed = true;
+            console.warn('[CMS OFFLINE → global fallback active]');
+          })
       : Promise.resolve();
 
     const fetchEn = (lang !== 'en' && !_globalCache[enKey])
       ? axios.get(`${API}/cms/global?lang=en`)
-          .then(r => { _globalCache[enKey] = r.data || {}; })
-          .catch(() => { _globalCache[enKey] = {}; })
+          .then(r => {
+            const d = r.data || {};
+            _globalCache[enKey] = d;
+            if (Object.keys(d).length > 0) lsSet(`${LS_GLOBAL}_en`, d);
+          })
+          .catch(() => {
+            const cached = lsGet(`${LS_GLOBAL}_en`);
+            _globalCache[enKey] = cached || {};
+          })
       : Promise.resolve();
 
     Promise.all([fetchLang, fetchEn]).then(() => {
@@ -49,18 +75,24 @@ export function useGlobalContent(language = 'en') {
    * Chain: CMS(lang) → CMS(EN) → FALLBACK_GLOBAL → _deprecated → ""
    */
   const global = useCallback((key, _deprecated) => {
-    if (!loaded) return _deprecated || FALLBACK_GLOBAL[key] || '';
+    // During initial load: show fallback immediately (no flash of empty)
+    if (!loaded) {
+      return _deprecated
+        || FALLBACK_GLOBAL[key]
+        || '';
+    }
 
     if (data[key] != null && data[key] !== '') return data[key];
 
     if (enData[key] != null && enData[key] !== '') return enData[key];
 
-    // 3. Static fallback
     if (FALLBACK_GLOBAL[key] != null && FALLBACK_GLOBAL[key] !== '') return FALLBACK_GLOBAL[key];
 
-    // 4. Deprecated parameter
     if (_deprecated != null && _deprecated !== '') return _deprecated;
 
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`[CMS MISSING GLOBAL KEY] ${key}`);
+    }
     return '';
   }, [data, enData, loaded]);
 
@@ -76,7 +108,13 @@ export async function prefetchGlobalContent(language = 'en') {
     _globalCache[key] = r.data || {};
     return _globalCache[key];
   } catch {
-    _globalCache[key] = {};
+    // Try localStorage
+    try {
+      const cached = localStorage.getItem(`${LS_GLOBAL}_${lang}`);
+      _globalCache[key] = cached ? JSON.parse(cached) : {};
+    } catch {
+      _globalCache[key] = {};
+    }
     return _globalCache[key];
   }
 }
