@@ -1047,25 +1047,34 @@ async def get_page_content_full(slug: str, _=Depends(verify_admin)):
 async def update_page_content(slug: str, sections: List[ContentSection],
                                note: Optional[str] = None,
                                created_by: Optional[str] = "admin",
+                               auto_publish: bool = True,   # DEFAULT: save = publish immediately
                                _=Depends(verify_admin)):
     doc = await db.cms_content.find_one({"slug": slug})
     now = datetime.now(timezone.utc).isoformat()
-
-    # Create version entry (draft) with author + note
     version_id = str(uuid.uuid4())
+    final_status = "published" if auto_publish else "draft"
+
     version = {
         "id": str(uuid.uuid4()),
         "version_id": version_id,
         "slug": slug,
         "is_global": False,
-        "status": "draft",
+        "status": final_status,
         "sections": [s.model_dump() for s in sections],
         "sections_count": len(sections),
         "created_at": now,
         "created_by": (created_by or "admin").strip(),
         "note": (note.strip() if note and note.strip() else "No note provided"),
-        "published_at": None,
+        "published_at": now if auto_publish else None,
     }
+
+    # If publishing, archive previous published version
+    if auto_publish:
+        await db.cms_versions.update_many(
+            {"slug": slug, "status": "published", "is_global": False},
+            {"$set": {"status": "archived"}}
+        )
+
     await db.cms_versions.insert_one(version)
 
     # Keep only last 20 versions per slug

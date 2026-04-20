@@ -528,14 +528,15 @@ function ContentEditor({ call }) {
     }
     setSaving(true); setMsg('');
     try {
-      const note = versionNote.trim() || 'No note provided';
+      const note   = versionNote.trim() || 'No note provided';
       const author = versionAuthor.trim() || 'admin';
-      await call('put', `/cms/content/${selectedPage}?note=${encodeURIComponent(note)}&created_by=${encodeURIComponent(author)}`, sections);
-      setMsg('Saved!');
-      setVersionNote(''); // clear note after save
-      // Reload completeness
+      // auto_publish=true by default → changes are LIVE immediately
+      await call('put', `/cms/content/${selectedPage}?note=${encodeURIComponent(note)}&created_by=${encodeURIComponent(author)}&auto_publish=true`, sections);
+      setMsg('✓ Saved & Published — changes are LIVE');
+      setVersionNote('');
       const completeness = await call('get', `/cms/content/${selectedPage}/completeness`).catch(() => ({}));
       setPageCompleteness(completeness || {});
+      await call('get', `/cms/versions/${selectedPage}`).then(setVersions).catch(() => {});
     } catch { setMsg('Error saving'); }
     finally { setSaving(false); }
   };
@@ -657,7 +658,7 @@ function ContentEditor({ call }) {
                 <button onClick={save} disabled={saving}
                   className="inline-flex items-center gap-2 font-inter font-bold text-xs uppercase px-5 rounded-[10px] bg-ak-gold text-black disabled:opacity-60"
                   style={{ height: '36px' }}>
-                  <Save size={13} /> {saving ? 'Saving...' : 'Save Draft'}
+                  <Save size={13} /> {saving ? 'Saving...' : '⬆ Save & Publish'}
                 </button>
                 {/* Publish latest version */}
                 {versions.length > 0 && versions[0]?.status !== 'published' && (
