@@ -1820,6 +1820,7 @@ const ALL_PAGES = [
   { key: 'crossfit',     href: '/crossfit',             labels: { en: 'CrossFit',              it: 'CrossFit',                es: 'CrossFit' } },
   { key: 'gamification', href: '/gamification',         labels: { en: 'Gamification',          it: 'Gamification',            es: 'Gamificación' } },
   { key: 'gyms',         href: '/for-gyms-and-coaches', labels: { en: 'Business',              it: 'Business',                es: 'Business' } },
+  { key: 'arenaMatches', href: '/arena-matches',        labels: { en: 'Arena Matches',         it: 'Arena Matches',           es: 'Arena Matches' } },
   { key: 'blog',         href: '/blog',                 labels: { en: 'Blog',                  it: 'Blog',                    es: 'Blog' } },
   { key: 'app',          href: '/get-the-app',          labels: { en: 'Get the App',           it: 'Scarica App',             es: 'Descargar App' } },
   { key: 'fitnessApp',   href: '/fitness-challenge-app',labels: { en: 'Fitness Challenge App', it: 'Fitness Challenge App',   es: 'Fitness Challenge App' } },
@@ -1852,13 +1853,17 @@ function NavManager({ call }) {
   const save = async () => {
     setSaving(true); setMsg('');
     try {
-      await call('put', '/nav/config', {
+      const payload = {
         top_nav:    topNav.map((item, i) => ({ ...item, order: i })),
         bottom_nav: bottomNav.map((item, i) => ({ ...item, order: i })),
-      });
-      setMsg('✓ Salvato! Il sito aggiornerà la navigazione al prossimo caricamento della pagina.');
-    } catch (e) { setMsg(e?.response?.data?.detail || 'Errore salvataggio'); }
-    finally { setSaving(false); }
+      };
+      await call('put', '/nav/config', payload);
+      setMsg('✓ Salvato! Le modifiche sono live.');
+      // Reload from DB to confirm saved state
+      await load();
+    } catch (e) {
+      setMsg(e?.response?.data?.detail || 'Errore salvataggio — riprova');
+    } finally { setSaving(false); }
   };
 
   /* ── Helpers ── */
