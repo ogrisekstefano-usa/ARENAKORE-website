@@ -34,6 +34,7 @@
     "ajv": "6.12.6",
     "ajv-keywords": "3.5.2",
     "axios": "^1.8.4",
+    "typescript": "4.9.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -62,7 +63,8 @@
   },
   "overrides": {
     "ajv": "6.12.6",
-    "ajv-keywords": "3.5.2"
+    "ajv-keywords": "3.5.2",
+    "typescript": "4.9.5"
   },
   "scripts": {
     "start": "craco start",
