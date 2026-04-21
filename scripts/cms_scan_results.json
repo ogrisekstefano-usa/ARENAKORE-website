@@ -1,4 +1,7 @@
 {
   "total": 0,
-  "issues": []
+  "scanned_files": 76,
+  "skipped_files": 12,
+  "result": "PASS",
+  "violations": []
 }

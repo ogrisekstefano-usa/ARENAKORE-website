@@ -25,6 +25,8 @@ import BlogArticlePage        from './pages/BlogArticlePage';
 import SupportPage            from './pages/SupportPage';
 import AdminPage              from './pages/AdminPage';
 
+import ArenaMatchesPage        from './pages/ArenaMatchesPage';
+
 // Validate routes at startup (dev mode only)
 validateNavigation();
 
@@ -52,6 +54,8 @@ function AppRoutes() {
         <Route path="/register"           element={<LoginPage />} />
         <Route path={ROUTES.admin}        element={<AdminPage />} />
         <Route path="/admin/*"            element={<AdminPage />} />
+
+        <Route path="/arena-matches"     element={<ArenaMatchesPage />} />
 
         {/* ── SEO PAGES (not in main nav, kept for backlinks) ── */}
         <Route path={ROUTES.fitnessApp}   element={<FitnessChallengePage />} />

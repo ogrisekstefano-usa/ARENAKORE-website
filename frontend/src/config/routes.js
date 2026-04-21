@@ -22,6 +22,9 @@ export const ROUTES = {
   login:        '/login',
   admin:        '/admin',
 
+  // Feature pages
+  arenaMatches: '/arena-matches',
+
   // SEO-only pages (not in main nav, kept for backlinks/SEO juice)
   fitnessApp:   '/fitness-challenge-app',
 };
