@@ -1,0 +1,95 @@
+{
+  "summary": "Full CMS audit completed: tested all 3 languages (EN/IT/ES) across 10 pages, language switching, fallback, and footer translation. 100% of pages render in correct language from CMS. Key issues: arena-matches missing from fallbackContent.js, one hardcoded string in ArenaMatchesPage.jsx.",
+  "testing_type": "frontend only",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "ArenaMatchesPage.jsx:98",
+        "issue": "Hardcoded 'NEXUS ANALIZZA:' label (Italian) — not from CMS/i18n. Shows wrong language when in ES (should be 'NEXUS ANALIZA:' or from cms key)",
+        "selector": "[data-testid='arena-matches-intro']",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Fallback - Arena Matches offline",
+        "issue": "CRITICAL: 'arena-matches' slug is MISSING from FALLBACK_PAGES in fallbackContent.js. If backend is down and no localStorage cache (e.g. first-time visitor), arena-matches page renders completely blank (all cms() calls return ''). All other 9 pages have fallback entries.",
+        "affected_selectors": ["[data-testid='arena-matches-hero']", "h1", "[data-testid='arena-matches-intro']"]
+      },
+      {
+        "flow": "Footer nav - Fitness App link translation",
+        "issue": "MINOR: 'fitnessApp' nav item has no IT/ES translation in nav config — shows 'Fitness Challenge App' in all 3 languages. Other items (Atleti, Competizione, etc.) are correctly translated.",
+        "affected_selectors": ["footer a"]
+      }
+    ],
+    "design_issues": []
+  },
+  "content_discrepancies_vs_spec": [
+    {
+      "page": "/for-athletes IT",
+      "spec_expects": "NON SCEGLI. TI METTI ALLA PROVA.",
+      "cms_actual": "NON TI ALLENI. COMPETE.",
+      "note": "Content is 100% Italian and CMS-driven. The CMS was updated to different text after spec was written. Not a code bug."
+    },
+    {
+      "page": "/for-gyms-and-coaches IT",
+      "spec_expects": "I COACH CREANO LE SFIDE.",
+      "cms_actual": "I TUOI ISCRITTI NON HANNO BISOGNO DI PIÙ ALLENAMENTI. HANNO BISOGNO DI COMPETIZIONE.",
+      "note": "Route /for-gyms-and-coaches maps to GymPilotPage (slug: gym-pilot), not ForGymsPage. Content is 100% Italian and CMS-driven. The spec expected text does not match any current CMS key."
+    },
+    {
+      "page": "Footer IT — Business link",
+      "spec_expects": "Business in footer nav",
+      "cms_actual": "Business is in top navbar only. Footer bottom_nav config has no 'business' key.",
+      "note": "Minor. Business is visible in the top navbar in IT (nav_business: Business in CMS global)."
+    }
+  ],
+  "test_results_by_feature": {
+    "homepage_EN": "PASS — hero H1=ENTER THE ARENA., HOW badge=VALIDATION PROCESS, BLOCCO VALORE=YOU DON'T TRAIN HERE. YOU MEASURE YOUR LEVEL.",
+    "homepage_IT": "PASS — hero H1=ENTRA NELL'ARENA., HOW badge=PROCESSO DI VALIDAZIONE, BLOCCO VALORE=QUI NON TI ALLENI. VALUTI IL TUO LIVELLO.",
+    "homepage_ES": "PASS — hero H1=ENTRA AL ARENA., HOW badge=PROCESO DE VALIDACIÓN, BLOCCO VALORE=AQUÍ NO ENTRENAS. MIDES TU NIVEL.",
+    "arena_system_IT": "PASS — NON È UNA PIATTAFORMA. È UN SISTEMA.",
+    "for_athletes_IT": "CONTENT_MISMATCH — shows 'NON TI ALLENI. COMPETE.' (IT, CMS-driven) vs spec's 'NON SCEGLI. TI METTI ALLA PROVA.'",
+    "for_gyms_IT": "CONTENT_MISMATCH — shows GymPilotPage hero (IT, CMS-driven) vs spec's 'I COACH CREANO LE SFIDE.'",
+    "competition_IT": "PASS — LA COMPETIZIONE È MISURATA.",
+    "amrap_IT": "PASS — OGNI RIPETIZIONE È VALIDATA.",
+    "crossfit_IT": "PASS — PROVE FUNZIONALI. RISULTATI MISURABILI.",
+    "gamification_IT": "PASS — NON È UN GIOCO. È UN SISTEMA DI VALUTAZIONE.",
+    "get_the_app_IT": "PASS — SCARICA. ENTRA. ESEGUI.",
+    "arena_matches_IT": "PASS — H1=ARENA MATCHES, H2=NEXUS DECIDE COSA DEVI AFFRONTARE., all 6 sections visible",
+    "language_switch_EN_to_IT": "PASS — hero changes to ENTRA NELL'ARENA., CTAs change to Entra nell'Arena",
+    "language_switch_IT_to_ES": "PASS — hero changes to ENTRA AL ARENA.",
+    "no_mixed_language_IT_all_pages": "PASS — all 10 pages show Italian H1s, zero English in hero headings",
+    "fallback_homepage_backend_down": "PASS — hero shows ENTER THE ARENA. via localStorage cache (or fallbackContent for first-time visitors)",
+    "fallback_arena_matches_backend_down": "FAIL — blank page when no localStorage cache (arena-matches missing from FALLBACK_PAGES)",
+    "footer_IT_translated_labels": "PASS — Atleti, Competizione, Per Palestre & Coach, Scarica App, Termini di Servizio, Accedi all correctly Italian"
+  },
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [
+    "CRITICAL: Add 'arena-matches' entry to FALLBACK_PAGES in /app/frontend/src/content/fallbackContent.js with EN static hero content (hero_h1, hero_h2, hero_sub, s1_title, s2_title, s3_title, s4_title, s5_title, s6_title, s1_text, etc.)",
+    "MEDIUM: Fix hardcoded 'NEXUS ANALIZZA:' in ArenaMatchesPage.jsx:98 — replace with cms('nexus_label') or t('arenaMatches.nexusLabel') and add to CMS/i18n",
+    "MINOR: Add IT/ES translations for 'fitnessApp' nav item in nav config (currently shows 'Fitness Challenge App' in all languages)",
+    "REVIEW: Verify if spec's expected text for For Athletes IT ('NON SCEGLI. TI METTI ALLA PROVA.') and For Gyms IT ('I COACH CREANO LE SFIDE.') should be restored in CMS, or if spec should be updated to match current CMS"
+  ],
+  "critical_code_review_comments": [
+    "fallbackContent.js is missing 'arena-matches' page entry — this is the only page without a fallback, creating blank content on first-visit when offline",
+    "ArenaMatchesPage.jsx:98 has hardcoded Italian string 'NEXUS ANALIZZA:' that won't change with language switch to ES (though IT translation is correct, ES would still show Italian)",
+    "GymPilotPage maps to /for-gyms-and-coaches route (not ForGymsPage which is at /for-gyms-seo) — this route mapping may confuse content expectations"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "frontend": "85% (12/14 spec items pass, 2 content discrepancies, 2 code issues)"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CMS audit iteration 5. All 3 languages (EN/IT/ES) work correctly via CMS on 10 pages. Language switching via footer globe button works. Fallback works for all pages EXCEPT arena-matches (missing from fallbackContent.js FALLBACK_PAGES). ArenaMatchesPage.jsx:98 has hardcoded 'NEXUS ANALIZZA:' Italian string. Two content discrepancies: for-athletes CMS has 'NON TI ALLENI. COMPETE.' not 'NON SCEGLI. TI METTI ALLA PROVA.' as spec expects; for-gyms path shows GymPilotPage with different hero. Footer footer nav shows Fitness Challenge App untranslated in IT/ES.",
+  "rca_of_issues": {
+    "arena_matches_fallback": "When usePageContent('arena-matches', lang) is called and backend fails, it initializes with FALLBACK_PAGES['arena-matches'] || {} = {}. Since {} is empty, all cms(key) calls return ''. Fix: add arena-matches entry to FALLBACK_PAGES in fallbackContent.js.",
+    "hardcoded_nexus_analizza": "Line 98 in ArenaMatchesPage.jsx contains the literal Italian string 'NEXUS ANALIZZA:' instead of using the cms() function. This was not caught by the scan_hardcoded.py script if it only scans JSX text props, not text content inside div elements."
+  }
+}
