@@ -122,3 +122,62 @@ export function trackConversion({ action, source_cta_key, page = '', position = 
     body: JSON.stringify({ action, source_cta_key, page, position, language, url: window.location.pathname }),
   }).catch(() => {});
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LANDING FUNNEL TRACKING
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Core landing event dispatcher.
+ * Sends to GA4 + MongoDB. Non-blocking.
+ */
+export function trackLandingEvent(event_name, params = {}) {
+  const lang    = localStorage.getItem('ak_lang') || 'it';
+  const slug    = params.page_slug || window.location.pathname.split('/').pop() || 'unknown';
+  const payload = { page_slug: slug, language: lang, ...params };
+  if (DEBUG) console.log(`%c[Landing] ${event_name}`, 'color:#FFD700;font-weight:bold', payload);
+  if (typeof window.gtag === 'function' && GA_ID) window.gtag('event', event_name, payload);
+  _logToBackend(event_name, payload);
+}
+
+/** Track landing page view */
+export function trackLandingView(slug) {
+  const lang = localStorage.getItem('ak_lang') || 'it';
+  const source = new URLSearchParams(window.location.search).get('utm_source') || 'organic';
+  trackLandingEvent('landing_view', { page_slug: slug, language: lang, source });
+}
+
+/** Track scroll depth (50% and 90%) */
+export function useLandingScrollTracking(slug) {
+  // Called from components — returns a setup function
+  return () => {
+    let fired50 = false, fired90 = false;
+    const lang = localStorage.getItem('ak_lang') || 'it';
+    const onScroll = () => {
+      const el  = document.documentElement;
+      const pct = (el.scrollTop + window.innerHeight) / el.scrollHeight * 100;
+      if (!fired50 && pct >= 50) {
+        fired50 = true;
+        trackLandingEvent('landing_scroll_50', { page_slug: slug, language: lang });
+      }
+      if (!fired90 && pct >= 90) {
+        fired90 = true;
+        trackLandingEvent('landing_scroll_90', { page_slug: slug, language: lang });
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  };
+}
+
+/** Track CTA "Start Test" click */
+export function trackStartTestClick(slug, position = 'hero') {
+  const lang = localStorage.getItem('ak_lang') || 'it';
+  trackLandingEvent('cta_start_test_click', { page_slug: slug, language: lang, position });
+}
+
+/** Track Download App click from landing */
+export function trackDownloadClick(slug, source = 'landing') {
+  const lang = localStorage.getItem('ak_lang') || 'it';
+  trackLandingEvent('cta_download_click', { page_slug: slug, language: lang, source });
+}

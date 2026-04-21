@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, ArrowRight, Target, BarChart2, Clock, Settings, Layers } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -7,17 +7,31 @@ import usePageContent from '../hooks/usePageContent';
 import useCMSSEO from '../hooks/useCMSSEO';
 import { useLangPath } from '../utils/langPath';
 import { ROUTES } from '../config/routes';
+import {
+  trackLandingView,
+  useLandingScrollTracking,
+  trackStartTestClick,
+  trackDownloadClick,
+} from '../utils/tracking';
 
 /**
  * TestLandingPage — SEO + Conversion optimized.
- * 100% CMS-driven.
+ * 100% CMS-driven. Full funnel tracking.
  */
 export default function TestLandingPage({ slug }) {
   const { i18n } = useTranslation();
   const lang = i18n.language?.slice(0, 2) || 'it';
   const { content: cms } = usePageContent(slug, lang);
   const lp = useLangPath();
+  const setupScrollTracking = useLandingScrollTracking(slug);
   useCMSSEO(cms, slug.replace(/-/g, ' ').toUpperCase());
+
+  // Track landing view + scroll depth
+  useEffect(() => {
+    trackLandingView(slug);
+    const cleanup = setupScrollTracking();
+    return cleanup;
+  }, [slug, setupScrollTracking]);
 
   return (
     <div className="bg-black min-h-screen text-white font-inter overflow-x-hidden">
@@ -119,11 +133,13 @@ export default function TestLandingPage({ slug }) {
               style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
                 <Link to={lp(ROUTES.app)} data-testid={`${slug}-cta-primary`}
+                  onClick={() => trackStartTestClick(slug, 'mid')}
                   className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
                   style={{ height: '60px' }}>
                   <Zap size={20} fill="black" /> {cms('cta_primary')}
                 </Link>
                 <Link to={lp(ROUTES.app)} data-testid={`${slug}-cta-secondary`}
+                  onClick={() => trackDownloadClick(slug, 'landing')}
                   className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-white transition-colors"
                   style={{ height: '60px' }}>
                   {cms('cta_secondary')} <ArrowRight size={14} />
@@ -260,6 +276,7 @@ export default function TestLandingPage({ slug }) {
           {/* CTA Group */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-5">
             <Link to={lp(ROUTES.app)} data-testid={`${slug}-final-primary`}
+              onClick={() => trackStartTestClick(slug, 'bottom')}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {cms('cta_primary')}

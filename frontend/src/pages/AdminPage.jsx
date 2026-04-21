@@ -1151,29 +1151,30 @@ function AnalyticsDashboard({ call }) {
   const [recent, setRecent]     = useState([]);
   const [ctaStats, setCtaStats] = useState([]);
   const [convStats, setConvStats] = useState([]);
+  const [funnel, setFunnel]     = useState(null);
   const [loading, setLoading]   = useState(true);
   const [lastRefresh, setLastRefresh] = useState(null);
 
   const load = useCallback(async () => {
     try {
-      const [sum, rec, cta, conv] = await Promise.all([
+      const [sum, rec, cta, conv, funnelData] = await Promise.all([
         call('get', '/events/summary'),
         call('get', '/events/recent'),
         call('get', '/cms/cta-analytics').catch(() => []),
         call('get', '/cms/conversion-analytics').catch(() => []),
+        call('get', '/analytics/funnel').catch(() => null),
       ]);
       setSummary(sum || []);
       setRecent(rec || []);
       setCtaStats(cta || []);
       setConvStats(conv || []);
+      setFunnel(funnelData);
       setLastRefresh(new Date());
     } catch { }
     finally { setLoading(false); }
   }, [call]);
 
   useEffect(() => { load(); }, [load]);
-
-  // Auto-refresh every 12 seconds
   useEffect(() => {
     const timer = setInterval(load, 12000);
     return () => clearInterval(timer);
@@ -1186,7 +1187,6 @@ function AnalyticsDashboard({ call }) {
   const sportSelects = summary.filter(e => e.event === 'sport_selected').reduce((s,e) => s+e.count, 0);
   const heroViews    = summary.filter(e => e.event === 'hero_slide_view').reduce((s,e) => s+e.count, 0);
 
-  // Top pages (from recent page_view_custom events)
   const pageMap = {};
   recent.filter(e => e.event === 'page_view_custom').forEach(e => {
     const page = e.params?.page_name || e.url || 'unknown';
@@ -1194,7 +1194,6 @@ function AnalyticsDashboard({ call }) {
   });
   const topPages = Object.entries(pageMap).sort((a,b) => b[1]-a[1]).slice(0, 8);
 
-  // Top sports
   const sportMap = {};
   recent.filter(e => e.event === 'sport_selected').forEach(e => {
     const sport = e.params?.sport || 'unknown';
@@ -1202,8 +1201,6 @@ function AnalyticsDashboard({ call }) {
   });
   const topSports = Object.entries(sportMap).sort((a,b) => b[1]-a[1]).slice(0, 8);
   const maxSport  = topSports[0]?.[1] || 1;
-
-  // Recent 15 events
   const recentEvents = recent.slice(0, 15);
 
   const fmt = (d) => {
@@ -1213,25 +1210,23 @@ function AnalyticsDashboard({ call }) {
   };
 
   const EVENT_COLOR = {
-    page_view_custom:   '#00FFFF',
-    hero_slide_view:    '#a78bfa',
-    hero_slide_click:   '#c084fc',
-    cta_get_app_click:  '#FFD700',
-    cta_business_click: '#FFD700',
-    sport_selected:     '#34d399',
-    scroll_50:          '#94a3b8',
-    scroll_90:          '#64748b',
+    page_view_custom:   '#00FFFF', hero_slide_view:    '#a78bfa',
+    hero_slide_click:   '#c084fc', cta_get_app_click:  '#FFD700',
+    cta_business_click: '#FFD700', sport_selected:     '#34d399',
+    scroll_50:          '#94a3b8', scroll_90:          '#64748b',
+    landing_view:       '#00FFFF', cta_start_test_click: '#FFD700',
+    cta_download_click: '#34d399', landing_scroll_50:  '#94a3b8',
+    landing_scroll_90:  '#64748b',
   };
 
   return (
     <div>
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-anton text-2xl uppercase text-white">ANALYTICS</h2>
           <p className="font-inter text-xs mt-1" style={{ color: '#a1a1aa' }}>
-            Auto-refresh every 12s
-            {lastRefresh && ` · Last: ${lastRefresh.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`}
+            Auto-refresh ogni 12s
+            {lastRefresh && ` · Aggiornato: ${lastRefresh.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`}
           </p>
         </div>
         <button onClick={load}
@@ -1249,11 +1244,11 @@ function AnalyticsDashboard({ call }) {
           {/* KPI Cards */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
             {[
-              { icon: <Activity size={16} />, label: 'Total Events', value: total,        color: '#a1a1aa' },
-              { icon: <Eye size={16} />,      label: 'Page Views',   value: pageViews,    color: '#00FFFF' },
-              { icon: <MousePointerClick size={16} />, label: 'CTA Clicks',value: ctaClicks, color: '#FFD700' },
-              { icon: <TrendingUp size={16} />,label: 'Sport Selects',value: sportSelects,color: '#34d399' },
-              { icon: <BarChart2 size={16} />, label: 'Hero Views',   value: heroViews,   color: '#a78bfa' },
+              { icon: <Activity size={16} />, label: 'Total Events', value: total, color: '#a1a1aa' },
+              { icon: <Eye size={16} />, label: 'Page Views', value: pageViews, color: '#00FFFF' },
+              { icon: <MousePointerClick size={16} />, label: 'CTA Clicks', value: ctaClicks, color: '#FFD700' },
+              { icon: <TrendingUp size={16} />, label: 'Sport Selects', value: sportSelects, color: '#34d399' },
+              { icon: <BarChart2 size={16} />, label: 'Hero Views', value: heroViews, color: '#a78bfa' },
             ].map((kpi, i) => (
               <div key={i} className="p-4 rounded-[12px] flex flex-col gap-2" style={{ background: '#0a0a0a', border: `1px solid ${kpi.color}18` }}>
                 <div style={{ color: kpi.color }}>{kpi.icon}</div>
@@ -1262,6 +1257,84 @@ function AnalyticsDashboard({ call }) {
               </div>
             ))}
           </div>
+
+          {/* ── LANDING FUNNEL PERFORMANCE ── */}
+          {funnel && (
+            <div className="mb-8 p-6 rounded-[16px]" style={{ background: '#0a0a0a', border: '1px solid rgba(255,215,0,0.2)' }}>
+              <div className="flex items-center gap-2 mb-6">
+                <TrendingUp size={16} style={{ color: '#FFD700' }} />
+                <span className="font-inter text-[10px] font-bold uppercase tracking-widest" style={{ color: '#FFD700' }}>
+                  LANDING FUNNEL PERFORMANCE
+                </span>
+              </div>
+
+              {/* Funnel KPIs */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                {[
+                  { label: 'Landing Views',  value: funnel.landing_views,   color: '#00FFFF' },
+                  { label: 'Scroll 50%',     value: funnel.scroll_50,       color: '#94a3b8' },
+                  { label: 'Scroll 90%',     value: funnel.scroll_90,       color: '#64748b' },
+                  { label: 'CTA Clicks',     value: funnel.cta_clicks,      color: '#FFD700' },
+                  { label: 'Download Clicks',value: funnel.download_clicks,  color: '#34d399' },
+                ].map((kpi, i) => (
+                  <div key={i} className="p-4 rounded-[12px] text-center" style={{ background: '#111', border: `1px solid ${kpi.color}20` }}>
+                    <div className="font-anton text-3xl mb-1" style={{ color: kpi.color }}>
+                      {kpi.value.toLocaleString()}
+                    </div>
+                    <div className="font-inter text-[10px] text-white/50 uppercase tracking-wider">{kpi.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Conversion Rates */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                {[
+                  { label: 'Landing → CTA',      value: funnel.conversion_rates.landing_to_cta,      color: '#FFD700' },
+                  { label: 'CTA → Download',      value: funnel.conversion_rates.cta_to_download,     color: '#34d399' },
+                  { label: 'Landing → Download',  value: funnel.conversion_rates.landing_to_download, color: '#34d399' },
+                  { label: 'Scroll 50% rate',     value: funnel.conversion_rates.scroll_50_rate,      color: '#94a3b8' },
+                  { label: 'Scroll 90% rate',     value: funnel.conversion_rates.scroll_90_rate,      color: '#64748b' },
+                ].map((rate, i) => (
+                  <div key={i} className="p-4 rounded-[12px] text-center" style={{ background: '#111', border: `1px solid ${rate.color}20` }}>
+                    <div className="font-anton text-2xl mb-1" style={{ color: rate.color }}>
+                      {rate.value}%
+                    </div>
+                    <div className="font-inter text-[10px] text-white/40 uppercase tracking-wider">{rate.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Per-page breakdown */}
+              {Object.keys(funnel.by_page || {}).length > 0 && (
+                <div>
+                  <div className="font-inter text-[10px] font-bold uppercase tracking-widest text-white/40 mb-3">Per Pagina</div>
+                  <div className="space-y-2">
+                    {Object.entries(funnel.by_page).map(([slug, data]) => (
+                      <div key={slug} className="grid grid-cols-5 gap-2 items-center py-2 px-3 rounded-[8px]"
+                        style={{ background: '#111', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div className="col-span-2 font-inter text-xs font-semibold text-white truncate">{slug}</div>
+                        <div className="font-inter text-xs text-center" style={{ color: '#00FFFF' }}>
+                          {(data.landing_view || 0)} views
+                        </div>
+                        <div className="font-inter text-xs text-center" style={{ color: '#FFD700' }}>
+                          {data.landing_to_cta}% CTA
+                        </div>
+                        <div className="font-inter text-xs text-center" style={{ color: '#34d399' }}>
+                          {data.landing_to_download}% DL
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {funnel.landing_views === 0 && (
+                <p className="font-inter text-xs text-white/30 text-center py-4">
+                  Nessun dato ancora — visita una landing page per generare eventi.
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             {/* Top pages */}

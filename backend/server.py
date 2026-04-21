@@ -2061,6 +2061,86 @@ async def track_event(data: AnalyticsEvent):
         logger.debug(f"Event log failed (non-critical): {e}")
     return {"ok": True}
 
+@api_router.get("/analytics/funnel")
+async def get_funnel_analytics(_=Depends(verify_admin)):
+    """KPI Dashboard: landing funnel performance metrics."""
+    LANDING_EVENTS = ['landing_view', 'landing_scroll_50', 'landing_scroll_90',
+                      'cta_start_test_click', 'cta_download_click']
+
+    # Aggregate counts per event and page_slug
+    pipeline = [
+        {"$match": {"event": {"$in": LANDING_EVENTS}}},
+        {"$group": {
+            "_id": {"event": "$event", "page_slug": "$params.page_slug", "language": "$params.language"},
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"_id.event": 1, "count": -1}}
+    ]
+    raw = await db.analytics_events.aggregate(pipeline).to_list(500)
+
+    # Build flat summary
+    totals = {e: 0 for e in LANDING_EVENTS}
+    by_page: dict = {}
+    by_lang: dict = {}
+
+    for r in raw:
+        ev   = r["_id"]["event"]
+        slug = r["_id"].get("page_slug") or "unknown"
+        lang = r["_id"].get("language") or "unknown"
+        cnt  = r["count"]
+        totals[ev] = totals.get(ev, 0) + cnt
+
+        # By page
+        if slug not in by_page:
+            by_page[slug] = {e: 0 for e in LANDING_EVENTS}
+        by_page[slug][ev] = by_page[slug].get(ev, 0) + cnt
+
+        # By language
+        if lang not in by_lang:
+            by_lang[lang] = {e: 0 for e in LANDING_EVENTS}
+        by_lang[lang][ev] = by_lang[lang].get(ev, 0) + cnt
+
+    # Conversion rates
+    def rate(num, den):
+        return round(num / den * 100, 1) if den > 0 else 0.0
+
+    lv   = totals['landing_view']
+    cta  = totals['cta_start_test_click']
+    dl   = totals['cta_download_click']
+    s50  = totals['landing_scroll_50']
+    s90  = totals['landing_scroll_90']
+
+    conversion_rates = {
+        "landing_to_cta":      rate(cta, lv),
+        "cta_to_download":     rate(dl, cta),
+        "landing_to_download": rate(dl, lv),
+        "scroll_50_rate":      rate(s50, lv),
+        "scroll_90_rate":      rate(s90, lv),
+    }
+
+    # Per-page conversion rates
+    by_page_rates = {}
+    for slug, counts in by_page.items():
+        plv  = counts.get('landing_view', 0)
+        pcta = counts.get('cta_start_test_click', 0)
+        pdl  = counts.get('cta_download_click', 0)
+        by_page_rates[slug] = {
+            **counts,
+            "landing_to_cta":      rate(pcta, plv),
+            "landing_to_download": rate(pdl, plv),
+        }
+
+    return {
+        "landing_views":    lv,
+        "scroll_50":        s50,
+        "scroll_90":        s90,
+        "cta_clicks":       cta,
+        "download_clicks":  dl,
+        "conversion_rates": conversion_rates,
+        "by_page":          by_page_rates,
+        "by_language":      by_lang,
+    }
+
 @api_router.get("/events/summary")
 async def events_summary(_=Depends(verify_admin)):
     pipeline = [
