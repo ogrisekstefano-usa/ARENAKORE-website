@@ -4,6 +4,7 @@ import { Menu, X, ChevronRight, Zap, Globe, LogIn, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LOGO } from '../data/seo-content';
 import { ROUTES, NAV_ITEMS } from '../config/routes';
+import { useLangPath, stripLang, VALID_LANGS, DEFAULT_LANG } from '../utils/langPath';
 import LangModal from './LangModal';
 import TranslationBanner from './TranslationBanner';
 import { trackGetAppClick, trackBusinessClick } from '../utils/tracking';
@@ -53,53 +54,50 @@ function setLink(rel, href, attrs = {}) {
  * useSEO — full SEO meta injection (title, description, OG, hreflang, canonical)
  * Called on every page with CMS-sourced data.
  */
-export function useSEO({ title, description, ogTitle, ogDescription, ogImage, canonical, keywords, pathname, lang }) {
+export function useSEO({ title, description, ogTitle, ogDescription, ogImage, canonical, keywords, hreflangUrls, pathname, lang }) {
   const activeLang = lang || 'it';
 
   useEffect(() => {
-    // -- Title & Description --
     if (title) document.title = title;
     setMeta('description', description);
     if (keywords) setMeta('keywords', keywords);
 
-    // -- Open Graph --
-    setMeta('og:title',       ogTitle || title,                  'property');
-    setMeta('og:description', ogDescription || description,      'property');
-    setMeta('og:type',        'website',                         'property');
+    setMeta('og:title',       ogTitle || title,              'property');
+    setMeta('og:description', ogDescription || description,  'property');
+    setMeta('og:type',        'website',                     'property');
     setMeta('og:locale',      activeLang === 'it' ? 'it_IT' : activeLang === 'es' ? 'es_ES' : 'en_US', 'property');
     if (ogImage) setMeta('og:image', ogImage, 'property');
+    if (canonical) {
+      setLink('canonical', canonical);
+      setMeta('og:url', canonical, 'property');
+    }
 
-    // -- Canonical --
-    const path = pathname || window.location.pathname;
-    const slug = ROUTE_SLUGS[path] !== undefined ? ROUTE_SLUGS[path] : path.replace(/^\//, '');
-    const canonicalUrl = canonical || (slug ? `${BASE_URL}/${slug}` : BASE_URL);
-    setLink('canonical', canonicalUrl);
-    if (canonical) setMeta('og:url', canonical, 'property');
-
-    // -- hreflang tags --
+    // -- hreflang (per-language URLs) --
     document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
-    const pageSlug = ROUTE_SLUGS[path] !== undefined ? ROUTE_SLUGS[path] : path.replace(/^\//, '');
-    const basePageUrl = pageSlug ? `${BASE_URL}/${pageSlug}` : BASE_URL;
-    LANGS_SEO.forEach(l => setLink('alternate', basePageUrl, { hreflang: l }));
-    setLink('alternate', basePageUrl, { hreflang: 'x-default' });
+    if (hreflangUrls) {
+      Object.entries(hreflangUrls).forEach(([l, url]) => {
+        setLink('alternate', url, { hreflang: l });
+      });
+      // x-default: root (no lang prefix), redirects to detected language
+      const xDefault = `${BASE_URL}${pathname?.replace(/^\/(en|it|es)(\/|$)/, '/') || '/'}`;
+      setLink('alternate', xDefault.replace(/\/$/, '') || BASE_URL, { hreflang: 'x-default' });
+    }
 
-    // -- Twitter/X Card --
     setMeta('twitter:card',        'summary_large_image');
     setMeta('twitter:title',       ogTitle || title);
     setMeta('twitter:description', ogDescription || description);
     if (ogImage) setMeta('twitter:image', ogImage);
 
-    // -- Schema.org JSON-LD --
     let jsonLd = document.getElementById('schema-org-jsonld');
     if (!jsonLd) { jsonLd = document.createElement('script'); jsonLd.id = 'schema-org-jsonld'; jsonLd.type = 'application/ld+json'; document.head.appendChild(jsonLd); }
     jsonLd.textContent = JSON.stringify({
       '@context': 'https://schema.org', '@type': 'SoftwareApplication',
-      'name': 'ArenaKore', 'description': description,
+      'name': 'ArenaKore', 'description': description || 'Performance validation system',
       'applicationCategory': 'SportsApplication',
       'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR' },
       'operatingSystem': 'iOS, Android',
     });
-  }, [title, description, ogTitle, ogDescription, ogImage, canonical, keywords, activeLang, pathname]);
+  }, [title, description, ogTitle, ogDescription, ogImage, canonical, keywords, activeLang, hreflangUrls, pathname]);
 }
 
 /* --─ Language Switcher --─ */
@@ -148,6 +146,7 @@ export function InnerNavbar() {
   const lang = i18n.language?.slice(0, 2) || 'en';
   const { global: g, offline: isOffline } = useGlobalContent(lang);
   const { topNav } = useNavConfig();
+  const lp = useLangPath();  // lang-prefixed path builder
 
   // Resolve label: 1. navConfig lang label, 2. CMS global, 3. i18n fallback
   const navLabel = (item) => {
@@ -196,7 +195,7 @@ export function InnerNavbar() {
         {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-0.5">
           {NAV.map(l => (
-            <Link key={l.href} to={l.href}
+            <Link key={l.href} to={lp(l.href)}
               className={`font-inter text-xs font-semibold uppercase tracking-wider px-3 py-2 rounded-lg transition-colors ${
                 active(l.href)
                   ? 'text-ak-cyan'
@@ -213,7 +212,7 @@ export function InnerNavbar() {
 
         <div className="flex items-center gap-2">
           <Link
-            to={ROUTES.app}
+            to={lp(ROUTES.app)}
             data-testid="nav-start-challenge-btn"
             onClick={() => trackGetAppClick('navbar')}
             className="hidden sm:inline-flex items-center gap-1.5 font-inter font-black text-[10px] uppercase tracking-wide px-3 rounded-[12px] bg-ak-gold text-black hover:scale-105 transition-transform whitespace-nowrap"
@@ -231,7 +230,7 @@ export function InnerNavbar() {
       {open && (
         <div className="lg:hidden bg-black/98 border-t border-white/10 px-5 py-5 space-y-1">
           {NAV.map(l => (
-            <Link key={l.href} to={l.href} onClick={() => setOpen(false)}
+            <Link key={l.href} to={lp(l.href)} onClick={() => setOpen(false)}
               className={`flex items-center justify-between py-3 border-b border-white/5 font-inter text-sm font-semibold uppercase tracking-wider ${
                 active(l.href) ? 'text-ak-cyan' : l.highlight ? 'text-white' : 'text-white/70'
               }`}
@@ -241,7 +240,7 @@ export function InnerNavbar() {
           ))}
           <div className="pt-3 flex items-center justify-between">
             <LangSwitcher />
-            <Link to={ROUTES.gyms} onClick={() => setOpen(false)}
+            <Link to={lp(ROUTES.gyms)} onClick={() => setOpen(false)}
               className="inline-flex items-center gap-2 font-inter font-black text-sm uppercase tracking-wider rounded-[14px] bg-ak-gold text-black px-5"
               style={{ height: '44px' }}>
               <Zap size={15} fill="black" /> {t('nav.startChallenge')}
@@ -274,6 +273,7 @@ export function InnerFooter() {
   const lang = i18n.language?.slice(0, 2) || 'en';
   const { global: g } = useGlobalContent(lang);
   const { bottomNav } = useNavConfig();
+  const lp = useLangPath();
   const [langOpen, setLangOpen] = useState(false);
   const currentLang    = i18n.language?.slice(0, 2).toUpperCase() || 'EN';
   const currentCountry = localStorage.getItem('arena_country') || '';
@@ -320,7 +320,7 @@ export function InnerFooter() {
               <ul className="space-y-2.5">
                 {activeFooterLinks.map(item => (
                   <li key={item.key}>
-                    <Link to={item.href} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">
+                    <Link to={lp(item.href)} className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">
                       {footerLabel(item)}
                     </Link>
                   </li>
@@ -334,7 +334,7 @@ export function InnerFooter() {
                 <li><Link to="/support" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">{t('footer.supportCenter')}</Link></li>
                 <li><a href="mailto:support@arenakore.com" className="font-inter text-sm text-white hover:text-ak-cyan transition-colors">support@arenakore.com</a></li>
               </ul>
-              <Link to={ROUTES.app}
+              <Link to={lp(ROUTES.app)}
                 onClick={() => trackGetAppClick('footer')}
                 className="inline-flex items-center gap-2 font-inter font-black text-xs uppercase tracking-wider px-5 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
                 style={{ height: '38px' }}>

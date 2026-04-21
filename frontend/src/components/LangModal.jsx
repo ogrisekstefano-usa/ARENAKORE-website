@@ -71,9 +71,18 @@ export default function LangModal({ open, onClose }) {
   const [showAllCountries, setShowAllCountries] = useState(false);
 
   const selectLang = (code) => {
+    // Navigate to new language URL preserving current path
+    const currentPath = window.location.pathname;
+    // Strip existing lang prefix
+    const stripped = currentPath.replace(/^\/(en|it|es)(\/|$)/, '/') || '/';
+    const newPath = `/${code}${stripped === '/' ? '' : stripped}`;
     i18n.changeLanguage(code);
     localStorage.setItem(LANG_KEY,   code);
     localStorage.setItem(ARENA_LANG, code);
+    // Navigate with language prefix
+    window.history.pushState({}, '', newPath);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    onClose && onClose();
   };
 
   const selectCountry = (country) => {
