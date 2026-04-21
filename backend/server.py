@@ -68,7 +68,7 @@ async def get_current_user(request: Request) -> dict:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         if payload.get("type") != "access":
             raise HTTPException(401, "Invalid token type")
-        user = await db.ak_users.find_one({"id": payload["sub"]}, {"_id": 0})
+        user = await db.website_users.find_one({"id": payload["sub"]}, {"_id": 0})
         if not user:
             raise HTTPException(401, "User not found")
         user.pop("password_hash", None)
@@ -115,13 +115,13 @@ class LoginIn(BaseModel):
 @api_router.post("/auth/register")
 async def register(data: RegisterIn, response: Response):
     email = data.email.lower().strip()
-    existing = await db.ak_users.find_one({"email": email})
+    existing = await db.website_users.find_one({"email": email})
     if existing:
         raise HTTPException(400, "Email already registered")
     user = AKUser(email=email, name=data.name.strip(), password_hash=hash_password(data.password))
     doc = user.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
-    await db.ak_users.insert_one(doc)
+    await db.website_users.insert_one(doc)
     access  = create_access_token(user.id, user.email)
     refresh = create_refresh_token(user.id)
     _set_auth_cookies(response, access, refresh)
@@ -131,7 +131,7 @@ async def register(data: RegisterIn, response: Response):
 @api_router.post("/auth/login")
 async def login(data: LoginIn, response: Response):
     email = data.email.lower().strip()
-    user  = await db.ak_users.find_one({"email": email}, {"_id": 0})
+    user  = await db.website_users.find_one({"email": email}, {"_id": 0})
     if not user or not verify_password(data.password, user.get("password_hash", "")):
         raise HTTPException(401, "Invalid credentials")
     access  = create_access_token(user["id"], user["email"])
@@ -160,7 +160,7 @@ async def refresh_token(request: Request, response: Response):
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         if payload.get("type") != "refresh":
             raise HTTPException(401, "Invalid refresh token")
-        user = await db.ak_users.find_one({"id": payload["sub"]}, {"_id": 0})
+        user = await db.website_users.find_one({"id": payload["sub"]}, {"_id": 0})
         if not user:
             raise HTTPException(401, "User not found")
         access = create_access_token(user["id"], user["email"])
@@ -175,21 +175,21 @@ async def update_me(updates: Dict[str, Any], current_user: dict = Depends(get_cu
     safe_updates = {k: v for k, v in updates.items() if k in allowed}
     if not safe_updates:
         raise HTTPException(400, "No valid fields")
-    await db.ak_users.update_one({"id": current_user["id"]}, {"$set": safe_updates})
-    updated = await db.ak_users.find_one({"id": current_user["id"]}, {"_id": 0})
+    await db.website_users.update_one({"id": current_user["id"]}, {"$set": safe_updates})
+    updated = await db.website_users.find_one({"id": current_user["id"]}, {"_id": 0})
     return {"user": _safe_user(updated)}
 
 # Seed admin on startup
 async def _seed_admin():
     admin_email = os.environ.get("ADMIN_EMAIL", "admin@arenakore.com")
     admin_password = os.environ.get("ADMIN_PASSWORD", "ArenaKore2026!")
-    existing = await db.ak_users.find_one({"email": admin_email})
+    existing = await db.website_users.find_one({"email": admin_email})
     if not existing:
         user = AKUser(email=admin_email, name="Admin", password_hash=hash_password(admin_password), role="admin")
         doc = user.model_dump(); doc["created_at"] = doc["created_at"].isoformat()
-        await db.ak_users.insert_one(doc)
+        await db.website_users.insert_one(doc)
         logger.info(f"Admin user seeded: {admin_email}")
-    await db.ak_users.create_index("email", unique=True)
+    await db.website_users.create_index("email", unique=True)
 
 # ─── ADMIN AUTH ───────────────────────────────────────────────
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'ArenaKore2026!')
@@ -436,11 +436,11 @@ async def root(): return {"message": "Hello World"}
 async def create_status_check(inp: StatusCheckCreate):
     obj = StatusCheck(**inp.model_dump())
     doc = obj.model_dump(); doc['timestamp'] = doc['timestamp'].isoformat()
-    await db.status_checks.insert_one(doc); return obj
+    await db.website_status_checks.insert_one(doc); return obj
 
 @api_router.get("/status", response_model=List[StatusCheck])
 async def get_status_checks():
-    docs = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
+    docs = await db.website_status_checks.find({}, {"_id": 0}).to_list(1000)
     for d in docs:
         if isinstance(d.get('timestamp'), str): d['timestamp'] = datetime.fromisoformat(d['timestamp'])
     return docs
@@ -464,7 +464,7 @@ class PilotRequestCreate(BaseModel):
 async def create_pilot_request(data: PilotRequestCreate):
     obj = PilotRequest(**data.model_dump())
     doc = obj.model_dump(); doc['created_at'] = doc['created_at'].isoformat()
-    await db.pilot_requests.insert_one(doc)
+    await db.website_pilot_requests.insert_one(doc)
     logger.info(f"Pilot request: {obj.gym_name} — {obj.email}")
     # Fire-and-forget: emails + webhook, non-blocking
     asyncio.create_task(_send_pilot_emails(obj))
@@ -473,7 +473,7 @@ async def create_pilot_request(data: PilotRequestCreate):
 
 @api_router.get("/pilot-requests", response_model=List[PilotRequest])
 async def get_pilot_requests(_=Depends(verify_admin)):
-    docs = await db.pilot_requests.find({}, {"_id": 0}).to_list(1000)
+    docs = await db.website_pilot_requests.find({}, {"_id": 0}).to_list(1000)
     for d in docs:
         if isinstance(d.get('created_at'), str): d['created_at'] = datetime.fromisoformat(d['created_at'])
     return docs
@@ -508,37 +508,37 @@ def _deserialize_post(d):
 
 @api_router.get("/blog", response_model=List[BlogPost])
 async def get_blog_posts():
-    docs = await db.blog_posts.find({"published": True}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    docs = await db.website_blog_posts.find({"published": True}, {"_id": 0}).sort("created_at", -1).to_list(100)
     return [_deserialize_post(d) for d in docs]
 
 @api_router.get("/blog/{slug}", response_model=BlogPost)
 async def get_blog_post(slug: str):
-    doc = await db.blog_posts.find_one({"slug": slug}, {"_id": 0})
+    doc = await db.website_blog_posts.find_one({"slug": slug}, {"_id": 0})
     if not doc: raise HTTPException(404, "Not found")
     return _deserialize_post(doc)
 
 @api_router.post("/blog", response_model=BlogPost)
 async def create_blog_post(data: BlogPostCreate, _=Depends(verify_admin)):
-    existing = await db.blog_posts.find_one({"slug": data.slug})
+    existing = await db.website_blog_posts.find_one({"slug": data.slug})
     if existing: raise HTTPException(400, f"Slug '{data.slug}' already exists")
     obj = BlogPost(**data.model_dump())
     doc = obj.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     doc['updated_at'] = doc['updated_at'].isoformat()
-    await db.blog_posts.insert_one(doc); return obj
+    await db.website_blog_posts.insert_one(doc); return obj
 
 @api_router.put("/blog/{post_id}", response_model=BlogPost)
 async def update_blog_post(post_id: str, data: BlogPostUpdate, _=Depends(verify_admin)):
     update = {k: v for k, v in data.model_dump().items() if v is not None}
     update['updated_at'] = datetime.now(timezone.utc).isoformat()
-    result = await db.blog_posts.find_one_and_update(
+    result = await db.website_blog_posts.find_one_and_update(
         {"id": post_id}, {"$set": update}, {"_id": 0}, return_document=True)
     if not result: raise HTTPException(404, "Not found")
     return _deserialize_post(result)
 
 @api_router.delete("/blog/{post_id}")
 async def delete_blog_post(post_id: str, _=Depends(verify_admin)):
-    await db.blog_posts.delete_one({"id": post_id})
+    await db.website_blog_posts.delete_one({"id": post_id})
     return {"ok": True}
 
 class BlogTranslateRequest(BaseModel):
@@ -548,7 +548,7 @@ class BlogTranslateRequest(BaseModel):
 @api_router.post("/blog/{post_id}/translate")
 async def translate_blog_post(post_id: str, req: BlogTranslateRequest, _=Depends(verify_admin)):
     """Translate all blog post fields from EN to target language using AI."""
-    doc = await db.blog_posts.find_one({"id": post_id}, {"_id": 0})
+    doc = await db.website_blog_posts.find_one({"id": post_id}, {"_id": 0})
     if not doc: raise HTTPException(404, "Post not found")
 
     lang = req.target_lang.lower()
@@ -603,7 +603,7 @@ For slug: generate a URL-friendly slug in {lang_name} (lowercase, hyphens, no ac
     existing = doc.get("translations") or {}
     existing[lang] = {**(existing.get(lang) or {}), **translated}
 
-    await db.blog_posts.update_one(
+    await db.website_blog_posts.update_one(
         {"id": post_id},
         {"$set": {"translations": existing, "updated_at": datetime.now(timezone.utc).isoformat()}}
     )
@@ -612,7 +612,7 @@ For slug: generate a URL-friendly slug in {lang_name} (lowercase, hyphens, no ac
 
 @api_router.post("/blog/seed/demo")
 async def seed_demo_blog(_=Depends(verify_admin)):
-    count = await db.blog_posts.count_documents({})
+    count = await db.website_blog_posts.count_documents({})
     if count > 0: return {"ok": True, "seeded": 0, "message": "Already has posts"}
     return {"ok": True, "seeded": 0, "message": "Send posts via POST /api/blog"}
 
@@ -628,14 +628,14 @@ DEFAULT_HERO_SLIDES = [
 
 @api_router.post("/hero-slides/seed")
 async def seed_hero_slides(_=Depends(verify_admin)):
-    existing = await db.hero_slides.count_documents({})
+    existing = await db.website_hero_slides.count_documents({})
     if existing > 0:
         return {"ok": True, "seeded": 0, "message": f"Already has {existing} slides"}
     inserted = 0
     for slide_data in DEFAULT_HERO_SLIDES:
         obj = HeroSlide(**slide_data)
         doc = obj.model_dump(); doc['created_at'] = doc['created_at'].isoformat()
-        await db.hero_slides.insert_one(doc)
+        await db.website_hero_slides.insert_one(doc)
         inserted += 1
     return {"ok": True, "seeded": inserted, "message": f"Seeded {inserted} default slides"}
 
@@ -655,14 +655,14 @@ class PageMetaUpdate(BaseModel):
 
 @api_router.get("/pages", response_model=List[PageMeta])
 async def get_pages(_=Depends(verify_admin)):
-    docs = await db.cms_pages.find({}, {"_id": 0}).to_list(100)
+    docs = await db.website_cms_pages.find({}, {"_id": 0}).to_list(100)
     for d in docs:
         if isinstance(d.get('updated_at'), str): d['updated_at'] = datetime.fromisoformat(d['updated_at'])
     return docs
 
 @api_router.get("/pages/{slug:path}", response_model=PageMeta)
 async def get_page_meta(slug: str):
-    doc = await db.cms_pages.find_one({"slug": slug}, {"_id": 0})
+    doc = await db.website_cms_pages.find_one({"slug": slug}, {"_id": 0})
     if not doc: raise HTTPException(404, "Not found")
     if isinstance(doc.get('updated_at'), str): doc['updated_at'] = datetime.fromisoformat(doc['updated_at'])
     return doc
@@ -672,13 +672,13 @@ async def upsert_page_meta(slug: str, data: PageMetaUpdate, _=Depends(verify_adm
     update = {k: v for k, v in data.model_dump().items() if v is not None}
     update['updated_at'] = datetime.now(timezone.utc).isoformat()
     update['slug'] = slug
-    doc = await db.cms_pages.find_one({"slug": slug})
+    doc = await db.website_cms_pages.find_one({"slug": slug})
     if doc:
-        await db.cms_pages.update_one({"slug": slug}, {"$set": update})
+        await db.website_cms_pages.update_one({"slug": slug}, {"$set": update})
     else:
         update['id'] = str(uuid.uuid4())
-        await db.cms_pages.insert_one(update)
-    result = await db.cms_pages.find_one({"slug": slug}, {"_id": 0})
+        await db.website_cms_pages.insert_one(update)
+    result = await db.website_cms_pages.find_one({"slug": slug}, {"_id": 0})
     if isinstance(result.get('updated_at'), str): result['updated_at'] = datetime.fromisoformat(result['updated_at'])
     return result
 
@@ -689,7 +689,7 @@ class PageSeoTranslateRequest(BaseModel):
 @api_router.post("/pages/{slug:path}/translate")
 async def translate_page_seo(slug: str, req: PageSeoTranslateRequest, _=Depends(verify_admin)):
     """Translate page SEO metadata (seo_title, meta_description, h1) from EN to target language."""
-    doc = await db.cms_pages.find_one({"slug": slug}, {"_id": 0})
+    doc = await db.website_cms_pages.find_one({"slug": slug}, {"_id": 0})
     lang = req.target_lang.lower()
     lang_name = req.target_lang_name or lang
 
@@ -746,10 +746,10 @@ Return a JSON object with the translated fields."""
         "slug": slug
     }
     if doc:
-        await db.cms_pages.update_one({"slug": slug}, {"$set": update})
+        await db.website_cms_pages.update_one({"slug": slug}, {"$set": update})
     else:
         update['id'] = str(uuid.uuid4())
-        await db.cms_pages.insert_one(update)
+        await db.website_cms_pages.insert_one(update)
 
     logger.info(f"Page SEO {slug} translated {len(translated)} fields → {lang}")
     return {"ok": True, "translated": len(translated), "lang": lang, "fields": translated}
@@ -765,7 +765,7 @@ class MediaItemCreate(BaseModel):
 
 @api_router.get("/media", response_model=List[MediaItem])
 async def get_media(_=Depends(verify_admin)):
-    docs = await db.media_library.find({}, {"_id": 0}).sort("uploaded_at", -1).to_list(200)
+    docs = await db.website_media_library.find({}, {"_id": 0}).sort("uploaded_at", -1).to_list(200)
     for d in docs:
         if isinstance(d.get('uploaded_at'), str): d['uploaded_at'] = datetime.fromisoformat(d['uploaded_at'])
     return docs
@@ -774,11 +774,11 @@ async def get_media(_=Depends(verify_admin)):
 async def add_media(data: MediaItemCreate, _=Depends(verify_admin)):
     obj = MediaItem(**data.model_dump())
     doc = obj.model_dump(); doc['uploaded_at'] = doc['uploaded_at'].isoformat()
-    await db.media_library.insert_one(doc); return obj
+    await db.website_media_library.insert_one(doc); return obj
 
 @api_router.delete("/media/{item_id}")
 async def delete_media(item_id: str, _=Depends(verify_admin)):
-    await db.media_library.delete_one({"id": item_id}); return {"ok": True}
+    await db.website_media_library.delete_one({"id": item_id}); return {"ok": True}
 
 # ─── CMS CONTENT (Multi-language sections) ───────────────────
 
@@ -1052,7 +1052,7 @@ async def seed_all_content(force: bool = False, translate: bool = True, _=Depend
     import json as _json
     results = {}
     for slug, sections in DEFAULT_PAGES.items():
-        existing = await db.cms_content.find_one({"slug": slug})
+        existing = await db.website_cms_content.find_one({"slug": slug})
         if existing and not force:
             results[slug] = {"status": "skipped", "reason": "already exists"}
             continue
@@ -1081,12 +1081,12 @@ async def seed_all_content(force: bool = False, translate: bool = True, _=Depend
 
         data = {"slug": slug, "sections": final_sections, "id": str(uuid.uuid4()), "updated_at": now, "history": []}
         if existing:
-            await db.cms_content.update_one({"slug": slug}, {"$set": {"sections": final_sections, "updated_at": now}})
+            await db.website_cms_content.update_one({"slug": slug}, {"$set": {"sections": final_sections, "updated_at": now}})
         else:
-            await db.cms_content.insert_one(data)
+            await db.website_cms_content.insert_one(data)
         # Auto-publish — archive old, create new published version
-        await db.cms_versions.update_many({"slug": slug, "status": "published", "is_global": False}, {"$set": {"status": "archived"}})
-        await db.cms_versions.insert_one({
+        await db.website_cms_versions.update_many({"slug": slug, "status": "published", "is_global": False}, {"$set": {"status": "archived"}})
+        await db.website_cms_versions.insert_one({
             "id": str(uuid.uuid4()), "version_id": str(uuid.uuid4()), "slug": slug, "is_global": False,
             "status": "published", "sections": final_sections, "sections_count": len(final_sections),
             "created_at": now, "published_at": now, "created_by": "seed-all", "note": "Auto-seeded with AI translations",
@@ -1152,7 +1152,7 @@ class TranslateRequest(BaseModel):
     keys: Optional[List[str]] = None  # None = translate all
 
 async def _get_or_default_page(slug: str) -> dict:
-    doc = await db.cms_content.find_one({"slug": slug}, {"_id": 0})
+    doc = await db.website_cms_content.find_one({"slug": slug}, {"_id": 0})
     if doc:
         return doc
     defaults = DEFAULT_PAGES.get(slug, [])
@@ -1188,7 +1188,7 @@ async def get_page_content(slug: str, lang: str = "en",
         sections = doc.get("sections", [])
     else:
         # Try published version first
-        pub = await db.cms_versions.find_one(
+        pub = await db.website_cms_versions.find_one(
             {"slug": slug, "status": "published", "is_global": False},
             {"_id": 0}, sort=[("published_at", -1)]
         )
@@ -1222,7 +1222,7 @@ async def update_page_content(slug: str, sections: List[ContentSection],
                                created_by: Optional[str] = "admin",
                                auto_publish: bool = True,   # DEFAULT: save = publish immediately
                                _=Depends(verify_admin)):
-    doc = await db.cms_content.find_one({"slug": slug})
+    doc = await db.website_cms_content.find_one({"slug": slug})
     now = datetime.now(timezone.utc).isoformat()
     version_id = str(uuid.uuid4())
     final_status = "published" if auto_publish else "draft"
@@ -1243,20 +1243,20 @@ async def update_page_content(slug: str, sections: List[ContentSection],
 
     # If publishing, archive previous published version
     if auto_publish:
-        await db.cms_versions.update_many(
+        await db.website_cms_versions.update_many(
             {"slug": slug, "status": "published", "is_global": False},
             {"$set": {"status": "archived"}}
         )
 
-    await db.cms_versions.insert_one(version)
+    await db.website_cms_versions.insert_one(version)
 
     # Keep only last 20 versions per slug
-    all_versions = await db.cms_versions.find(
+    all_versions = await db.website_cms_versions.find(
         {"slug": slug, "is_global": False}, {"_id": 0, "id": 1}
     ).sort("created_at", -1).to_list(None)
     if len(all_versions) > 20:
         old_ids = [v["id"] for v in all_versions[20:]]
-        await db.cms_versions.delete_many({"id": {"$in": old_ids}})
+        await db.website_cms_versions.delete_many({"id": {"$in": old_ids}})
 
     data = {
         "slug": slug,
@@ -1265,16 +1265,16 @@ async def update_page_content(slug: str, sections: List[ContentSection],
         "latest_version_id": version_id,
     }
     if doc:
-        await db.cms_content.update_one({"slug": slug}, {"$set": data})
+        await db.website_cms_content.update_one({"slug": slug}, {"$set": data})
     else:
         data["id"] = str(uuid.uuid4())
         data["history"] = []
-        await db.cms_content.insert_one(data)
+        await db.website_cms_content.insert_one(data)
     return {"ok": True, "slug": slug, "sections": len(sections), "version_id": version_id}
 
 @api_router.get("/cms/versions/{slug}")
 async def get_versions(slug: str, _=Depends(verify_admin)):
-    versions = await db.cms_versions.find(
+    versions = await db.website_cms_versions.find(
         {"slug": slug, "is_global": False}, {"_id": 0, "sections": 0}
     ).sort("created_at", -1).to_list(20)
     return versions
@@ -1283,12 +1283,12 @@ async def get_versions(slug: str, _=Depends(verify_admin)):
 async def publish_version(slug: str, version_id: str, _=Depends(verify_admin)):
     now = datetime.now(timezone.utc).isoformat()
     # Unpublish current published version
-    await db.cms_versions.update_many(
+    await db.website_cms_versions.update_many(
         {"slug": slug, "status": "published", "is_global": False},
         {"$set": {"status": "archived"}}
     )
     # Publish selected version
-    result = await db.cms_versions.find_one_and_update(
+    result = await db.website_cms_versions.find_one_and_update(
         {"slug": slug, "version_id": version_id},
         {"$set": {"status": "published", "published_at": now}},
         {"_id": 0}, return_document=True
@@ -1297,7 +1297,7 @@ async def publish_version(slug: str, version_id: str, _=Depends(verify_admin)):
         raise HTTPException(404, "Version not found")
     # Also update cms_content with published sections
     if result.get("sections"):
-        await db.cms_content.update_one(
+        await db.website_cms_content.update_one(
             {"slug": slug}, {"$set": {"sections": result["sections"], "published_version_id": version_id, "published_at": now}},
             upsert=True
         )
@@ -1307,7 +1307,7 @@ async def publish_version(slug: str, version_id: str, _=Depends(verify_admin)):
 @api_router.post("/cms/versions/{slug}/rollback/{version_id}")
 async def rollback_version(slug: str, version_id: str, _=Depends(verify_admin)):
     """Rollback: create a new draft from an old version's content."""
-    old = await db.cms_versions.find_one({"slug": slug, "version_id": version_id})
+    old = await db.website_cms_versions.find_one({"slug": slug, "version_id": version_id})
     if not old:
         raise HTTPException(404, "Version not found")
     sections = old.get("sections", [])
@@ -1325,8 +1325,8 @@ async def rollback_version(slug: str, version_id: str, _=Depends(verify_admin)):
         "published_at": None,
         "rolled_back_from": version_id,
     }
-    await db.cms_versions.insert_one(new_version)
-    await db.cms_content.update_one(
+    await db.website_cms_versions.insert_one(new_version)
+    await db.website_cms_content.update_one(
         {"slug": slug}, {"$set": {"sections": sections, "updated_at": now, "latest_version_id": new_version_id}},
         upsert=True
     )
@@ -1347,7 +1347,7 @@ class CTAClickEvent(BaseModel):
 @api_router.post("/cms/cta-click")
 async def track_cta_click(data: CTAClickEvent):
     now = datetime.now(timezone.utc).isoformat()
-    await db.cms_cta_clicks.update_one(
+    await db.website_cms_cta_clicks.update_one(
         {"key": data.key, "language": data.language, "page": data.page,
          "position": data.position, "variant_id": data.variant_id},
         {"$inc": {"clicks": 1}, "$set": {
@@ -1357,7 +1357,7 @@ async def track_cta_click(data: CTAClickEvent):
         }},
         upsert=True
     )
-    await db.analytics_events.insert_one({
+    await db.website_analytics_events.insert_one({
         "event": "cta_click",
         "params": {"key": data.key, "text": data.text, "language": data.language,
                    "page": data.page, "position": data.position, "variant_id": data.variant_id},
@@ -1400,7 +1400,7 @@ async def upsert_ab_tests(slug: str, tests: List[ABTestKey], _=Depends(verify_ad
 @api_router.get("/cms/ab-analytics/{slug}")
 async def get_ab_analytics(slug: str, _=Depends(verify_admin)):
     """Returns click stats grouped by key + variant_id."""
-    docs = await db.cms_cta_clicks.find({"page": slug, "variant_id": {"$ne": None}}, {"_id": 0}).to_list(500)
+    docs = await db.website_cms_cta_clicks.find({"page": slug, "variant_id": {"$ne": None}}, {"_id": 0}).to_list(500)
     result = {}
     for d in docs:
         k = d["key"]
@@ -1418,7 +1418,7 @@ async def get_ab_analytics(slug: str, _=Depends(verify_admin)):
 
 @api_router.get("/cms/cta-analytics")
 async def get_cta_analytics(_=Depends(verify_admin)):
-    docs = await db.cms_cta_clicks.find({}, {"_id": 0}).sort("clicks", -1).to_list(200)
+    docs = await db.website_cms_cta_clicks.find({}, {"_id": 0}).sort("clicks", -1).to_list(200)
     return docs
 
 # ─── CONVERSION TRACKING ──────────────────────────────────────
@@ -1434,7 +1434,7 @@ class ConversionEvent(BaseModel):
 @api_router.post("/cms/conversion")
 async def track_conversion(data: ConversionEvent):
     now = datetime.now(timezone.utc).isoformat()
-    await db.cms_conversions.update_one(
+    await db.website_cms_conversions.update_one(
         {"source_cta_key": data.source_cta_key, "action": data.action, "page": data.page, "position": data.position},
         {"$inc": {"conversions": 1}, "$set": {
             "source_cta_key": data.source_cta_key, "action": data.action,
@@ -1443,7 +1443,7 @@ async def track_conversion(data: ConversionEvent):
         }},
         upsert=True
     )
-    await db.analytics_events.insert_one({
+    await db.website_analytics_events.insert_one({
         "event": "conversion_event",
         "params": {"source_cta_key": data.source_cta_key, "action": data.action, "page": data.page, "position": data.position, "language": data.language},
         "url": data.url, "ts": now, "server_ts": now,
@@ -1452,8 +1452,8 @@ async def track_conversion(data: ConversionEvent):
 
 @api_router.get("/cms/conversion-analytics")
 async def get_conversion_analytics(_=Depends(verify_admin)):
-    clicks   = await db.cms_cta_clicks.find({}, {"_id": 0}).to_list(500)
-    convs    = await db.cms_conversions.find({}, {"_id": 0}).to_list(500)
+    clicks   = await db.website_cms_cta_clicks.find({}, {"_id": 0}).to_list(500)
+    convs    = await db.website_cms_conversions.find({}, {"_id": 0}).to_list(500)
     # Build conversion map: key+page+position → conversions
     conv_map = {}
     for c in convs:
@@ -1508,7 +1508,7 @@ class UsageLog(BaseModel):
 async def log_usage(data: UsageLog):
     now = datetime.now(timezone.utc).isoformat()
     for key in data.keys[:50]:  # cap at 50 keys per request
-        await db.cms_usage_keys.update_one(
+        await db.website_cms_usage_keys.update_one(
             {"slug": data.slug, "key": key},
             {"$set": {"last_seen": now}, "$inc": {"count": 1}, "$addToSet": {"langs": data.lang}},
             upsert=True
@@ -1517,7 +1517,7 @@ async def log_usage(data: UsageLog):
 
 @api_router.get("/cms/coverage")
 async def get_key_coverage(_=Depends(verify_admin)):
-    used_docs = await db.cms_usage_keys.find({}, {"_id": 0}).sort("count", -1).to_list(500)
+    used_docs = await db.website_cms_usage_keys.find({}, {"_id": 0}).sort("count", -1).to_list(500)
     coverage = {}
     used_by_slug = {}
     for doc in used_docs:
@@ -1601,11 +1601,11 @@ Format: {{"key1": "translation1", "key2": "translation2"}}"""
 
     # Save
     data = {"slug": slug, "sections": updated_sections, "updated_at": datetime.now(timezone.utc).isoformat()}
-    if await db.cms_content.find_one({"slug": slug}):
-        await db.cms_content.update_one({"slug": slug}, {"$set": data})
+    if await db.website_cms_content.find_one({"slug": slug}):
+        await db.website_cms_content.update_one({"slug": slug}, {"$set": data})
     else:
         data["id"] = str(uuid.uuid4())
-        await db.cms_content.insert_one(data)
+        await db.website_cms_content.insert_one(data)
 
     logger.info(f"Translated {len(translations)} keys for {slug} → {target}")
     return {"ok": True, "translated": len(translations), "lang": target, "slug": slug}
@@ -1617,15 +1617,15 @@ async def get_cms_pages_list(_=Depends(verify_admin)):
     """
     # All pages that exist in DB (from seed_cms.py or DEFAULT_PAGES seed)
     db_pages = {}
-    async for doc in db.cms_content.find({}, {"slug": 1, "updated_at": 1, "_id": 0}):
+    async for doc in db.website_cms_content.find({}, {"slug": 1, "updated_at": 1, "_id": 0}):
         slug = doc["slug"]
         # Count sections for this slug
-        count = await db.cms_content.count_documents({"slug": slug}) if False else None
+        count = await db.website_cms_content.count_documents({"slug": slug}) if False else None
         db_pages[slug] = doc
 
     # Count sections per slug (each page is one document with embedded sections array)
     section_counts = {}
-    async for doc in db.cms_content.find({}, {"slug": 1, "sections": 1, "_id": 0}):
+    async for doc in db.website_cms_content.find({}, {"slug": 1, "sections": 1, "_id": 0}):
         slug = doc.get("slug", "")
         if slug:
             secs = doc.get("sections", [])
@@ -1717,13 +1717,13 @@ GLOBAL_DEFAULTS = [
 
 @api_router.get("/cms/global")
 async def get_global_content(lang: str = "en"):
-    docs = await db.cms_global.find({}, {"_id": 0}).to_list(200)
+    docs = await db.website_cms_global.find({}, {"_id": 0}).to_list(200)
     items = docs if docs else GLOBAL_DEFAULTS
     return {item["key"]: item.get("translations", {}).get(lang) or item.get("translations", {}).get("en", "") for item in items}
 
 @api_router.get("/cms/global/full")
 async def get_global_full(_=Depends(verify_admin)):
-    docs = await db.cms_global.find({}, {"_id": 0}).to_list(200)
+    docs = await db.website_cms_global.find({}, {"_id": 0}).to_list(200)
     return docs if docs else GLOBAL_DEFAULTS
 
 @api_router.put("/cms/global")
@@ -1732,28 +1732,28 @@ async def update_global_content(items: List[Dict[str, Any]], _=Depends(verify_ad
         k = item.get("key")
         if not k: continue
         item["updated_at"] = datetime.now(timezone.utc).isoformat()
-        if await db.cms_global.find_one({"key": k}):
-            await db.cms_global.update_one({"key": k}, {"$set": item})
+        if await db.website_cms_global.find_one({"key": k}):
+            await db.website_cms_global.update_one({"key": k}, {"$set": item})
         else:
             item.setdefault("id", str(uuid.uuid4()))
-            await db.cms_global.insert_one(item)
+            await db.website_cms_global.insert_one(item)
     return {"ok": True, "updated": len(items)}
 
 @api_router.post("/cms/global/seed")
 async def seed_global_content(force: bool = False, _=Depends(verify_admin)):
-    count = await db.cms_global.count_documents({})
+    count = await db.website_cms_global.count_documents({})
     if count > 0 and not force:
         return {"ok": True, "seeded": 0, "message": f"Already has {count} items. Use ?force=true to reseed."}
     if force:
-        await db.cms_global.drop()
+        await db.website_cms_global.drop()
     for item in GLOBAL_DEFAULTS:
         doc = {**item, "id": str(uuid.uuid4()), "updated_at": datetime.now(timezone.utc).isoformat()}
-        await db.cms_global.insert_one(doc)
+        await db.website_cms_global.insert_one(doc)
     return {"ok": True, "seeded": len(GLOBAL_DEFAULTS), "total": len(GLOBAL_DEFAULTS)}
 
 @api_router.post("/cms/global/translate")
 async def translate_global_content(req: TranslateRequest, _=Depends(verify_admin)):
-    docs = await db.cms_global.find({}, {"_id": 0}).to_list(200)
+    docs = await db.website_cms_global.find({}, {"_id": 0}).to_list(200)
     items = docs if docs else GLOBAL_DEFAULTS
     target = req.target_lang.lower()
     lang_name = req.target_lang_name or target
@@ -1773,11 +1773,11 @@ async def translate_global_content(req: TranslateRequest, _=Depends(verify_admin
         if k in translations:
             item.setdefault("translations", {})[target] = translations[k]
             item["updated_at"] = datetime.now(timezone.utc).isoformat()
-            if await db.cms_global.find_one({"key": k}):
-                await db.cms_global.update_one({"key": k}, {"$set": item})
+            if await db.website_cms_global.find_one({"key": k}):
+                await db.website_cms_global.update_one({"key": k}, {"$set": item})
             else:
                 item["id"] = str(uuid.uuid4())
-                await db.cms_global.insert_one(item)
+                await db.website_cms_global.insert_one(item)
     return {"ok": True, "translated": len(translations), "lang": target}
 
 
@@ -1802,7 +1802,7 @@ async def sitemap_xml():
         {"path": "/blog",                 "priority": "0.8", "changefreq": "daily"},
     ]
     # Add blog post slugs dynamically
-    blog_posts = await db.blog_posts.find({"published": True}, {"slug": 1, "_id": 0}).to_list(100)
+    blog_posts = await db.website_blog_posts.find({"published": True}, {"slug": 1, "_id": 0}).to_list(100)
     for post in blog_posts:
         pages.append({"path": f"/blog/{post['slug']}", "priority": "0.7", "changefreq": "monthly"})
 
@@ -1848,11 +1848,11 @@ Sitemap: https://www.arenakore.com/api/sitemap.xml
 
 async def get_admin_stats(_=Depends(verify_admin)):
     return {
-        "blog_posts": await db.blog_posts.count_documents({}),
-        "pages": await db.cms_pages.count_documents({}),
-        "media": await db.media_library.count_documents({}),
-        "pilot_requests": await db.pilot_requests.count_documents({}),
-        "hero_slides": await db.hero_slides.count_documents({}),
+        "blog_posts": await db.website_blog_posts.count_documents({}),
+        "pages": await db.website_cms_pages.count_documents({}),
+        "media": await db.website_media_library.count_documents({}),
+        "pilot_requests": await db.website_pilot_requests.count_documents({}),
+        "hero_slides": await db.website_hero_slides.count_documents({}),
     }
 
 # ─── NAVIGATION CONFIG ────────────────────────────────────────
@@ -1900,7 +1900,7 @@ async def get_nav_config():
     Source of truth = DB. No automatic merging that overrides user choices.
     Defaults are used ONLY when no config has ever been saved.
     """
-    doc = await db.nav_config.find_one({"type": "nav_config"}, {"_id": 0})
+    doc = await db.website_nav_config.find_one({"type": "nav_config"}, {"_id": 0})
     if not doc:
         return {
             "top_nav":    [i.model_dump() for i in DEFAULT_TOP_NAV],
@@ -1918,7 +1918,7 @@ async def update_nav_config(data: NavConfig, _=Depends(verify_admin)):
     doc = data.model_dump()
     doc["type"] = "nav_config"
     doc["updated_at"] = datetime.now(timezone.utc).isoformat()
-    await db.nav_config.replace_one({"type": "nav_config"}, doc, upsert=True)
+    await db.website_nav_config.replace_one({"type": "nav_config"}, doc, upsert=True)
     return {"ok": True, "top_nav": len(data.top_nav), "bottom_nav": len(data.bottom_nav)}
 
 @api_router.get("/nav/config/full")
@@ -1962,7 +1962,7 @@ KNOWN_ROUTES = [
 async def get_pages_catalog(_=Depends(verify_admin)):
     """Returns all known routes with their CMS override status."""
     overrides = {}
-    async for d in db.cms_pages.find({}, {"_id": 0}):
+    async for d in db.website_cms_pages.find({}, {"_id": 0}):
         overrides[d["slug"]] = d
 
     result = []
@@ -2016,31 +2016,31 @@ def _deser_slide(d):
 
 @api_router.get("/hero-slides")
 async def get_hero_slides():
-    docs = await db.hero_slides.find({"active": True}, {"_id": 0}).sort("order", 1).to_list(20)
+    docs = await db.website_hero_slides.find({"active": True}, {"_id": 0}).sort("order", 1).to_list(20)
     return [_deser_slide(d) for d in docs]
 
 @api_router.get("/hero-slides/all")
 async def get_all_hero_slides(_=Depends(verify_admin)):
-    docs = await db.hero_slides.find({}, {"_id": 0}).sort("order", 1).to_list(20)
+    docs = await db.website_hero_slides.find({}, {"_id": 0}).sort("order", 1).to_list(20)
     return [_deser_slide(d) for d in docs]
 
 @api_router.post("/hero-slides", response_model=HeroSlide)
 async def create_hero_slide(data: HeroSlideCreate, _=Depends(verify_admin)):
     obj = HeroSlide(**data.model_dump())
     doc = obj.model_dump(); doc['created_at'] = doc['created_at'].isoformat()
-    await db.hero_slides.insert_one(doc); return obj
+    await db.website_hero_slides.insert_one(doc); return obj
 
 @api_router.put("/hero-slides/{slide_id}", response_model=HeroSlide)
 async def update_hero_slide(slide_id: str, data: HeroSlideUpdate, _=Depends(verify_admin)):
     update = {k: v for k, v in data.model_dump().items() if v is not None}
-    result = await db.hero_slides.find_one_and_update(
+    result = await db.website_hero_slides.find_one_and_update(
         {"id": slide_id}, {"$set": update}, {"_id": 0}, return_document=True)
     if not result: raise HTTPException(404, "Not found")
     return _deser_slide(result)
 
 @api_router.delete("/hero-slides/{slide_id}")
 async def delete_hero_slide(slide_id: str, _=Depends(verify_admin)):
-    await db.hero_slides.delete_one({"id": slide_id}); return {"ok": True}
+    await db.website_hero_slides.delete_one({"id": slide_id}); return {"ok": True}
 
 # ─── ANALYTICS EVENTS ────────────────────────────────────────
 
@@ -2056,7 +2056,7 @@ async def track_event(data: AnalyticsEvent):
     try:
         doc = data.model_dump()
         doc['server_ts'] = datetime.now(timezone.utc).isoformat()
-        await db.analytics_events.insert_one(doc)
+        await db.website_analytics_events.insert_one(doc)
     except Exception as e:
         logger.debug(f"Event log failed (non-critical): {e}")
     return {"ok": True}
@@ -2076,7 +2076,7 @@ async def get_funnel_analytics(_=Depends(verify_admin)):
         }},
         {"$sort": {"_id.event": 1, "count": -1}}
     ]
-    raw = await db.analytics_events.aggregate(pipeline).to_list(500)
+    raw = await db.website_analytics_events.aggregate(pipeline).to_list(500)
 
     # Build flat summary
     totals = {e: 0 for e in LANDING_EVENTS}
@@ -2148,12 +2148,12 @@ async def events_summary(_=Depends(verify_admin)):
         {"$sort": {"count": -1}},
         {"$limit": 50},
     ]
-    result = await db.analytics_events.aggregate(pipeline).to_list(50)
+    result = await db.website_analytics_events.aggregate(pipeline).to_list(50)
     return [{"event": r["_id"], "count": r["count"]} for r in result]
 
 @api_router.get("/events/recent")
 async def events_recent(_=Depends(verify_admin)):
-    docs = await db.analytics_events.find({}, {"_id": 0}).sort("server_ts", -1).to_list(100)
+    docs = await db.website_analytics_events.find({}, {"_id": 0}).sort("server_ts", -1).to_list(100)
     return docs
 
 class LeadAlertPayload(BaseModel):
