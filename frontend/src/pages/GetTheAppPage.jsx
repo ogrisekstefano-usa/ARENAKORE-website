@@ -7,6 +7,7 @@ import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import { trackGetAppClick, trackConversion } from '../utils/tracking';
 import { useScrollTracking } from '../hooks/useScrollTracking';
 import usePageContent from '../hooks/usePageContent';
+import useCMSSEO from '../hooks/useCMSSEO';
 
 const APP_STORE_URL  = process.env.REACT_APP_APPSTORE_URL  || '#';
 const PLAY_STORE_URL = process.env.REACT_APP_PLAYSTORE_URL || '#';

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import usePageContent from '../hooks/usePageContent';
+import useCMSSEO from '../hooks/useCMSSEO';
 import { useScrollTracking } from '../hooks/useScrollTracking';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
@@ -36,10 +37,7 @@ export default function ArenaSystemPage() {
     t('arena.d5'), t('arena.d6'), t('arena.d7'), t('arena.d8'),
   ];
 
-  useSEO({
-    title: 'Arena System | ArenaKore — The Competition Platform',
-    description: 'Track performance. Rank results. Compete every day. ArenaKore Arena System works across any sport.',
-  });
+  useCMSSEO(cms, 'Arena System');
 
   useEffect(() => {
     const obs = new IntersectionObserver(

@@ -16,6 +16,7 @@ import { useScrollTracking } from './hooks/useScrollTracking';
 import SportSelector from './components/SportSelector';
 import { useSportPreference } from './components/SportSelector';
 import usePageContent from './hooks/usePageContent';
+import useCMSSEO from './hooks/useCMSSEO';
 
 const HERO_BG = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
 
@@ -68,10 +69,7 @@ export default function LandingPage() {
     { num: '06', title: t('home.howItWorks.s6_title'), desc: t('home.howItWorks.s6_desc'), color: '#FF2D2D' },
   ];
 
-  useSEO({
-    title: cms('seo_title', 'ArenaKore — The Multi-Sport Competition Platform'),
-    description: cms('seo_description', t('home.sub')),
-  });
+  useCMSSEO(cms, "ENTRA NELL'ARENA");
 
   // CMS IS THE SOURCE OF TRUTH.
   // Fetch from DB. If DB empty → use defaults. Never mix.

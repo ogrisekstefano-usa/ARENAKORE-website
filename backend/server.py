@@ -1782,7 +1782,70 @@ async def translate_global_content(req: TranslateRequest, _=Depends(verify_admin
 
 
 # ─── STATS ────────────────────────────────────────────────────
-@api_router.get("/admin/stats")
+@api_router.get("/sitemap.xml", response_class=Response)
+async def sitemap_xml():
+    """Dynamic sitemap covering all pages × all languages."""
+    base_url = "https://www.arenakore.com"
+    pages = [
+        {"path": "/",                     "priority": "1.0", "changefreq": "weekly"},
+        {"path": "/arena-system",         "priority": "0.9", "changefreq": "weekly"},
+        {"path": "/for-athletes",         "priority": "0.9", "changefreq": "weekly"},
+        {"path": "/for-gyms-and-coaches", "priority": "0.9", "changefreq": "weekly"},
+        {"path": "/competition",          "priority": "0.8", "changefreq": "monthly"},
+        {"path": "/amrap",                "priority": "0.7", "changefreq": "monthly"},
+        {"path": "/crossfit",             "priority": "0.7", "changefreq": "monthly"},
+        {"path": "/gamification",         "priority": "0.7", "changefreq": "monthly"},
+        {"path": "/get-the-app",          "priority": "0.9", "changefreq": "weekly"},
+        {"path": "/arena-matches",        "priority": "0.8", "changefreq": "weekly"},
+        {"path": "/support",              "priority": "0.6", "changefreq": "monthly"},
+        {"path": "/fitness-challenge-app","priority": "0.6", "changefreq": "monthly"},
+        {"path": "/blog",                 "priority": "0.8", "changefreq": "daily"},
+    ]
+    # Add blog post slugs dynamically
+    blog_posts = await db.blog_posts.find({"published": True}, {"slug": 1, "_id": 0}).to_list(100)
+    for post in blog_posts:
+        pages.append({"path": f"/blog/{post['slug']}", "priority": "0.7", "changefreq": "monthly"})
+
+    langs = [("it", "it_IT"), ("en", "en_US"), ("es", "es_ES")]
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    urls = []
+    for page in pages:
+        url_parts = [f"  <url>"]
+        url_parts.append(f"    <loc>{base_url}{page['path']}</loc>")
+        url_parts.append(f"    <lastmod>{today}</lastmod>")
+        url_parts.append(f"    <changefreq>{page['changefreq']}</changefreq>")
+        url_parts.append(f"    <priority>{page['priority']}</priority>")
+        # hreflang alternates
+        page_path = page["path"]
+        for lang_code, _ in langs:
+            url_parts.append(f'    <xhtml:link rel="alternate" hreflang="{lang_code}" href="{base_url}{page_path}"/>')
+        url_parts.append(f'    <xhtml:link rel="alternate" hreflang="x-default" href="{base_url}{page_path}"/>')
+        url_parts.append(f"  </url>")
+        urls.append("\n".join(url_parts))
+
+    sitemap = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+        '        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+        + "\n".join(urls) + "\n</urlset>"
+    )
+    return Response(content=sitemap, media_type="application/xml")
+
+@api_router.get("/robots.txt", response_class=Response)
+async def robots_txt():
+    """robots.txt — allow all, block /admin."""
+    content = """User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/
+
+Sitemap: https://www.arenakore.com/api/sitemap.xml
+"""
+    return Response(content=content, media_type="text/plain")
+
+
 async def get_admin_stats(_=Depends(verify_admin)):
     return {
         "blog_posts": await db.blog_posts.count_documents({}),

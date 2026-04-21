@@ -4,6 +4,7 @@ import { Zap, ArrowRight, Database, Target, Shield, BarChart2, Users, Award } fr
 import { useTranslation } from 'react-i18next';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import usePageContent from '../hooks/usePageContent';
+import useCMSSEO from '../hooks/useCMSSEO';
 import { ROUTES } from '../config/routes';
 
 /**

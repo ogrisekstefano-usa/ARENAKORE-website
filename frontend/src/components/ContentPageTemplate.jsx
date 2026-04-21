@@ -2,10 +2,11 @@ import { ROUTES } from '../config/routes';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, ChevronDown, Zap } from 'lucide-react';
-import { InnerNavbar, InnerFooter, useSEO } from './SharedLayout';
+import { InnerNavbar, InnerFooter } from './SharedLayout';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedPage } from '../data/seo-content';
 import usePageContent from '../hooks/usePageContent';
+import useCMSSEO from '../hooks/useCMSSEO';
 
 /**
  * ContentPageTemplate — CMS-first architecture.
@@ -26,7 +27,7 @@ export default function ContentPageTemplate({ page }) {
   // Helper: CMS first, then static page data
   const c = (cmsKey, staticVal = '') => cms(cmsKey) || staticVal;
 
-  useSEO({ title: c('seo_title', p.seo_title), description: c('hero_sub', p.meta_description) });
+  useCMSSEO(cms, p.badge || p.h1);
 
   return (
     <div className="bg-black text-white min-h-screen font-inter">

@@ -6,6 +6,7 @@ import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import { useTranslation } from 'react-i18next';
 import SportSelector from '../components/SportSelector';
 import usePageContent from '../hooks/usePageContent';
+import useCMSSEO from '../hooks/useCMSSEO';
 import { trackConversion } from '../utils/tracking';
 
 const HERO_BG   = 'https://customer-assets.emergentagent.com/job_nexus-arena-11/artifacts/g6ba12ic_ChatGPT%20Image%20Apr%2015%2C%202026%2C%2011_23_53%20AM.png';
@@ -18,10 +19,7 @@ export default function AthletePage() {
   const lang = i18n.language?.slice(0, 2) || 'en';
   const { content: cms } = usePageContent('for-athletes', lang);
 
-  useSEO({
-    title: cms('hero_h1'),
-    description: cms('hero_tagline'),
-  });
+  useCMSSEO(cms, 'For Athletes');
 
   useEffect(() => {
     const obs = new IntersectionObserver(

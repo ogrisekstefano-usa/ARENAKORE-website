@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import usePageContent from '../hooks/usePageContent';
+import useCMSSEO from '../hooks/useCMSSEO';
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
 const HERO_IMG    = 'https://images.unsplash.com/photo-1636634450055-51533cb3e0d6?crop=entropy&cs=srgb&fm=jpg&q=85&w=1600';
@@ -137,10 +138,7 @@ export default function GymPilotPage() {
   const lang = i18n.language?.slice(0, 2) || 'en';
   const { content: cms } = usePageContent('gym-pilot', lang);
 
-  useSEO({
-    title: cms('form_title') || 'ArenaKore Pilot',
-    description: cms('hero_sub') || '',
-  });
+  useCMSSEO(cms, 'For Gyms & Coaches');
 
   useEffect(() => {
     const obs = new IntersectionObserver(

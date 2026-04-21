@@ -3,6 +3,7 @@ import { Shield, Zap, Activity, Bug, Mail, Clock } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import { useTranslation } from 'react-i18next';
 import usePageContent from '../hooks/usePageContent';
+import useCMSSEO from '../hooks/useCMSSEO';
 
 /**
  * SupportPage — 100% CMS-driven.

@@ -19,16 +19,90 @@ function getUseAuth() {
   return _useAuth;
 }
 
-export function useSEO({ title, description }) {
-  useEffect(() => {
-    document.title = title;
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) { meta = document.createElement('meta'); meta.name = 'description'; document.head.appendChild(meta); }
-    meta.content = description;
-  }, [title, description]);
+const BASE_URL = 'https://www.arenakore.com';
+const LANGS_SEO = ['en', 'it', 'es'];
+const ROUTE_SLUGS = {
+  '/': '', '/arena-system': 'arena-system', '/for-athletes': 'for-athletes',
+  '/for-gyms-and-coaches': 'for-gyms-and-coaches', '/competition': 'competition',
+  '/amrap': 'amrap', '/crossfit': 'crossfit', '/gamification': 'gamification',
+  '/get-the-app': 'get-the-app', '/arena-matches': 'arena-matches', '/support': 'support',
+};
+
+function setMeta(name, content, type = 'name') {
+  if (!content) return;
+  let el = document.querySelector(`meta[${type}="${name}"]`);
+  if (!el) { el = document.createElement('meta'); el.setAttribute(type, name); document.head.appendChild(el); }
+  el.setAttribute('content', content);
 }
 
-/* ─── Language Switcher ─── */
+function setLink(rel, href, attrs = {}) {
+  if (!href) return;
+  // Find existing by rel+hreflang if applicable
+  const hreflang = attrs.hreflang || '';
+  const selector = hreflang
+    ? `link[rel="${rel}"][hreflang="${hreflang}"]`
+    : `link[rel="${rel}"]`;
+  let el = document.querySelector(selector);
+  if (!el) { el = document.createElement('link'); document.head.appendChild(el); }
+  el.setAttribute('rel', rel);
+  el.setAttribute('href', href);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+}
+
+/**
+ * useSEO — full SEO meta injection (title, description, OG, hreflang, canonical)
+ * Called on every page with CMS-sourced data.
+ */
+export function useSEO({ title, description, ogTitle, ogDescription, ogImage, canonical, keywords, pathname, lang }) {
+  const activeLang = lang || 'it';
+
+  useEffect(() => {
+    // -- Title & Description --
+    if (title) document.title = title;
+    setMeta('description', description);
+    if (keywords) setMeta('keywords', keywords);
+
+    // -- Open Graph --
+    setMeta('og:title',       ogTitle || title,                  'property');
+    setMeta('og:description', ogDescription || description,      'property');
+    setMeta('og:type',        'website',                         'property');
+    setMeta('og:locale',      activeLang === 'it' ? 'it_IT' : activeLang === 'es' ? 'es_ES' : 'en_US', 'property');
+    if (ogImage) setMeta('og:image', ogImage, 'property');
+
+    // -- Canonical --
+    const path = pathname || window.location.pathname;
+    const slug = ROUTE_SLUGS[path] !== undefined ? ROUTE_SLUGS[path] : path.replace(/^\//, '');
+    const canonicalUrl = canonical || (slug ? `${BASE_URL}/${slug}` : BASE_URL);
+    setLink('canonical', canonicalUrl);
+    if (canonical) setMeta('og:url', canonical, 'property');
+
+    // -- hreflang tags --
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+    const pageSlug = ROUTE_SLUGS[path] !== undefined ? ROUTE_SLUGS[path] : path.replace(/^\//, '');
+    const basePageUrl = pageSlug ? `${BASE_URL}/${pageSlug}` : BASE_URL;
+    LANGS_SEO.forEach(l => setLink('alternate', basePageUrl, { hreflang: l }));
+    setLink('alternate', basePageUrl, { hreflang: 'x-default' });
+
+    // -- Twitter/X Card --
+    setMeta('twitter:card',        'summary_large_image');
+    setMeta('twitter:title',       ogTitle || title);
+    setMeta('twitter:description', ogDescription || description);
+    if (ogImage) setMeta('twitter:image', ogImage);
+
+    // -- Schema.org JSON-LD --
+    let jsonLd = document.getElementById('schema-org-jsonld');
+    if (!jsonLd) { jsonLd = document.createElement('script'); jsonLd.id = 'schema-org-jsonld'; jsonLd.type = 'application/ld+json'; document.head.appendChild(jsonLd); }
+    jsonLd.textContent = JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'SoftwareApplication',
+      'name': 'ArenaKore', 'description': description,
+      'applicationCategory': 'SportsApplication',
+      'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR' },
+      'operatingSystem': 'iOS, Android',
+    });
+  }, [title, description, ogTitle, ogDescription, ogImage, canonical, keywords, activeLang, pathname]);
+}
+
+/* --─ Language Switcher --─ */
 const LANGS = [
   { code: 'en', label: 'EN' },
   { code: 'it', label: 'IT' },
