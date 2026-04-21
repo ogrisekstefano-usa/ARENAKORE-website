@@ -64,6 +64,8 @@ export default function LandingPage() {
     { num: '02', title: t('home.howItWorks.s2_title'), desc: t('home.howItWorks.s2_desc'), color: '#00FFFF' },
     { num: '03', title: t('home.howItWorks.s3_title'), desc: t('home.howItWorks.s3_desc'), color: '#FFD700' },
     { num: '04', title: t('home.howItWorks.s4_title'), desc: t('home.howItWorks.s4_desc'), color: '#FFD700' },
+    { num: '05', title: t('home.howItWorks.s5_title'), desc: t('home.howItWorks.s5_desc'), color: '#FF2D2D' },
+    { num: '06', title: t('home.howItWorks.s6_title'), desc: t('home.howItWorks.s6_desc'), color: '#FF2D2D' },
   ];
 
   useSEO({
@@ -214,24 +216,27 @@ export default function LandingPage() {
             <span style={{ color: '#00FFFF' }}>{cms('hero_h1_line2', t('home.h1_line2'))}</span>
           </h1>
           {/* Sub */}
-          <p className="ak-hero-sub font-inter text-lg md:text-xl text-white mb-10 max-w-xl leading-relaxed">
+          <p className="ak-hero-sub font-inter text-lg md:text-xl text-white mb-4 max-w-xl leading-relaxed">
             {cms('hero_sub', t('home.sub'))}
+          </p>
+          {/* NEXUS coaches line */}
+          <p className="font-inter text-sm text-white/60 mb-10 max-w-xl leading-relaxed" style={{ borderLeft: '2px solid rgba(0,255,255,0.4)', paddingLeft: '1rem' }}>
+            {cms('hero_nexus_line', t('home.hero_nexus_line'))}
           </p>
           {/* CTAs */}
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
-            <Link to={ROUTES.app} data-testid="hero-download-app-btn"
+            <Link to={ROUTES.athletes} data-testid="hero-enter-arena-btn"
               onClick={() => {
-                trackGetAppClick('hero', heroSlides[slide]?.sport, 'hero_cta_primary');
-                trackCMSCTAClick({ key: 'cta_primary', text: cms('cta_primary', 'Download the App'), page: 'homepage', position: 'hero' });
+                trackCMSCTAClick({ key: 'cta_primary', text: cms('cta_primary', 'Enter the Arena'), page: 'homepage', position: 'hero' });
               }}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
               <Zap size={20} fill="black" /> {cms('cta_primary', t('home.cta_primary'))}
             </Link>
-            <Link to={ROUTES.gyms} data-testid="hero-for-gyms-btn"
+            <Link to={ROUTES.app} data-testid="hero-download-app-btn"
               onClick={() => {
-                trackBusinessClick('hero', 'hero_cta_secondary');
-                trackCMSCTAClick({ key: 'cta_secondary', text: cms('cta_secondary', 'For Gyms & Coaches'), page: 'homepage', position: 'hero' });
+                trackGetAppClick('hero', heroSlides[slide]?.sport, 'hero_cta_secondary');
+                trackCMSCTAClick({ key: 'cta_secondary', text: cms('cta_secondary', 'Download the App'), page: 'homepage', position: 'hero' });
               }}
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/30 text-white hover:border-white transition-colors"
               style={{ height: '60px' }}>
@@ -270,6 +275,21 @@ export default function LandingPage() {
       {/* ══ SPORT SELECTOR ══ */}
       <section className="border-b border-white/5" style={{ background: '#000' }}>
         <SportSelector />
+      </section>
+
+      {/* ══ BLOCCO VALORE ══ */}
+      <section data-testid="value-section" className="py-20 px-6 sm:px-10" style={{ background: '#050505' }}>
+        <div className="max-w-4xl mx-auto ak-reveal">
+          <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-8">
+            {cms('value_h2', t('home.value_h2'))}
+          </h2>
+          <p className="font-inter text-base md:text-lg text-white leading-relaxed max-w-2xl mb-6">
+            {cms('value_body', t('home.value_body'))}
+          </p>
+          <p className="font-inter text-sm leading-relaxed max-w-2xl" style={{ color: 'rgba(0,255,255,0.6)', borderLeft: '2px solid rgba(0,255,255,0.3)', paddingLeft: '1rem' }}>
+            {cms('hero_nexus_line', t('home.hero_nexus_line'))}
+          </p>
+        </div>
       </section>
 
       {/* ══ POSITIONING BLOCK ══ */}

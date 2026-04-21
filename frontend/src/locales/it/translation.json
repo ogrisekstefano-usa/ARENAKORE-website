@@ -33,9 +33,9 @@
     "badge": "SISTEMA DI VALIDAZIONE NEXUS",
     "h1_line1": "ENTRA",
     "h1_line2": "NELL'ARENA.",
-    "sub": "Un sistema di validazione delle performance. NEXUS analizza, seleziona e valuta ogni sfida.",
-    "cta_primary": "Entra nel Sistema",
-    "cta_secondary": "Per Palestre & Coach",
+    "sub": "ArenaKore è un sistema di validazione delle performance. NEXUS analizza i tuoi dati, seleziona ciò che devi affrontare e misura ogni risultato.",
+    "cta_primary": "Entra nell'Arena",
+    "cta_secondary": "Scarica l'App",
     "scrollHint": "Scorri per sapere di più",
     "stats": {
       "active": "KORE Attivi",
@@ -80,7 +80,11 @@
       "s3_title": "Tu esegui",
       "s3_desc": "NEXUS certifica ogni rep in tempo reale. Il risultato è il dato.",
       "s4_title": "NEXUS valuta",
-      "s4_desc": "Il tuo rank si aggiorna. Una nuova sfida viene assegnata. La validazione non si ferma."
+      "s4_desc": "Il tuo rank si aggiorna. Una nuova sfida viene assegnata. La validazione non si ferma.",
+      "s5_title": "Risultato",
+      "s5_desc": "Il risultato certificato è un dato permanente. Il tuo profilo si aggiorna. Il tuo rank riflette ciò che hai dimostrato.",
+      "s6_title": "Nuova prova",
+      "s6_desc": "NEXUS assegna la prossima sfida. Il ciclo di validazione non si ferma. Continui a migliorare."
     },
     "useCases": {
       "badge": "LA PIATTAFORMA",
@@ -102,7 +106,7 @@
     "finalCta": {
       "h2": "INIZIA ORA.",
       "sub": "Compete o resta indietro.",
-      "cta": "Inizia una Sfida",
+      "cta": "Entra nell'Arena",
       "gyms": "Per Palestre & Coach"
     },
     "positioning_badge": "IL SISTEMA DI VALIDAZIONE",
@@ -155,7 +159,10 @@
     "gyms_stat_4_unit": "setup",
     "gyms_stat_4_desc": "prima sfida live",
     "for_athletes_link": "Per Atleti",
-    "disciplines_sub": "Un sistema di ranking. Un'identità. Qualsiasi sport."
+    "disciplines_sub": "Un sistema di ranking. Un'identità. Qualsiasi sport.",
+    "hero_nexus_line": "NEXUS crea e seleziona sfide progettate da coach professionisti e validate su migliaia di atleti.",
+    "value_h2": "QUI NON TI ALLENI. VALUTI IL TUO LIVELLO.",
+    "value_body": "Non è un programma di allenamento. È un sistema che misura le capacità attraverso prove strutturate, comparabili e rilevanti."
   },
   "athlete": {
     "badge": "PER ATLETI",
@@ -169,7 +176,7 @@
       "pretext": "NEXUS VALIDA. L'ATLETA DIMOSTRA.",
       "h2_line1": "SEI",
       "h2_line2": "MISURATO.",
-      "body": "In ArenaKore non sei un iscritto. Sei un dato di performance in un sistema di valutazione validato. NEXUS assegna la sfida. Tu esegui. Il sistema misura."
+      "body": "Gli atleti migliorano quando si confrontano con prove reali. Ogni risultato è un dato, ogni esecuzione è una misura."
     },
     "whatIsKore": {
       "badge": "IL SISTEMA DI VALIDAZIONE",
@@ -241,7 +248,9 @@
       "t2": "Rank validato da NEXUS",
       "t3": "Dati permanenti"
     },
-    "hero_tagline": "Ogni esecuzione è una misurazione. Ogni risultato è un dato."
+    "hero_tagline": "Ogni esecuzione è una misurazione. Ogni risultato è un dato.",
+    "sfide_rilevanti_title": "SFIDE SFIDANTI E RILEVANTI",
+    "sfide_rilevanti_body": "Una sfida è davvero sfidante solo quando è calibrata sul tuo livello. NEXUS costruisce questa coerenza. Ogni prova assegnata è progettata per dove ti trovi davvero."
   },
   "pilot": {
     "badge": "PILOT 14 GIORNI · PALESTRE",
@@ -369,7 +378,12 @@
     "location_a": "Sede A",
     "location_b": "Sede B",
     "rival_gym": "Palestra Rivale",
-    "krating_avg": "K-Rating medio"
+    "krating_avg": "K-Rating medio",
+    "kflux_il_valore": "IL VALORE È MISURATO",
+    "kflux_value_body": "Ogni protocollo genera valore in base a: utilizzo, risultati, coerenza. K-Flux rappresenta questo processo.",
+    "kflux_f1": "Utilizzo del protocollo",
+    "kflux_f2": "Risultati generati",
+    "kflux_f3": "Coerenza di esecuzione"
   },
   "support": {
     "h1": "SUPPORTO ARENAKORE",
