@@ -1,35 +1,37 @@
 /**
- * ArenaKore Analytics — GA4 + CMS CTA Attribution
- * Works with: Google Analytics 4 (gtag.js)
- * Debug: console.log in non-production
+ * ArenaKore Analytics — GTM + MongoDB
+ *
+ * Tracking source: Google Tag Manager (GTM-WJ9LQV5T)
+ * GTM manages GA4 — NO direct GA4 initialization here.
+ *
+ * window.gtag is provided by GTM's GA4 Configuration Tag.
+ * This file only fires custom events via the dataLayer.
  */
 
-const GA_ID    = process.env.REACT_APP_GA_ID;
 const IS_PROD  = process.env.NODE_ENV === 'production';
 const DEBUG    = !IS_PROD;
 const API_BASE = process.env.REACT_APP_BACKEND_URL + '/api';
 
-let _ga_initialized = false;
-
-/* ─── GA4 Init ─── */
+/**
+ * initGA — no-op. GTM handles GA4 initialization.
+ * Kept for backward compat so existing callers don't break.
+ */
 export function initGA() {
-  if (_ga_initialized || !GA_ID) return;
-  _ga_initialized = true;
-  const script = document.createElement('script');
-  script.async = true;
-  script.src   = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  document.head.appendChild(script);
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function () { window.dataLayer.push(arguments); };
-  window.gtag('js', new Date());
-  window.gtag('config', GA_ID, { send_page_view: false, anonymize_ip: true });
-  if (DEBUG) console.log('[Analytics] GA4 initialized →', GA_ID);
+  if (DEBUG) console.log('[Analytics] GTM active — GA4 managed by GTM-WJ9LQV5T');
 }
 
 /* ─── Core tracker ─── */
 export function trackEvent(eventName, params = {}) {
   if (DEBUG) console.log(`%c[Analytics] ${eventName}`, 'color:#00FFFF;font-weight:bold', params);
-  if (typeof window.gtag === 'function' && GA_ID) window.gtag('event', eventName, params);
+  // Push to dataLayer — GTM GA4 tag picks it up
+  if (window.dataLayer) {
+    window.dataLayer.push({ event: eventName, ...params });
+  }
+  // Also call gtag directly if available (GTM GA4 exposes it)
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', eventName, params);
+  }
   _logToBackend(eventName, params);
 }
 
@@ -136,7 +138,9 @@ export function trackLandingEvent(event_name, params = {}) {
   const slug    = params.page_slug || window.location.pathname.split('/').pop() || 'unknown';
   const payload = { page_slug: slug, language: lang, ...params };
   if (DEBUG) console.log(`%c[Landing] ${event_name}`, 'color:#FFD700;font-weight:bold', payload);
-  if (typeof window.gtag === 'function' && GA_ID) window.gtag('event', event_name, payload);
+  // Push to dataLayer — GTM picks it up
+  if (window.dataLayer) window.dataLayer.push({ event: event_name, ...payload });
+  if (typeof window.gtag === 'function') window.gtag('event', event_name, payload);
   _logToBackend(event_name, payload);
 }
 
