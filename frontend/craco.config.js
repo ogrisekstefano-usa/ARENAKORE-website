@@ -38,6 +38,22 @@ let webpackConfig = {
     },
     configure: (webpackConfig) => {
 
+      // Fix: exclude node_modules from source-map-loader to prevent missing .mjs errors
+      webpackConfig.module.rules = webpackConfig.module.rules.map(rule => {
+        if (rule.loader && rule.loader.includes('source-map-loader')) {
+          return { ...rule, exclude: /node_modules/ };
+        }
+        if (rule.use) {
+          rule.use = (Array.isArray(rule.use) ? rule.use : [rule.use]).map(u => {
+            if (u && u.loader && u.loader.includes('source-map-loader')) {
+              return { ...u, exclude: /node_modules/ };
+            }
+            return u;
+          });
+        }
+        return rule;
+      });
+
       // Add ignored patterns to reduce watched directories
         webpackConfig.watchOptions = {
           ...webpackConfig.watchOptions,
