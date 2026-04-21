@@ -1,52 +1,67 @@
 import React from 'react';
-import { Mail, MessageCircle, Zap, Shield, Activity, Bug, ArrowRight } from 'lucide-react';
+import { Shield, Zap, Activity, Bug, Mail, Clock } from 'lucide-react';
 import { InnerNavbar, InnerFooter, useSEO } from '../components/SharedLayout';
 import { useTranslation } from 'react-i18next';
+import usePageContent from '../hooks/usePageContent';
 
+/**
+ * SupportPage — 100% CMS-driven.
+ * Content source: MongoDB → cms_content → slug: "support"
+ * Manage via: /admin → Content → Support
+ */
 export default function SupportPage() {
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const lang = i18n.language?.slice(0, 2) || 'en';
+  const { content: cms } = usePageContent('support', lang);
 
-  const TOPICS = [
-    { icon: <Shield size={20} />, title: t('support.t1_title'), desc: t('support.t1_desc') },
-    { icon: <Zap size={20} />,    title: t('support.t2_title'), desc: t('support.t2_desc') },
-    { icon: <Activity size={20} />, title: t('support.t3_title'), desc: t('support.t3_desc') },
-    { icon: <Bug size={20} />,    title: t('support.t4_title'), desc: t('support.t4_desc') },
-  ];
   useSEO({
-    title: 'Support | ArenaKore',
-    description: 'Get help with ArenaKore. Account issues, challenge problems, technical support. We respond within 24–48 hours.',
+    title: cms('h1') ? `${cms('h1')} | ArenaKore` : 'Support | ArenaKore',
+    description: cms('sub'),
   });
 
+  const TOPICS = [
+    { icon: <Shield size={20} />, titleKey: 't1_title', descKey: 't1_desc' },
+    { icon: <Zap    size={20} />, titleKey: 't2_title', descKey: 't2_desc' },
+    { icon: <Activity size={20} />, titleKey: 't3_title', descKey: 't3_desc' },
+    { icon: <Bug   size={20} />, titleKey: 't4_title', descKey: 't4_desc' },
+  ];
+
+  const FAQS = [
+    { qKey: 'faq_q1', aKey: 'faq_a1' },
+    { qKey: 'faq_q2', aKey: 'faq_a2' },
+    { qKey: 'faq_q3', aKey: 'faq_a3' },
+    { qKey: 'faq_q4', aKey: 'faq_a4' },
+    { qKey: 'faq_q5', aKey: 'faq_a5' },
+  ];
+
   return (
-    <div className="bg-black text-white min-h-screen font-inter">
+    <div className="bg-black text-white min-h-screen" data-testid="support-page">
       <InnerNavbar />
 
-      {/* Hero */}
-      <section className="pt-28 pb-16 px-6 sm:px-10" style={{ background: '#050505' }}>
+      {/* ── HERO ── */}
+      <section className="pt-32 pb-16 px-6 sm:px-10">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="w-12 h-12 rounded-full bg-ak-cyan/10 border border-ak-cyan/30 flex items-center justify-center mx-auto mb-6">
-            <MessageCircle size={22} className="text-ak-cyan" />
-          </div>
-          <h1 className="font-anton text-4xl md:text-6xl uppercase text-white mb-4">{t('ui.support_h1')}</h1>
-          <p className="font-inter text-base text-white leading-relaxed max-w-xl mx-auto">
-            {t('ui.support_sub')}
+          <h1 className="font-anton text-5xl md:text-6xl uppercase text-white mb-4">
+            {cms('h1')}
+          </h1>
+          <p className="font-inter text-base text-white/60 leading-relaxed max-w-xl mx-auto">
+            {cms('sub')}
           </p>
         </div>
       </section>
 
-      {/* Topics */}
-      <section className="py-16 px-6 sm:px-10 bg-black">
+      {/* ── TOPICS ── */}
+      <section className="py-16 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-8 text-center">{t('ui.support_topics')}</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {TOPICS.map((t, i) => (
-              <div key={i} className="flex items-start gap-4 p-6 rounded-[14px] border border-white/10 hover:border-ak-cyan/30 transition-all" style={{ background: '#0a0a0a' }}>
-                <div className="w-10 h-10 rounded-[10px] flex items-center justify-center flex-shrink-0 text-ak-cyan" style={{ background: 'rgba(0,255,255,0.08)' }}>
-                  {t.icon}
-                </div>
+          <h2 className="font-anton text-2xl uppercase text-white mb-8">{cms('topics_h2')}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {TOPICS.map((tp, i) => (
+              <div key={i} className="flex items-start gap-4 p-5 rounded-[12px]"
+                style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="text-ak-cyan flex-shrink-0 mt-0.5">{tp.icon}</div>
                 <div>
-                  <div className="font-inter text-sm font-bold text-white mb-1">{t.title}</div>
-                  <p className="font-inter text-xs text-white leading-relaxed">{t.desc}</p>
+                  <div className="font-inter text-sm font-bold text-white mb-1">{cms(tp.titleKey)}</div>
+                  <div className="font-inter text-xs text-white/50 leading-relaxed">{cms(tp.descKey)}</div>
                 </div>
               </div>
             ))}
@@ -54,67 +69,50 @@ export default function SupportPage() {
         </div>
       </section>
 
-      {/* Contact */}
-      <section className="py-16 px-6 sm:px-10" style={{ background: '#050505' }}>
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="w-10 h-1 bg-ak-gold mx-auto mb-6 rounded" />
-          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-4">{t('ui.support_contact')}</h2>
-          <p className="font-inter text-sm text-white mb-8">
-            {t('support.contact_response')} <strong className="text-white">{t('support.contact_time')}</strong>.
-            {' '}{t('support.contact_tip')}
-          </p>
-
-          <a
-            href="mailto:support@arenakore.com"
-            data-testid="support-email-btn"
-            className="inline-flex items-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-10 rounded-[14px] bg-ak-cyan text-black hover:scale-105 transition-transform mb-6"
-            style={{ height: '52px' }}
-          >
-            <Mail size={18} />
-            support@arenakore.com
-          </a>
-
-          <div className="mt-6 p-5 rounded-[14px] border border-white/10" style={{ background: '#0a0a0a' }}>
-            <div className="font-inter text-xs font-bold uppercase tracking-wider text-ak-gold mb-2">{t('ui.support_response_badge')}</div>
-            <p className="font-inter text-sm text-white">{t('ui.support_response_text')}</p>
+      {/* ── CONTACT ── */}
+      <section className="py-16 px-6 sm:px-10" style={{ background: '#000' }}>
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
+          <div>
+            <h2 className="font-anton text-2xl uppercase text-white mb-5">{cms('contact_h2')}</h2>
+            <p className="font-inter text-sm text-white mb-6">
+              {cms('contact_response')} <strong className="text-white">{cms('contact_time')}</strong>.
+              {' '}{cms('contact_tip')}
+            </p>
+            <a href={`mailto:${cms('contact_cta')}`} data-testid="support-email-btn"
+              className="inline-flex items-center gap-3 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
+              style={{ height: '52px' }}>
+              <Mail size={16} /> {cms('contact_cta')}
+            </a>
+            <p className="font-inter text-xs text-white/30 mt-4">{cms('still_need')}</p>
+          </div>
+          {/* Response time card */}
+          <div className="p-6 rounded-[14px]" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.15)' }}>
+            <div className="flex items-center gap-3 mb-3">
+              <Clock size={18} className="text-ak-cyan" />
+              <span className="font-inter text-xs font-bold uppercase tracking-widest text-ak-cyan">
+                {cms('response_badge')}
+              </span>
+            </div>
+            <p className="font-inter text-sm text-white leading-relaxed">
+              {cms('response_text')}
+            </p>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-16 px-6 sm:px-10 bg-black">
+      {/* ── FAQ ── */}
+      <section className="py-16 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-3xl mx-auto">
-          <h2 className="font-anton text-2xl md:text-3xl uppercase text-white mb-8 text-center">{t('ui.support_faq')}</h2>
+          <h2 className="font-anton text-2xl uppercase text-white mb-8">{cms('faq_h2')}</h2>
           <div className="space-y-3">
-            {[
-              { q: t('support.faq_q1'), a: t('support.faq_a1') },
-              { q: t('support.faq_q2'), a: t('support.faq_a2') },
-              { q: t('support.faq_q3'), a: t('support.faq_a3') },
-              { q: t('support.faq_q4'), a: t('support.faq_a4') },
-              { q: t('support.faq_q5'), a: t('support.faq_a5') },
-            ].map((f, i) => (
-              <details key={i} className="group border border-white/10 rounded-[14px] overflow-hidden" style={{ background: '#0a0a0a' }}>
-                <summary className="flex items-center justify-between p-5 cursor-pointer list-none">
-                  <span className="font-inter text-sm font-semibold text-white">{f.q}</span>
-                  <ArrowRight size={14} className="text-ak-cyan flex-shrink-0 group-open:rotate-90 transition-transform" />
-                </summary>
-                <div className="px-5 pb-5">
-                  <p className="font-inter text-sm text-white leading-relaxed">{f.a}</p>
-                </div>
-              </details>
+            {FAQS.map((faq, i) => (
+              <div key={i} className="p-5 rounded-[12px]"
+                style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <div className="font-inter text-sm font-bold text-ak-gold mb-2">{cms(faq.qKey)}</div>
+                <div className="font-inter text-sm text-white/70 leading-relaxed">{cms(faq.aKey)}</div>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <section className="py-12 px-6 sm:px-10" style={{ background: '#050505' }}>
-        <div className="max-w-xl mx-auto text-center">
-          <p className="font-inter text-sm text-white mb-4">{t('ui.support_still_need')}</p>
-          <a href="mailto:support@arenakore.com" data-testid="support-contact-cta"
-            className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-cyan hover:underline">
-            <Mail size={16} /> support@arenakore.com <ArrowRight size={14} />
-          </a>
         </div>
       </section>
 
