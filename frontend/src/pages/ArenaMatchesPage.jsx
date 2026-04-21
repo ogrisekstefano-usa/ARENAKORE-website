@@ -95,7 +95,7 @@ export default function ArenaMatchesPage() {
             {/* NEXUS analysis points */}
             <div className="space-y-4">
               <div className="font-inter text-xs font-bold tracking-[0.35em] uppercase mb-4" style={{ color: '#00FFFF' }}>
-                NEXUS ANALIZZA:
+                {cms('s1_nexus_label')}
               </div>
               {['s1_nexus_point1', 's1_nexus_point2', 's1_nexus_point3'].map((k, i) => (
                 <div key={i} className="flex items-center gap-4 p-4 rounded-[12px]"

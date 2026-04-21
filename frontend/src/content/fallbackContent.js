@@ -283,6 +283,49 @@ export const FALLBACK_PAGES = {
     prove_it: 'PROVE IT.',
   },
 
+
+  // ── ARENA MATCHES (42 keys) ──────────────────────────────────────────────
+  'arena-matches': {
+    hero_badge: 'ARENA MATCHES',
+    hero_h1: 'ARENA MATCHES',
+    hero_h2: 'NEXUS decides what you must face.',
+    hero_sub: 'Every entry into the Arena can become an individual test or a comparison with another athlete. NEXUS analyzes the data and selects the most relevant challenge or the most fitting opponent.',
+    hero_nexus_line: 'NEXUS creates and selects challenges designed by professional coaches and validated on thousands of athletes.',
+    s1_title: 'THESE ARE NOT RANDOM CHALLENGES.',
+    s1_text: "Arena Matches are system-assigned challenges. You don't choose who to compare yourself with. NEXUS analyzes your level, performance history and progression.",
+    s1_nexus_point1: 'Current athletic level',
+    s1_nexus_point2: 'Performance history',
+    s1_nexus_point3: 'Progression over time',
+    s1_nexus_label: 'NEXUS ANALYZES:',
+    s2_title: 'DATA-DRIVEN MATCHMAKING.',
+    how_s1_title: 'NEXUS ANALYZES',
+    how_s1_desc: 'NEXUS evaluates your profile and your recent performances to build the challenge context.',
+    how_s2_title: 'NEXUS SELECTS',
+    how_s2_desc: 'It can assign you an individual challenge calibrated to your level or a direct comparison with a matching athlete.',
+    how_s3_title: 'EXECUTION',
+    how_s3_desc: 'Execute the challenge according to protocol. NEXUS validates every rep in real time.',
+    how_s4_title: 'EVALUATION',
+    how_s4_desc: 'The result is measured, compared and permanently recorded in your profile.',
+    s3_title: 'TWO CHALLENGE MODES.',
+    s3_b1_title: 'INDIVIDUAL CHALLENGE',
+    s3_b1_text: 'A test designed to measure your capabilities against your current level.',
+    s3_b2_title: 'ATHLETE MATCH',
+    s3_b2_text: 'A direct comparison with an athlete similar to you. Same level, same challenge, identical conditions.',
+    s4_title: 'EVERY MATCH GENERATES DATA.',
+    s4_point1: 'Execution', s4_point2: 'Completion', s4_point3: 'Quality', s4_point4: 'Time', s4_point5: 'Improvement',
+    s4_text: 'Every result updates your profile. The system learns.',
+    s5_title: 'CHALLENGES ARE CREATED BY PROFESSIONALS.',
+    s5_text: 'The protocols used in matches are developed by qualified coaches. NEXUS uses them and distributes them based on results. Only effective tests remain in the system.',
+    s6_title: 'A RELEVANT CHALLENGE.',
+    s6_text: 'A challenge is only challenging if it is calibrated to your level. NEXUS selects appropriate difficulty, coherent context and correct comparison.',
+    s6_point1: 'Appropriate difficulty', s6_point2: 'Coherent context', s6_point3: 'Correct comparison',
+    final_h2: 'ENTER THE ARENA.',
+    final_sub: 'NEXUS has already analyzed your data.',
+    cta_primary: 'DISCOVER YOUR MATCH',
+    cta_secondary: 'DOWNLOAD THE APP',
+  },
+
+
 };
 
 // ─── GLOBAL CONTENT (43 keys) ────────────────────────────────────────────────
