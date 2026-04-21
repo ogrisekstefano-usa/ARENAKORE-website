@@ -65,18 +65,18 @@ export default function ArenaSystemPage() {
           <div className="ak-hero-badge flex items-center gap-3 mb-6">
             <span className="w-2 h-2 rounded-full bg-ak-cyan inline-block" style={{ boxShadow: '0 0 8px #00FFFF' }} />
             <span className="font-inter text-xs font-bold tracking-[0.35em] uppercase text-ak-cyan">
-              {cms('hero_badge', t('arena.hero_badge'))}
+              {cms('hero_badge')}
             </span>
           </div>
           <h1 className="ak-hero-title font-anton uppercase leading-[0.9] text-white mb-5"
             style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
-            {cms('hero_h1', t('arena.hero_h1'))}
+            {cms('hero_h1')}
           </h1>
           <p className="ak-hero-sub font-inter text-xl md:text-2xl font-semibold text-white mb-3">
-            {cms('hero_sub', t('arena.hero_sub'))}
+            {cms('hero_sub')}
           </p>
           <p className="ak-hero-sub font-inter text-sm text-white mb-10" style={{ opacity: 0.6 }}>
-            {cms('hero_sub2', t('arena.hero_sub2'))}
+            {cms('hero_sub2')}
           </p>
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-10">
             <Link to={ROUTES.app} data-testid="arena-download-btn"
@@ -93,7 +93,7 @@ export default function ArenaSystemPage() {
           {/* Not a fitness app statement */}
           <div className="inline-block font-inter text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full"
             style={{ background: 'rgba(255,45,45,0.08)', border: '1px solid rgba(255,45,45,0.25)', color: '#FF2D2D' }}>
-            {cms('not_fitness_app', t('arena.not_fitness_app'))}
+            {cms('not_fitness_app')}
           </div>
         </div>
       </section>
@@ -103,9 +103,9 @@ export default function ArenaSystemPage() {
         className="py-24 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">{cms('what_badge', t('arena.what_badge'))}</div>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">{cms('what_badge')}</div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase text-white leading-none">
-              {cms('what_h2', t('arena.what_h2'))}<br /><span style={{ color: '#00FFFF' }}>{cms('what_h2_2', t('arena.what_h2_2'))}</span>
+              {cms('what_h2')}<br /><span style={{ color: '#00FFFF' }}>{cms('what_h2_2')}</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
@@ -127,10 +127,10 @@ export default function ArenaSystemPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4" style={{ color: '#FFD700' }}>
-              {cms('why_badge', t('arena.why_badge'))}
+              {cms('why_badge')}
             </div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase text-white leading-none">
-              {cms('why_h2', t('arena.why_h2'))}
+              {cms('why_h2')}
             </h2>
           </div>
           <div className="space-y-4">
@@ -155,13 +155,13 @@ export default function ArenaSystemPage() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">
-                {cms('sport_badge', t('arena.sport_badge'))}
+                {cms('sport_badge')}
               </div>
               <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-                {cms('sport_h2', t('arena.sport_badge'))}
+                {cms('sport_h2')}
               </h2>
               <p className="font-inter text-base text-white leading-relaxed mb-8">
-                {cms('sport_body', t('arena.sport_body'))}
+                {cms('sport_body')}
               </p>
               <div className="flex flex-col gap-2">
                 <Link to={ROUTES.gyms} data-testid="multisport-gyms-link"
@@ -193,13 +193,13 @@ export default function ArenaSystemPage() {
         <div className="max-w-4xl mx-auto ak-reveal">
           <div className="p-8 rounded-[16px] text-center" style={{ background: '#0a0a0a', border: '1px solid rgba(0,255,255,0.15)' }}>
             <div className="font-inter text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(0,255,255,0.6)' }}>
-              {cms('nexus_badge', t('arena.nexus_badge'))}
+              {cms('nexus_badge')}
             </div>
             <p className="font-anton text-2xl md:text-3xl uppercase text-white mb-2">
-              {cms('nexus_callout', t('arena.nexus_callout'))}
+              {cms('nexus_callout')}
             </p>
             <p className="font-inter text-sm text-white max-w-lg mx-auto">
-              {cms('nexus_body', t('arena.nexus_body'))}
+              {cms('nexus_body')}
             </p>
           </div>
         </div>
@@ -210,10 +210,10 @@ export default function ArenaSystemPage() {
         <div className="max-w-2xl mx-auto text-center ak-reveal">
           <div className="w-10 h-1 bg-ak-gold mx-auto mb-8 rounded" />
           <h2 className="font-anton text-5xl md:text-6xl uppercase text-white mb-4 leading-none">
-            {cms('final_h2', t('arena.final_h2'))}
+            {cms('final_h2')}
           </h2>
           <p className="font-inter text-base text-white mb-10">
-            {cms('final_body', t('arena.final_body'))}
+            {cms('final_body')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to={ROUTES.app} data-testid="arena-final-download"

@@ -55,8 +55,8 @@ export default function GetTheAppPage() {
   useScrollTracking('get_the_app');
 
   useSEO({
-    title: `${cms('hero_h1', t('getApp.h1_line1'))} ${t('getApp.h1_line2')} ${t('getApp.h1_line3')} | ArenaKore`,
-    description: `${cms('hero_sub1', t('getApp.sub1'))} ${cms('hero_sub2', t('getApp.sub2'))} ${cms('hero_tension', t('getApp.tension'))}`,
+    title: `${cms('hero_h1')} ${t('getApp.h1_line2')} ${t('getApp.h1_line3')} | ArenaKore`,
+    description: `${cms('hero_sub1')} ${cms('hero_sub2')} ${cms('hero_tension')}`,
   });
 
   useEffect(() => {
@@ -85,27 +85,27 @@ export default function GetTheAppPage() {
           <div>
             <div className="ak-hero-badge flex items-center gap-3 mb-8">
               <span className="w-2 h-2 rounded-full bg-ak-cyan inline-block" style={{ boxShadow: '0 0 8px #00FFFF' }} />
-              <span className="font-inter text-xs font-bold tracking-[0.35em] uppercase text-ak-cyan">{cms('hero_badge', t('getApp.badge'))}</span>
+              <span className="font-inter text-xs font-bold tracking-[0.35em] uppercase text-ak-cyan">{cms('hero_badge')}</span>
             </div>
 
             <h1 className="ak-hero-title font-anton uppercase leading-[0.88] text-white mb-5"
               style={{ fontSize: 'clamp(60px,9vw,108px)' }}>
-              {cms('hero_h1', t('getApp.h1_line1'))}<br />{t('getApp.h1_line2')}<br />
+              {cms('hero_h1')}<br />{t('getApp.h1_line2')}<br />
               <span style={{ color: '#00FFFF' }}>{t('getApp.h1_line3')}</span>
             </h1>
 
             {/* Tension line */}
             <p className="ak-hero-sub font-inter text-sm font-bold uppercase tracking-[0.2em] mb-5"
               style={{ color: 'rgba(255,45,45,0.85)' }}>
-              {cms('hero_tension', t('getApp.tension'))}
+              {cms('hero_tension')}
             </p>
 
-            <p className="ak-hero-sub font-inter text-lg text-white mb-1 leading-snug font-medium">{cms('hero_sub1', t('getApp.sub1'))}</p>
-            <p className="ak-hero-sub font-inter text-lg mb-10 leading-snug" style={{ color: 'rgba(255,255,255,0.55)' }}>{cms('hero_sub2', t('getApp.sub2'))}</p>
+            <p className="ak-hero-sub font-inter text-lg text-white mb-1 leading-snug font-medium">{cms('hero_sub1')}</p>
+            <p className="ak-hero-sub font-inter text-lg mb-10 leading-snug" style={{ color: 'rgba(255,255,255,0.55)' }}>{cms('hero_sub2')}</p>
 
             {/* Available now */}
             <p className="font-inter text-xs font-bold uppercase tracking-[0.3em] mb-4 text-ak-gold">
-              {cms('available', t('getApp.available'))}
+              {cms('available')}
             </p>
 
             {/* Store buttons */}
@@ -116,10 +116,10 @@ export default function GetTheAppPage() {
 
             {/* Download time hint */}
             <p className="font-inter text-xs mb-6" style={{ color: 'rgba(255,255,255,0.25)' }}>
-              {cms('download_time', t('getApp.download_time'))}
+              {cms('download_time')}
             </p>
             <p className="font-inter text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.2)' }}>
-              {cms('free_note', t('getApp.free_note'))}
+              {cms('free_note')}
             </p>
           </div>
 
@@ -160,9 +160,9 @@ export default function GetTheAppPage() {
       <section data-testid="what-you-get-section" className="py-24 md:py-28 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">{cms('what_badge', t('getApp.what_label'))}</div>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-cyan">{cms('what_badge')}</div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white">
-              {cms('what_h2', t('getApp.what_h2_line1'))}<br /><span style={{ color: '#00FFFF' }}>{t('getApp.what_h2_line2')}</span>
+              {cms('what_h2')}<br /><span style={{ color: '#00FFFF' }}>{t('getApp.what_h2_line2')}</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-px" style={{ background: 'rgba(255,255,255,0.05)' }}>
@@ -191,8 +191,8 @@ export default function GetTheAppPage() {
       <section data-testid="what-happens-next-section" className="py-24 px-6 sm:px-10 bg-black">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-gold">{cms('next_badge', t('getApp.next_label'))}</div>
-            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">{cms('next_title', t('getApp.next_title'))}</h2>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-gold">{cms('next_badge')}</div>
+            <h2 className="font-anton text-4xl md:text-5xl uppercase text-white">{cms('next_title')}</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {['next_1', 'next_2', 'next_3', 'next_4'].map((key, i) => (
@@ -213,11 +213,11 @@ export default function GetTheAppPage() {
       <section data-testid="multi-sport-section" className="py-24 px-6 sm:px-10" style={{ background: '#050505' }}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div className="ak-reveal">
-            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-gold">{cms('sport_badge', t('getApp.sport_label'))}</div>
+            <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-5 text-ak-gold">{cms('sport_badge')}</div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-              {cms('sport_h2_line1', t('getApp.sport_h2_line1'))}<br /><span style={{ color: '#FFD700' }}>{cms('sport_h2_line2', t('getApp.sport_h2_line2'))}</span>
+              {cms('sport_h2_line1')}<br /><span style={{ color: '#FFD700' }}>{cms('sport_h2_line2')}</span>
             </h2>
-            <p className="font-inter text-base text-white mb-8 leading-relaxed">{cms('sport_body', t('getApp.sport_body'))}</p>
+            <p className="font-inter text-base text-white mb-8 leading-relaxed">{cms('sport_body')}</p>
             <Link to={ROUTES.arenaSystem} className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-cyan hover:underline">
               {t('getApp.sport_link')} <ArrowRight size={14} />
             </Link>
@@ -252,12 +252,12 @@ export default function GetTheAppPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-12">
             <div className="flex items-center gap-3">
               <span className="ak-blink w-2 h-2 rounded-full inline-block" style={{ background: '#FF2D2D', boxShadow: '0 0 8px #FF2D2D' }} />
-              <span className="font-inter text-xs font-bold uppercase tracking-widest" style={{ color: '#FF2D2D' }}>{cms('proof_badge', t('getApp.proof_label'))}</span>
+              <span className="font-inter text-xs font-bold uppercase tracking-widest" style={{ color: '#FF2D2D' }}>{cms('proof_badge')}</span>
             </div>
             <div className="hidden sm:block w-px h-5 bg-white/10" />
-            <p className="font-inter text-sm font-semibold text-white">{cms('proof_perf', t('getApp.proof_perf'))}</p>
+            <p className="font-inter text-sm font-semibold text-white">{cms('proof_perf')}</p>
             <div className="hidden sm:block w-px h-5 bg-white/10" />
-            <p className="font-inter text-sm font-semibold text-white">{cms('proof_athletes', t('getApp.proof_athletes'))}</p>
+            <p className="font-inter text-sm font-semibold text-white">{cms('proof_athletes')}</p>
           </div>
         </div>
       </section>
@@ -270,20 +270,20 @@ export default function GetTheAppPage() {
           <div className="w-12 h-1 bg-ak-cyan mx-auto mb-10 rounded" />
           <h2 className="font-anton uppercase leading-none text-white mb-2"
             style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
-            {cms('final_h2_line1', t('getApp.final_h2_line1'))}
+            {cms('final_h2_line1')}
           </h2>
           <h2 className="font-anton uppercase leading-none text-white mb-2"
             style={{ fontSize: 'clamp(52px,8vw,96px)' }}>
-            {cms('final_h2_line2', t('getApp.final_h2_line2'))}
+            {cms('final_h2_line2')}
           </h2>
           <h2 className="font-anton uppercase leading-none mb-10"
             style={{ fontSize: 'clamp(52px,8vw,96px)', color: '#FFD700' }}>
-            {cms('final_h2_line3', t('getApp.final_h2_line3'))}
+            {cms('final_h2_line3')}
           </h2>
-          <p className="font-inter text-base text-white mb-4 max-w-md mx-auto leading-relaxed">{cms('final_body', t('getApp.final_body'))}</p>
+          <p className="font-inter text-base text-white mb-4 max-w-md mx-auto leading-relaxed">{cms('final_body')}</p>
           {/* Tension reinforcement */}
           <p className="font-inter text-xs font-bold uppercase tracking-[0.25em] mb-10" style={{ color: 'rgba(255,45,45,0.7)' }}>
-            {cms('hero_tension', t('getApp.tension'))}
+            {cms('hero_tension')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
@@ -293,10 +293,10 @@ export default function GetTheAppPage() {
 
           <Link to={ROUTES.arenaSystem} data-testid="final-learn-link"
             className="inline-flex items-center gap-2 font-inter text-sm font-bold text-ak-cyan hover:underline">
-            {cms('final_learn', t('getApp.final_learn'))} <ArrowRight size={14} />
+            {cms('final_learn')} <ArrowRight size={14} />
           </Link>
           <p className="font-inter text-xs mt-6 uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.2)' }}>
-            {cms('final_free', t('getApp.final_free'))}
+            {cms('final_free')}
           </p>
         </div>
       </section>

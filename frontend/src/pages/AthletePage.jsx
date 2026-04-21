@@ -19,8 +19,8 @@ export default function AthletePage() {
   const { content: cms } = usePageContent('for-athletes', lang);
 
   useSEO({
-    title: cms('hero_h1', 'For Athletes | ArenaKore'),
-    description: cms('hero_tagline', 'You are not just training. You are competing.'),
+    title: cms('hero_h1'),
+    description: cms('hero_tagline'),
   });
 
   useEffect(() => {
@@ -59,16 +59,16 @@ export default function AthletePage() {
           <div className="ak-hero-badge flex items-center gap-3 mb-8">
             <span className="ak-blink w-2.5 h-2.5 rounded-full" style={{ background: '#FF2D2D', boxShadow: '0 0 10px #FF2D2D', display: 'inline-block' }} />
             <span className="font-inter text-xs font-bold tracking-[0.35em] uppercase text-white">
-              {cms('hero_badge', t('athlete.badge'))}
+              {cms('hero_badge')}
             </span>
           </div>
 
           <h1 className="ak-hero-title font-anton uppercase leading-[0.88] text-white mb-6" style={{ fontSize: 'clamp(60px,9vw,108px)' }}>
-            {cms('hero_h1', t('athlete.h1_line1'))}
+            {cms('hero_h1')}
           </h1>
 
           <p className="ak-hero-sub font-inter text-lg md:text-xl text-white mb-5 font-medium">
-            {cms('hero_sub', t('athlete.sub'))}
+            {cms('hero_sub')}
           </p>
 
           <div className="ak-hero-btns flex flex-col sm:flex-row gap-4 mb-14">
@@ -76,18 +76,18 @@ export default function AthletePage() {
               onClick={() => trackConversion({ action: 'app_download', source_cta_key: 'hero_cta', page: 'for-athletes', position: 'hero' })}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-base px-10 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '60px' }}>
-              <Zap size={20} fill="black" /> {cms('hero_cta', t('cta.downloadApp'))}
+              <Zap size={20} fill="black" /> {cms('hero_cta')}
             </Link>
             <Link to={ROUTES.arenaSystem} data-testid="athlete-enter-arena-btn"
               className="inline-flex items-center justify-center gap-3 font-inter font-semibold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/25 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
               style={{ height: '60px' }}>
-              {cms('final_cta', t('cta.enterArena'))} <ArrowRight size={16} />
+              {cms('final_cta')} <ArrowRight size={16} />
             </Link>
           </div>
 
           <div className="ak-hero-scroll">
             <p className="font-inter text-xs font-bold tracking-widest uppercase mb-2" style={{ color: 'rgba(0,255,255,0.5)' }}>
-              {cms('hero_tagline', t('athlete.hero_tagline'))}
+              {cms('hero_tagline')}
             </p>
             <div className="flex flex-col items-start gap-2" style={{ color: 'rgba(255,255,255,0.25)' }}>
               <ChevronDown size={16} className="ak-bounce" />
@@ -106,16 +106,16 @@ export default function AthletePage() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url(${IMG_DARK})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
         <div className="relative z-10 max-w-4xl mx-auto text-center ak-reveal">
           <p className="font-inter text-sm font-bold tracking-[0.4em] uppercase mb-8" style={{ color: 'rgba(255,255,255,0.4)' }}>
-            {cms('identity_pretext', t('athlete.identity.pretext'))}
+            {cms('identity_pretext')}
           </p>
           <h2 className="font-anton uppercase text-white" style={{ fontSize: 'clamp(64px,12vw,140px)', lineHeight: 0.88 }}>
-            {cms('identity_h2_line1', t('athlete.identity.h2_line1'))}<br />
+            {cms('identity_h2_line1')}<br />
             <span style={{ color: '#00FFFF', textShadow: '0 0 60px rgba(0,255,255,0.4)' }}>
-              {cms('identity_h2_line2', t('athlete.identity.h2_line2'))}
+              {cms('identity_h2_line2')}
             </span>
           </h2>
           <p className="font-inter text-base text-white mt-10 max-w-lg mx-auto leading-relaxed">
-            {cms('identity_body', t('athlete.identity.body'))}
+            {cms('identity_body')}
           </p>
         </div>
       </section>
@@ -125,10 +125,10 @@ export default function AthletePage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4 text-ak-cyan">
-              {cms('kore_badge', t('athlete.whatIsKore.badge'))}
+              {cms('kore_badge')}
             </div>
             <h2 className="font-anton text-4xl md:text-6xl uppercase text-white leading-none">
-              {cms('kore_h2', t('athlete.whatIsKore.h2_line1'))}
+              {cms('kore_h2')}
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -162,14 +162,14 @@ export default function AthletePage() {
             <div className="flex items-center gap-3 mb-5">
               <Zap size={18} style={{ color: '#FFD700' }} />
               <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-gold">
-                {cms('kflux_badge', 'K-FLUX')}
+                {cms('kflux_badge')}
               </span>
             </div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-              {cms('kflux_h2', t('athlete.kflux.h2_line1'))}
+              {cms('kflux_h2')}
             </h2>
             <p className="font-inter text-base text-white mb-8 leading-relaxed">
-              {cms('kflux_body', t('athlete.kflux.body'))}
+              {cms('kflux_body')}
             </p>
             <div className="space-y-4">
               {[
@@ -197,10 +197,10 @@ export default function AthletePage() {
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%)' }} />
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="font-inter text-xs font-bold uppercase tracking-widest mb-2 text-ak-gold">
-                  {cms('kflux_hud_label', t('athlete.kflux.hud_label'))}
+                  {cms('kflux_hud_label')}
                 </div>
                 <div className="font-anton text-5xl" style={{ color: '#FFD700', textShadow: '0 0 20px rgba(255,215,0,0.5)' }}>+346</div>
-                <div className="font-inter text-xs text-white mt-1">{cms('kflux_hud_sub', t('athlete.kflux.hud_sub'))}</div>
+                <div className="font-inter text-xs text-white mt-1">{cms('kflux_hud_sub')}</div>
               </div>
             </div>
           </div>
@@ -231,14 +231,14 @@ export default function AthletePage() {
             <div className="flex items-center gap-3 mb-5">
               <Scan size={18} className="text-ak-cyan" />
               <span className="font-inter text-xs font-bold tracking-[0.3em] uppercase text-ak-cyan">
-                {cms('nexus_badge', t('athlete.nexus.badge'))}
+                {cms('nexus_badge')}
               </span>
             </div>
             <h2 className="font-anton text-4xl md:text-5xl uppercase leading-none text-white mb-6">
-              {cms('nexus_h2', t('athlete.nexus.h2_line1'))}
+              {cms('nexus_h2')}
             </h2>
             <p className="font-inter text-base text-white mb-8 leading-relaxed">
-              {cms('nexus_body', t('athlete.nexus.body'))}
+              {cms('nexus_body')}
             </p>
             <div className="space-y-4">
               {[
@@ -301,10 +301,10 @@ export default function AthletePage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 ak-reveal">
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-4" style={{ color: '#FF2D2D' }}>
-              {cms('challenges_badge', t('athlete.challenges.badge'))}
+              {cms('challenges_badge')}
             </div>
             <h2 className="font-anton text-5xl md:text-7xl uppercase text-white leading-none">
-              {cms('challenges_h2', t('athlete.challenges.h2_line1'))}
+              {cms('challenges_h2')}
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -342,26 +342,26 @@ export default function AthletePage() {
               <div key={i} className={`absolute w-5 h-5 ${cls}`} style={{ borderColor: 'rgba(255,215,0,0.5)' }} />
             ))}
             <div className="font-inter text-xs font-bold tracking-[0.4em] uppercase mb-6" style={{ color: 'rgba(255,255,255,0.3)' }}>
-              {cms('final_badge', t('athlete.finalPush.badge'))}
+              {cms('final_badge')}
             </div>
             <h2 className="font-anton uppercase text-white leading-[0.88]" style={{ fontSize: 'clamp(56px,9vw,100px)' }}>
-              {cms('final_h2', t('athlete.finalPush.h2_line1'))}
+              {cms('final_h2')}
             </h2>
           </div>
           <p className="font-inter text-lg text-white mb-12 leading-relaxed">
-            {cms('final_body', t('athlete.finalPush.body'))}
+            {cms('final_body')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to={ROUTES.app} data-testid="athlete-final-cta"
               onClick={() => trackConversion({ action: 'app_download', source_cta_key: 'final_cta', page: 'for-athletes', position: 'final_cta' })}
               className="inline-flex items-center justify-center gap-3 font-inter font-black uppercase tracking-wider text-lg px-12 rounded-[14px] bg-ak-gold text-black hover:scale-105 transition-transform"
               style={{ height: '64px' }}>
-              <Zap size={22} fill="black" /> {cms('hero_cta', t('cta.downloadApp'))}
+              <Zap size={22} fill="black" /> {cms('hero_cta')}
             </Link>
             <Link to={ROUTES.arenaSystem} data-testid="athlete-final-arena"
               className="inline-flex items-center justify-center gap-2 font-inter font-bold uppercase tracking-wider text-sm px-8 rounded-[14px] border border-white/20 text-white hover:border-ak-cyan hover:text-ak-cyan transition-all"
               style={{ height: '64px' }}>
-              {cms('final_cta', t('cta.enterArena'))} <ArrowRight size={16} />
+              {cms('final_cta')} <ArrowRight size={16} />
             </Link>
           </div>
           <div className="flex items-center justify-center gap-8 mt-12">
