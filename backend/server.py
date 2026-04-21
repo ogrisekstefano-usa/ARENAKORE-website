@@ -1612,13 +1612,52 @@ Format: {{"key1": "translation1", "key2": "translation2"}}"""
 
 @api_router.get("/cms/pages-list")
 async def get_cms_pages_list(_=Depends(verify_admin)):
-    """Returns list of all pages with CMS content status."""
-    saved = {doc["slug"] async for doc in db.cms_content.find({}, {"slug": 1, "_id": 0})}
-    return [
-        {"slug": slug, "name": slug.replace("-", " ").title(), "has_content": slug in saved,
-         "section_count": len(DEFAULT_PAGES.get(slug, []))}
-        for slug in DEFAULT_PAGES
-    ]
+    """Returns list of all pages with CMS content status.
+    Includes BOTH pages in DEFAULT_PAGES AND any pages seeded via seed_cms.py.
+    """
+    # All pages that exist in DB (from seed_cms.py or DEFAULT_PAGES seed)
+    db_pages = {}
+    async for doc in db.cms_content.find({}, {"slug": 1, "updated_at": 1, "_id": 0}):
+        slug = doc["slug"]
+        # Count sections for this slug
+        count = await db.cms_content.count_documents({"slug": slug}) if False else None
+        db_pages[slug] = doc
+
+    # Count sections per slug (each page is one document with embedded sections array)
+    section_counts = {}
+    async for doc in db.cms_content.find({}, {"slug": 1, "sections": 1, "_id": 0}):
+        slug = doc.get("slug", "")
+        if slug:
+            secs = doc.get("sections", [])
+            section_counts[slug] = len(secs) if isinstance(secs, list) else 1
+
+    # Build list: DEFAULT_PAGES first (with section count from code), then DB-only pages
+    result = []
+    seen = set()
+
+    for slug in DEFAULT_PAGES:
+        seen.add(slug)
+        db_count = section_counts.get(slug, 0)
+        result.append({
+            "slug": slug,
+            "name": slug.replace("-", " ").title(),
+            "has_content": slug in db_pages,
+            "section_count": max(db_count, len(DEFAULT_PAGES.get(slug, []))),
+            "source": "default",
+        })
+
+    # Add DB-only pages (created via seed_cms.py — not in DEFAULT_PAGES)
+    for slug in db_pages:
+        if slug not in seen:
+            result.append({
+                "slug": slug,
+                "name": slug.replace("-", " ").title(),
+                "has_content": True,
+                "section_count": section_counts.get(slug, 0),
+                "source": "custom",
+            })
+
+    return result
 
 
 
