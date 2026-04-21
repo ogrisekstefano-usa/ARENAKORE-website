@@ -2193,7 +2193,11 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', 'http://localhost:3000,https://arenakore.com,https://www.arenakore.com').split(','),
+    allow_origins=os.environ.get(
+        'CORS_ORIGINS',
+        'http://localhost:3000,https://arenakore.com,https://www.arenakore.com,https://talent-card-refactor.preview.emergentagent.com'
+    ).split(','),
+    allow_origin_regex=r'https://.*\.onrender\.com',
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["Set-Cookie"],

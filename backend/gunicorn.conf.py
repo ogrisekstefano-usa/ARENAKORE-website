@@ -1,7 +1,10 @@
-# gunicorn.conf.py — Production server config for ArenaKore API
+import os
 
-bind = "0.0.0.0:8001"
-workers = 2
+# Render injects $PORT; fallback to 8001 for local dev
+port = os.environ.get("PORT", "8001")
+bind = f"0.0.0.0:{port}"
+
+workers = int(os.environ.get("WEB_CONCURRENCY", "2"))
 worker_class = "uvicorn.workers.UvicornWorker"
 worker_connections = 1000
 timeout = 120

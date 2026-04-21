@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: arenakore-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/ --quiet && pip install -r requirements.txt
+    startCommand: gunicorn server:app -c gunicorn.conf.py
+    plan: free
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: arenakore_website
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://www.arenakore.com,https://arenakore.com,https://talent-card-refactor.preview.emergentagent.com
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_BASE_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.11"
+    healthCheckPath: /api/
