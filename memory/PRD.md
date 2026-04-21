@@ -1,35 +1,42 @@
-# ARENAKORE — PRD (Product Requirements Document)
+# ARENAKORE — PRD
 
-## Overview
-Sito web ufficiale ARENAKORE. Full-stack React SPA + FastAPI + MongoDB.
-**Core Positioning (April 2026):** "NEXUS decides. The athlete executes."
+## Core Positioning (Final, April 2026)
+"NEXUS mette alla prova. NEXUS crea e seleziona sfide progettate da coach professionisti e validate su migliaia di atleti."
 
-## Phase 5 — Product Consistency & Positioning (April 20, 2026) COMPLETED
+ArenaKore = sistema di validazione delle performance (NOT choice-based app)
 
-### New positioning:
-- ArenaKore is NOT choice-based. NEXUS assigns. Athletes execute.
-- Removed: choose, browse, select, pick, catalog, explore
-- Added: assign, execute, system-driven flow
+## Phase 6 — Full Content Alignment (April 21, 2026) COMPLETED
 
-### Changes applied:
-- **i18n EN/IT/ES**: HOW IT WORKS s1 = "NEXUS assigns your challenge", disciplines_explore = "Compete", arena.hero_sub = "NEXUS assigns. You execute."
-- **Backend DEFAULT_PAGES**: All 9 pages reseeded with NEXUS positioning
-- **seo-content.js**: All ContentPageTemplate howItWorks steps updated
-- **fallbackContent.js**: Synced with new positioning
-- **Footer**: "Support" filtered from PAGINE column (already in SUPPORTO section)
-- **Nav config**: Backend now merges DEFAULT_TOP_NAV with stored MongoDB config (prevents disappearing items on new additions)
+### All 9 pages updated:
+| Page | New Hero H1 | New Sub |
+|------|-------------|---------|
+| Homepage | ENTRA NELL'ARENA. | Un sistema di validazione delle performance... |
+| Arena System | NON È UNA PIATTAFORMA. È UN SISTEMA. | Un sistema progettato per testare e misurare... |
+| For Athletes | NON SCEGLI. TI METTI ALLA PROVA. | NEXUS elimina la scelta e assegna sfide rilevanti... |
+| Gym Pilot | I COACH CREANO LE SFIDE. | NEXUS seleziona e distribuisce i protocolli più efficaci. |
+| Competition | COMPETITION IS MEASURED. | Challenges assigned. Results measured. |
+| AMRAP | OGNI RIPETIZIONE È VALIDATA. | NEXUS misura ogni esecuzione. |
+| CrossFit | PROVE FUNZIONALI. RISULTATI MISURABILI. | Ogni esercizio è una verifica delle capacità. |
+| Gamification | NON È UN GIOCO. È UN SISTEMA DI VALUTAZIONE. | La dinamica ludica supporta la misurazione reale. |
+| Get the App | SCARICA. ENTRA. ESEGUI. | Accedi al sistema di validazione delle performance. |
 
-### QA Results (Testing Agent iteration_4):
-- 100% pass rate — all 15 test requirements passing
-- 4 bugs fixed: sport_selector_sub x3 locales + GAMIFICATION navbar missing
-- Zero mixed language across all pages
+### HOW IT WORKS (renamed: "PROCESSO DI VALIDAZIONE")
+1. NEXUS analizza — scansiona dati e mappa profilo
+2. NEXUS seleziona — sfide da coach professionisti validate su migliaia di atleti
+3. Tu esegui — NEXUS certifica ogni rep in tempo reale
+4. NEXUS valuta — rank aggiornato, nuova sfida assegnata
+
+### Global Insert (every page):
+"NEXUS crea e seleziona sfide progettate da coach professionisti e validate su migliaia di atleti."
+
+### Language:
+- EN/IT/ES: all 3 locales updated + all CMS pages reseeded
 
 ## Credentials
 - Admin: admin@arenakore.com / ArenaKore2026!
 - Preview: https://talent-card-refactor.preview.emergentagent.com
 
 ## Next: SEO (hreflang, metadata, indexing)
-- Only proceed AFTER product consistency is complete (DONE ✅)
 
 ## Backlog
 - [ ] Language switcher navbar desktop

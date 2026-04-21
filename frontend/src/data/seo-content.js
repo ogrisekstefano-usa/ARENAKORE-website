@@ -81,7 +81,7 @@ export const PAGES = {
     slug: ROUTES.crossfit,
     seo_title: 'CrossFit Challenge App | Box vs Box | ArenaKore',
     meta_description: 'Box vs box CrossFit challenges validated by AI. Track WODs, rank athletes in real-time, compete globally. ArenaKore is built for your box.',
-    h1: 'BOX VS BOX. NO EXCUSES.',
+    h1: 'FUNCTIONAL TESTS. MEASURABLE RESULTS.',
     badge: 'CROSSFIT CHALLENGE',
     heroImage: IMGS.crossfit,
     intro: {
@@ -133,7 +133,7 @@ export const PAGES = {
     slug: ROUTES.competition,
     seo_title: 'Workout Competition Platform | ArenaKore',
     meta_description: 'Compete in real workout competitions. Validated rankings, certified performances, global leaderboards. The platform for athletes who train to win.',
-    h1: 'TRAIN TO WIN. COMPETE TO PROVE IT.',
+    h1: 'COMPETITION IS MEASURED.',
     badge: 'WORKOUT COMPETITION',
     heroImage: IMGS.competition,
     intro: {
@@ -237,7 +237,7 @@ export const PAGES = {
     slug: ROUTES.gamification,
     seo_title: 'Fitness Gamification Platform | +40% Retention | ArenaKore',
     meta_description: '+30% engagement. +40% retention. Gamify fitness with challenges, rankings, rewards. ArenaKore uses real behavioral science to keep athletes training.',
-    h1: 'GAMIFY FITNESS. DOMINATE RETENTION.',
+    h1: "NOT A GAME. AN EVALUATION SYSTEM.",
     badge: 'FITNESS GAMIFICATION',
     heroImage: IMGS.teamTraining,
     intro: {
@@ -342,20 +342,20 @@ export const PAGES = {
 const PAGE_TRANSLATIONS = {
   [ROUTES.fitnessApp]: {
     it: {
-      h1: "L'APP FITNESS CHALLENGE PER ATLETI VERI",
+      h1: "VALIDAZIONE DELLE PERFORMANCE PER ATLETI VERI",
       badge: 'APP FITNESS CHALLENGE',
-      intro: { heading: "Non solo un'app. Un motore di validazione.", body: "Ogni app fitness ti permette di registrare un allenamento. ArenaKore è l'unica che ti dice se conta davvero. Usando la bio-analisi NEXUS, ogni rep viene tracciata, validata e registrata in modo permanente. Non puoi ingannare il sistema. È il punto." },
-      problem: { heading: "Il problema di tutte le altre app fitness.", points: ["Tracci gli allenamenti, ma nessuno li valida.", "I progressi sembrano invisibili — nessun benchmark reale.", "Zero responsabilità. Zero competizione.", "Smetti dopo 3 mesi perché non c'è nulla in gioco."] },
-      solution: { heading: "ArenaKore cambia la posta in gioco.", body: "Quando le tue rep vengono validate in tempo reale da un motore di bio-analisi AI, tutto cambia. Di colpo ogni sessione ha un punteggio. Ogni punteggio ha un rank. Ogni rank ha un rivale. Benvenuto nell'Arena." },
+      intro: { heading: "Non un catalogo. Un sistema di validazione.", body: "Ogni app fitness ti permette di registrare un allenamento. ArenaKore è l'unica che ti dice se conta davvero. Usando la bio-analisi NEXUS, ogni rep viene tracciata, validata e registrata in modo permanente. Non puoi ingannare il sistema. È il punto." },
+      problem: { heading: "Il problema delle app fitness basate sulla scelta.", points: ["Tracci gli allenamenti, ma nessuno li valida.", "I progressi sembrano invisibili — nessun benchmark reale.", "Zero responsabilità. Zero competizione.", "Smetti dopo 3 mesi perché non c'è nulla in gioco."] },
+      solution: { heading: "NEXUS elimina la scelta. Misura tutto.", body: "Quando le tue rep vengono validate in tempo reale da un motore di bio-analisi AI, tutto cambia. Di colpo ogni sessione ha un punteggio. Ogni punteggio ha un rank. Ogni rank ha un rivale. Benvenuto nell'Arena." },
       howItWorks: [ { step: '01', title: 'NEXUS attiva il tuo profilo', desc: 'Crea il tuo KORE ID. NEXUS mappa il tuo profilo atletico. Il sistema parte da qui.' }, { step: '02', title: 'NEXUS assegna la tua sfida', desc: 'Ogni giorno NEXUS assegna una sfida in base al tuo profilo. Zero navigazione. Zero scelta.' }, { step: '03', title: 'NEXUS valida', desc: 'La bio-analisi traccia ogni movimento. Forma scorretta = rep non contata.' }, { step: '04', title: 'Scala il ranking', desc: 'Il tuo K-Rating si aggiorna in tempo reale. Sfida gli altri. Difendi il tuo rank.' } ],
       benefits: [ { icon: '⚡', title: 'Validazione in tempo reale', desc: 'NEXUS valida ogni singola rep. Nessuna eccezione.' }, { icon: '🏆', title: 'Classifiche globali', desc: 'Il K-Rating ti classifica tra atleti in tutto il mondo.' }, { icon: '🔥', title: '15+ discipline', desc: 'CrossFit, AMRAP, forza, sprint — tutto in una piattaforma.' }, { icon: '📊', title: 'Punteggio DNA', desc: 'Il tuo profilo atletico unico su 6 attributi di performance.' }, { icon: '⚔️', title: 'Sfide 1vs1', desc: 'Sfida qualsiasi atleta direttamente. Il sistema decide chi vince.' }, { icon: '🛡', title: 'Record permanente', desc: 'La tua storia non scompare mai. Ogni PR è certificato.' } ],
       faq: [ { q: 'ArenaKore è gratuita?', a: 'Sì. L\'app base è gratuita da scaricare e usare. Funzionalità avanzate sono disponibili nei piani premium.' }, { q: 'Quali discipline supporta ArenaKore?', a: 'ArenaKore supporta 15+ discipline inclusi CrossFit WOD, AMRAP, EMOM, sollevamento pesi, sprint e altro.' }, { q: 'Come funziona la validazione NEXUS?', a: 'NEXUS usa il Puppet Motion Detection — un sistema AI di bio-analisi che traccia angoli articolari e qualità del movimento in tempo reale.' }, { q: 'Posso sfidare atleti di altre palestre?', a: 'Sì. Le sfide possono essere inviate a qualsiasi utente globalmente, o a palestre specifiche tramite la Mappa Hub.' } ],
       relatedPages: [ { label: 'Sfida CrossFit', href: ROUTES.crossfit }, { label: 'Allenamento AMRAP', href: ROUTES.amrap }, { label: 'Gamification Fitness', href: ROUTES.gamification } ],
     },
     es: {
-      h1: "LA APP FITNESS CHALLENGE PARA ATLETAS REALES",
+      h1: "VALIDACIÓN DEL RENDIMIENTO PARA ATLETAS REALES",
       badge: 'APP FITNESS CHALLENGE',
-      intro: { heading: "No es solo una app. Es un motor de validación.", body: "Cada app de fitness te permite registrar un entrenamiento. ArenaKore es la única que te dice si realmente cuenta. Usando bio-análisis NEXUS, cada rep se rastrea, valida y registra permanentemente. No puedes hacer trampa. Ese es el punto." },
+      intro: { heading: "No es un catálogo. Es un sistema de validación.", body: "Cada app de fitness te permite registrar un entrenamiento. ArenaKore es la única que te dice si realmente cuenta. Usando bio-análisis NEXUS, cada rep se rastrea, valida y registra permanentemente. No puedes hacer trampa. Ese es el punto." },
       problem: { heading: "El problema con todas las demás apps de fitness.", points: ["Registras entrenos, pero nadie los valida.", "El progreso parece invisible — sin benchmark real.", "Cero responsabilidad. Cero competición.", "Abandona a los 3 meses porque no hay nada en juego."] },
       solution: { heading: "ArenaKore cambia lo que está en juego.", body: "Cuando tus reps se validan en tiempo real por un motor de bio-análisis AI, todo cambia. De repente cada sesión tiene una puntuación. Cada puntuación tiene un ranking. Cada ranking tiene un rival. Bienvenido al Arena." },
       howItWorks: [ { step: '01', title: 'NEXUS activa tu perfil', desc: 'Crea tu KORE ID. NEXUS mapea tu perfil atlético. El sistema toma el control desde aquí.' }, { step: '02', title: 'NEXUS asigna tu desafío', desc: 'Cada día NEXUS asigna un desafío basado en tu perfil. Sin búsqueda. Sin selección.' }, { step: '03', title: 'NEXUS valida', desc: 'El bio-análisis rastrea cada movimiento. Mala forma = rep no contada.' }, { step: '04', title: 'Sube el ranking', desc: 'Tu K-Rating se actualiza en tiempo real. Desafía a otros. Defiende tu posición.' } ],
@@ -366,9 +366,9 @@ const PAGE_TRANSLATIONS = {
   },
   [ROUTES.crossfit]: {
     it: {
-      h1: 'BOX VS BOX. ZERO SCUSE.',
+      h1: 'PROVE FUNZIONALI. RISULTATI MISURABILI.',
       badge: 'SFIDA CROSSFIT',
-      intro: { heading: 'Il tuo box. Il loro box. Un vincitore.', body: 'ArenaKore trasforma il CrossFit da sforzo individuale a competizione inter-box. I coach impostano il WOD. Gli atleti gareggiano. NEXUS valida ogni rep. La classifica mostra chi ha davvero fatto il lavoro.' },
+      intro: { heading: 'Ogni esercizio è una verifica delle capacità.', body: 'ArenaKore trasforma il CrossFit da sforzo individuale a competizione inter-box. I coach impostano il WOD. Gli atleti gareggiano. NEXUS valida ogni rep. La classifica mostra chi ha davvero fatto il lavoro.' },
       problem: { heading: 'Il CrossFit merita qualcosa di meglio dei fogli Excel.', points: ["Gli atleti dichiarano i risultati da soli — impossibile verificarli.", "La competizione inter-box richiede coordinazione manuale.", "Nessuna classifica in tempo reale durante un WOD.", "I risultati vengono dimenticati la settimana successiva."] },
       solution: { heading: "Costruito per l'intensità del CrossFit.", body: "NEXUS traccia ogni squat, ogni trazioni, ogni swing con il kettlebell — validando in tempo reale. I coach possono lanciare sfide box sincronizzate su più location. Il box migliore vince. Nessuna scusa." },
       howItWorks: [ { step: '01', title: 'Connetti il tuo Box', desc: 'Registra il tuo box CrossFit come Hub ufficiale ArenaKore. NEXUS prende il controllo.' }, { step: '02', title: 'NEXUS assegna il WOD', desc: 'Usa i template coach o lascia che NEXUS assegni automaticamente. Il sistema gestisce il resto.' }, { step: '03', title: 'Gli atleti gareggiano', desc: 'NEXUS valida ogni rep. Niente imbrogli. Niente auto-dichiarazioni.' }, { step: '04', title: 'Classifica live', desc: 'I ranking si aggiornano in tempo reale. Box vs box, atleta vs atleta.' } ],
@@ -377,9 +377,9 @@ const PAGE_TRANSLATIONS = {
       relatedPages: [ { label: 'Per Palestre', href: ROUTES.gyms }, { label: 'Competizione Workout', href: ROUTES.competition }, { label: 'Allenamento AMRAP', href: ROUTES.amrap } ],
     },
     es: {
-      h1: 'BOX VS BOX. SIN EXCUSAS.',
+      h1: 'PRUEBAS FUNCIONALES. RESULTADOS MEDIBLES.',
       badge: 'DESAFÍO CROSSFIT',
-      intro: { heading: 'Tu box. Su box. Un ganador.', body: 'ArenaKore transforma CrossFit de esfuerzo individual a competición inter-box. Los coaches programan el WOD. Los atletas compiten. NEXUS valida cada rep. El ranking muestra quién realmente hizo el trabajo.' },
+      intro: { heading: 'Cada ejercicio es una verificación de capacidades.', body: 'ArenaKore transforma CrossFit de esfuerzo individual a competición inter-box. Los coaches programan el WOD. Los atletas compiten. NEXUS valida cada rep. El ranking muestra quién realmente hizo el trabajo.' },
       problem: { heading: 'CrossFit merece algo mejor que hojas de cálculo.', points: ["Los atletas auto-reportan resultados — imposible verificarlos.", "La competición inter-box requiere coordinación manual.", "Sin ranking en tiempo real durante un WOD.", "Los resultados se olvidan la semana siguiente."] },
       solution: { heading: "Construido para la intensidad de CrossFit.", body: "NEXUS rastrea cada sentadilla, cada dominada, cada swing de kettlebell — validando en tiempo real. Los coaches pueden lanzar desafíos de box sincronizados en múltiples ubicaciones. El mejor box gana. Sin excusas." },
       howItWorks: [ { step: '01', title: 'Conecta tu Box', desc: 'Registra tu box CrossFit como Hub oficial ArenaKore. NEXUS toma el control.' }, { step: '02', title: 'NEXUS asigna el WOD', desc: 'Usa las plantillas de coach o deja que NEXUS asigne automáticamente. El sistema gestiona el resto.' }, { step: '03', title: 'Los atletas compiten', desc: 'NEXUS valida cada rep. Sin trampas. Sin auto-declaraciones.' }, { step: '04', title: 'Ranking en vivo', desc: 'Los rankings se actualizan en tiempo real. Box vs box, atleta vs atleta.' } ],
@@ -392,8 +392,8 @@ const PAGE_TRANSLATIONS = {
     it: {
       h1: 'ALLENATI PER VINCERE. GAREGGIA PER DIMOSTRARLO.',
       badge: 'COMPETIZIONE WORKOUT',
-      intro: { heading: 'Allenarsi senza competizione è solo esercizio.', body: 'ArenaKore converte ogni sessione di allenamento in un evento competitivo. La tua performance viene misurata, validata e classificata contro atleti reali in tutto il mondo. Non like. Non follower. Ranking basati su risultati verificati.' },
-      problem: { heading: 'Perché gli atleti competitivi abbandonano le app mainstream.', points: ["Nessuna vera competizione — solo log dei personal best.", "I ranking sono auto-dichiarati e non verificabili.", "Nessuna conseguenza per le performance scadenti.", "I tuoi risultati spariscono in un feed infinito."] },
+      intro: { heading: 'Le sfide sono assegnate. I risultati sono misurati.', body: 'ArenaKore converte ogni sessione di allenamento in un evento competitivo. La tua performance viene misurata, validata e classificata contro atleti reali in tutto il mondo. Non like. Non follower. Ranking basati su risultati verificati.' },
+      problem: { heading: 'Perché la selezione autonoma fallisce gli atleti competitivi.', points: ["Nessuna vera competizione — solo log dei personal best.", "I ranking sono auto-dichiarati e non verificabili.", "Nessuna conseguenza per le performance scadenti.", "I tuoi risultati spariscono in un feed infinito."] },
       solution: { heading: "L'arena dove la performance è tutto.", body: "In ArenaKore, ti guadagni il rank. NEXUS valida ogni movimento. Il K-Rating traccia il tuo punteggio da 0 a 1000. Ogni sfida aggiorna il tuo record permanente. Gli atleti sono classificati globalmente e localmente. Non c'è posto dove nascondersi." },
       howItWorks: [ { step: '01', title: 'NEXUS attiva il tuo KORE ID', desc: 'La tua identità atletica permanente. NEXUS mappa statistiche, storia e livello competitivo.' }, { step: '02', title: 'Entra in competizione', desc: 'Unisciti a sfide aperte o crea un match diretto 1vs1.' }, { step: '03', title: 'Performa e dimostra', desc: 'NEXUS valida le tue rep in tempo reale. Ogni movimento conta.' }, { step: '04', title: 'Scala le classifiche', desc: 'Il K-Rating si aggiorna dopo ogni competizione. Difendi la tua posizione.' } ],
       benefits: [ { icon: '📈', title: 'Sistema K-Rating', desc: 'Punteggio di performance da 0 a 1000 aggiornato dopo ogni competizione validata.' }, { icon: '⚔️', title: 'Diretto 1vs1', desc: 'Sfida atleti specifici. Il risultato è permanente e pubblico.' }, { icon: '🌍', title: 'Ranking globale', desc: 'Confronta il tuo K-Rating con atleti in tutto il mondo nella tua disciplina.' }, { icon: '🔒', title: 'Risultati certificati', desc: 'Tutti i risultati sono validati da NEXUS. Niente auto-dichiarazioni. Niente imbrogli.' }, { icon: '🧬', title: 'Profilo DNA', desc: 'VEL, FOR, RES, AGI, TEC, POT — il tuo profilo atletico completo.' }, { icon: '🔴', title: 'Competizioni live', desc: 'Eventi in tempo reale dove gli atleti gareggiano simultaneamente.' } ],
@@ -403,7 +403,7 @@ const PAGE_TRANSLATIONS = {
     es: {
       h1: 'ENTRENA PARA GANAR. COMPITE PARA DEMOSTRARLO.',
       badge: 'COMPETICIÓN WORKOUT',
-      intro: { heading: 'Entrenar sin competición es solo ejercicio.', body: 'ArenaKore convierte cada sesión de entrenamiento en un evento competitivo. Tu rendimiento se mide, valida y clasifica contra atletas reales en todo el mundo. No likes. No seguidores. Rankings basados en resultados verificados.' },
+      intro: { heading: 'Los desafíos son asignados. Los resultados son medidos.', body: 'ArenaKore convierte cada sesión de entrenamiento en un evento competitivo. Tu rendimiento se mide, valida y clasifica contra atletas reales en todo el mundo. No likes. No seguidores. Rankings basados en resultados verificados.' },
       problem: { heading: 'Por qué los atletas competitivos abandonan las apps mainstream.', points: ["Sin competición real — solo registros de récords personales.", "Los rankings son auto-declarados e inverificables.", "Sin consecuencias por bajo rendimiento.", "Tus logros desaparecen en un feed infinito."] },
       solution: { heading: "El arena donde el rendimiento lo es todo.", body: "En ArenaKore, te ganas tu posición. NEXUS valida cada movimiento. El K-Rating rastrea tu puntuación de 0 a 1000. Cada desafío actualiza tu historial permanente. Los atletas se clasifican global y localmente. No hay dónde esconderse." },
       howItWorks: [ { step: '01', title: 'NEXUS activa tu KORE ID', desc: 'Tu identidad atlética permanente. NEXUS mapea estadísticas, historial y nivel competitivo.' }, { step: '02', title: 'NEXUS asigna. Tú ejecutas.', desc: 'NEXUS asigna el desafío del día. Acepta un 1vs1 directo o entra en la competición abierta.' }, { step: '03', title: 'Actúa y demuéstralo', desc: 'NEXUS valida tus reps en tiempo real. Cada movimiento cuenta.' }, { step: '04', title: 'Sube los rankings', desc: 'El K-Rating se actualiza después de cada competición. Defiende tu posición.' } ],
@@ -414,9 +414,9 @@ const PAGE_TRANSLATIONS = {
   },
   [ROUTES.amrap]: {
     it: {
-      h1: 'PIÙ REP POSSIBILI. LE STIAMO CONTANDO.',
+      h1: 'OGNI RIPETIZIONE È VALIDATA.',
       badge: 'ALLENAMENTO AMRAP',
-      intro: { heading: 'AMRAP è semplice. Eseguirlo correttamente non lo è.', body: 'Quante Rep Possibili. Tre parole che definiscono uno dei formati più brutali del fitness competitivo. Il motore NEXUS di ArenaKore traccia ogni rep nell\'AMRAP, valida la forma in tempo reale e ti dà un punteggio che puoi davvero confrontare con altri atleti.' },
+      intro: { heading: 'NEXUS misura ogni ripetizione. Nessuna eccezione.', body: 'Quante Rep Possibili. Tre parole che definiscono uno dei formati più brutali del fitness competitivo. Il motore NEXUS di ArenaKore traccia ogni rep nell\'AMRAP, valida la forma in tempo reale e ti dà un punteggio che puoi davvero confrontare con altri atleti.' },
       problem: { heading: 'Il problema dell\'AMRAP di cui nessuno parla.', points: ["Conti le tue rep da solo — la precisione varia.", "Le rep con forma scorretta contano come quelle corrette.", "Impossibile confrontare i risultati tra atleti in modo equo.", "I progressi sono invisibili senza benchmark validati."] },
       solution: { heading: "AMRAP come è stato progettato per essere fatto.", body: "NEXUS usa la bio-analisi per tracciare ogni movimento durante il tuo AMRAP. Le rep parziali non contano. La forma scorretta non conta. Solo rep complete e pulite vengono contate. Il tuo punteggio finale è certificato, confrontabile e permanente. Ora conosci il tuo vero numero." },
       howItWorks: [ { step: '01', title: 'NEXUS assegna il tuo AMRAP', desc: 'NEXUS assegna movimento, time cap e difficoltà. Il tuo compito: eseguire.' }, { step: '02', title: 'Esegui', desc: 'NEXUS traccia ogni rep tramite Puppet Motion Detection.' }, { step: '03', title: 'Ottieni il punteggio', desc: 'Contano solo le rep validate. Nessun credito parziale.' }, { step: '04', title: 'Confronta e gareggia', desc: 'Il tuo punteggio AMRAP è classificato tra atleti nella tua categoria.' } ],
@@ -425,9 +425,9 @@ const PAGE_TRANSLATIONS = {
       relatedPages: [ { label: 'Sfida CrossFit', href: ROUTES.crossfit }, { label: 'Competizione Workout', href: ROUTES.competition }, { label: 'App Fitness Challenge', href: ROUTES.fitnessApp } ],
     },
     es: {
-      h1: 'MÁS REPS POSIBLES. LAS ESTAMOS CONTANDO.',
+      h1: 'CADA REPETICIÓN ES VALIDADA.',
       badge: 'ENTRENAMIENTO AMRAP',
-      intro: { heading: 'AMRAP es simple. Ejecutarlo correctamente no lo es.', body: 'As Many Reps As Possible. Tres palabras que definen uno de los formatos más brutales del fitness competitivo. El motor NEXUS de ArenaKore rastrea cada rep en tu AMRAP, valida la forma en tiempo real y te da una puntuación que realmente puedes comparar con otros atletas.' },
+      intro: { heading: 'NEXUS mide cada repetición. Sin excepciones.', body: 'As Many Reps As Possible. Tres palabras que definen uno de los formatos más brutales del fitness competitivo. El motor NEXUS de ArenaKore rastrea cada rep en tu AMRAP, valida la forma en tiempo real y te da una puntuación que realmente puedes comparar con otros atletas.' },
       problem: { heading: 'El problema del AMRAP del que nadie habla.', points: ["Cuentas tus propias reps — la precisión varía.", "Las reps con mala forma cuentan igual que las buenas.", "Sin forma de comparar resultados entre atletas equitativamente.", "El progreso es invisible sin benchmarks validados."] },
       solution: { heading: "AMRAP como fue diseñado para hacerse.", body: "NEXUS usa bio-análisis para rastrear cada movimiento durante tu AMRAP. Las reps parciales no cuentan. La mala forma no cuenta. Solo se puntúan reps completas y limpias. Tu puntuación final es certificada, comparable y permanente." },
       howItWorks: [ { step: '01', title: 'NEXUS asigna tu AMRAP', desc: 'NEXUS asigna movimiento, tiempo límite y dificultad. Tu papel: ejecutar.' }, { step: '02', title: 'Ejecuta', desc: 'NEXUS rastrea cada rep mediante Puppet Motion Detection.' }, { step: '03', title: 'Obtén tu puntuación', desc: 'Solo cuentan las reps validadas. Sin crédito parcial.' }, { step: '04', title: 'Compara y compite', desc: 'Tu puntuación AMRAP se clasifica entre atletas en tu categoría.' } ],
@@ -438,9 +438,9 @@ const PAGE_TRANSLATIONS = {
   },
   [ROUTES.gamification]: {
     it: {
-      h1: 'GAMIFICA IL FITNESS. DOMINA LA FIDELIZZAZIONE.',
+      h1: 'NON È UN GIOCO. È UN SISTEMA DI VALUTAZIONE.',
       badge: 'GAMIFICATION FITNESS',
-      intro: { heading: "La gamification non è un trucco. È scienza comportamentale.", body: "Il motivo per cui la maggior parte delle app fitness fallisce non sono le funzionalità — è la psicologia. Le persone smettono quando non ci sono conseguenze. ArenaKore applica meccaniche di gamification comprovate al fitness: ranking, sfide, streak, progressi validati e risultati pubblici. I dati dimostrano che funziona." },
+      intro: { heading: "La gamification supporta la misurazione. Non il contrario.", body: "Il motivo per cui la maggior parte delle app fitness fallisce non sono le funzionalità — è la psicologia. Le persone smettono quando non ci sono conseguenze. ArenaKore applica meccaniche di gamification comprovate al fitness: ranking, sfide, streak, progressi validati e risultati pubblici. I dati dimostrano che funziona." },
       problem: { heading: "Perché l'80% degli iscritti in palestra smette entro 6 mesi.", points: ["Nessuna responsabilità esterna — solo automotivazione.", "I progressi sembrano invisibili dopo la fase iniziale.", "Nessun elemento di confronto sociale o competitivo.", "I traguardi sono arbitrari e facili da ignorare."] },
       solution: { heading: "Il sistema di gamification che cambia davvero il comportamento.", body: "Il motore NEXUS di ArenaKore crea puntate reali. Il tuo K-Rating è pubblico. Le tue sfide sono permanenti. Il tuo punteggio DNA evolve. Ogni decisione di allenamento ha una conseguenza visibile e misurabile. Ecco perché ArenaKore guida +30% di coinvolgimento e +40% di fidelizzazione rispetto alle app fitness standard." },
       howItWorks: [ { step: '01', title: 'Punti e ranking', desc: 'Il K-Flux premia ogni rep validata. Il K-Rating ti classifica competitivamente.' }, { step: '02', title: 'Streak e timeline', desc: 'K-Timeline traccia la costanza su 7 giorni. Le streak contano. I gap sono visibili.' }, { step: '03', title: 'Sfide e premi', desc: 'Completa sfide per sbloccare bonus K-Flux ed evoluzione DNA.' }, { step: '04', title: 'Competizione sociale', desc: 'KORE Network mostra il tuo rank nella tua palestra e globalmente. I colleghi vedono il tuo punteggio.' } ],
@@ -449,7 +449,7 @@ const PAGE_TRANSLATIONS = {
       relatedPages: [ { label: 'Per Palestre', href: ROUTES.gyms }, { label: 'App Fitness Challenge', href: ROUTES.fitnessApp }, { label: 'Competizione Workout', href: ROUTES.competition } ],
     },
     es: {
-      h1: 'GAMIFICA EL FITNESS. DOMINA LA RETENCIÓN.',
+      h1: 'NO ES UN JUEGO. ES UN SISTEMA DE EVALUACIÓN.',
       badge: 'GAMIFICACIÓN FITNESS',
       intro: { heading: "La gamificación no es un truco. Es ciencia del comportamiento.", body: "La razón por la que la mayoría de las apps de fitness fracasan no son las funciones — es la psicología. Las personas abandonan cuando no hay consecuencias. ArenaKore aplica mecánicas de gamificación probadas al fitness: rankings, desafíos, rachas, progreso validado y resultados públicos." },
       problem: { heading: "Por qué el 80% de los miembros del gimnasio abandona en 6 meses.", points: ["Sin responsabilidad externa — solo automotivación.", "El progreso parece invisible después de la fase inicial.", "Sin elemento de comparación social o competitivo.", "Los hitos son arbitrarios y fáciles de ignorar."] },
