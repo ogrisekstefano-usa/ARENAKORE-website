@@ -130,7 +130,13 @@ function Dashboard({ call }) {
   useEffect(() => {
     call('get', '/admin/stats')
       .then(d => { setStats(d); setBackendDown(false); })
-      .catch(() => { setBackendDown(true); });
+      .catch((err) => {
+  if (err?.response?.status === 401) {
+    setBackendDown(false);
+  } else {
+    setBackendDown(true);
+  }
+});
   }, [call]);
   const cards = stats ? [
     { label: 'Blog Posts', value: stats.blog_posts, color: '#00FFFF' },
